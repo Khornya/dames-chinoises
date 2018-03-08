@@ -29,7 +29,7 @@ for (i=0; i<MaxMove+7; i++)
 
 Pic= new Array(2);                 <!--Pic matrice 2*6-->
 for (i=0; i<2; i++)
-  Pic[i] = new Array(6);            <!-- cette matrice est destine a acceuillir des image-->
+  Pic[i] = new Array(6);            <!-- cette matrice est destine a acceuillir des images-->
 for (i=0; i<2; i++)
 { for (j=0; j<6; j++)
   { Pic[i][j] = new Image();
@@ -62,6 +62,8 @@ function SetOption(n, m)
 }
 
 
+<!-- cette fonction recommence le jeu en appelant la fonction RefreshScreen selon la valeur de NDraw -->
+<!--et permet de jouer contre IA qui s execute avec la fonction MakeBestMove --> 
 function Timer()
 { if (NDraw>0) RefreshScreen();
   else
@@ -70,6 +72,10 @@ function Timer()
   }
 }
 
+
+<!-- cette fonction permet de valider un click -->
+<!-- pls sénario possible le jeu est terminé ,ce n est pas la tour de l utilisateur, ou lutilisateur restart le jeu rreturn --> 
+<!--sinon check la validité du coup avec Pressed(), si invalide alert à lécran -->
 function Clicked(ii, jj)
 { if (IsOver) return;
   if (! IsPlayer[(MoveCount+Start)%2]) return;
