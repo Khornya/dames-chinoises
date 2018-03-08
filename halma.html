@@ -1,36 +1,35 @@
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<HTML>
-<HEAD>
-<META NAME="description" content="Halma is a PC-Game, which is a part of the '7 by one stroke' package, translated from C++ into HTML and JavaScript">
-<META NAME="author" content="Lutz Tautenhahn">
-<META NAME="keywords" content="Game, Halma, Streich, Stroke, JavaScript">
-<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="description" content="Halma is a PC-Game, which is a part of the '7 by one stroke' package, translated from C++ into HTML and JavaScript">
+<meta name="author" content="Lutz Tautenhahn">
+<meta name="keywords" content="Game, Halma, Streich, Stroke, JavaScript">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <title>Halma</title>
 <script language="JavaScript">
 var i, j, MaxFld=16, MaxMove=217, MaxMoveLine=32;
 var NDraw, IsOver, Start0, CanJump, I_Sel, J_Sel;
 var MoveCount, MaxMoveCount, Start;
-IsPlayer = new Array(2);
-Level = new Array(2);  
-Fld = new Array(MaxFld);
+IsPlayer = new Array(2);   <!-- table pour 2 joueurs--> 
+Level = new Array(2);      <!-- table pour 2 niveau-->
+Fld = new Array(MaxFld);   <!--fld matrice de 16*16 ele présente le plateau-->
 for (i=0; i<MaxFld; i++)
-  Fld[i] = new Array(MaxFld);  
-MoveLine = new Array(MaxMoveLine);
+  Fld[i] = new Array(MaxFld); 
+MoveLine = new Array(MaxMoveLine); <!--array pour les mouvements de 32 ele--> 
 for (i=0; i<MaxMoveLine; i++)
-  MoveLine[i] = new Array(2);
-var NLine;
+  MoveLine[i] = new Array(2);      <!-- chaque ele de MoveLine est une liste de deux ele-->
+<!-- deux variable identique a MoveLine :  NLine et NCLine --> 
+var NLine;                         
 MoveCLine = new Array(MaxMoveLine);
 for (i=0; i<MaxMoveLine; i++)
   MoveCLine[i] = new Array(2);
 var NCLine;
-FldH = new Array(MaxMove+7);
+FldH = new Array(MaxMove+7);       <!-- fldH array de 217+7 ele-->
 for (i=0; i<MaxMove+7; i++)
-  FldH[i] = new Array(4);
+  FldH[i] = new Array(4);          <!--chaque ele de fldH est une sous liste de 4 ele-->
 
-Pic= new Array(2);
+Pic= new Array(2);                 <!--Pic matrice 2*6-->
 for (i=0; i<2; i++)
-  Pic[i] = new Array(6);
+  Pic[i] = new Array(6);            <!-- cette matrice est destine a acceuillir des image
 for (i=0; i<2; i++)
 { for (j=0; j<6; j++)
   { Pic[i][j] = new Image();
@@ -38,12 +37,18 @@ for (i=0; i<2; i++)
   }
 }
 
-Start0=1;
-Level[0]=0;
+Start0=1;                         <!-- Start Variable -->
+Level[0]=0;                       <!--initialiser les levels dans la table Level -->
 Level[1]=1;
-IsPlayer[0]=true;
+IsPlayer[0]=true;                 <!-- passer la main au joueur >>
 IsPlayer[1]=false; 
 
+
+<!-- cette fonction update les valeurs de: Isplayer, Level, et Start0 selon les options selectionnées-->
+<!-- si m=0, le mode joueur est activé n=0 pour jaune et n=1 pour vert-->
+<!-- si m !=0, le level dans Level est updated m=1 mode avance m=2 mode expert-->
+<!-- sinon (2, 0) (2, 1) sert à initialiser la valuer de Start0 à 0 pour jaune 1 pour vert -->
+<!-- selon le valeur de Start0 lutilisateur jaune ou vert va commencer -->  
 function SetOption(n, m)
 { if (n<2) 
   { if (m==0)
@@ -55,6 +60,7 @@ function SetOption(n, m)
   }
   else Start0=m; 
 }
+
 
 function Timer()
 { if (NDraw>0) RefreshScreen();
