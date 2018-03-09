@@ -8,7 +8,7 @@
 <script language="JavaScript">
 var i, j, MaxFld=16, MaxMove=217, MaxMoveLine=32;
 var NDraw, IsOver, Start0, CanJump, I_Sel, J_Sel;
-var MoveCount, MaxMoveCount, Start;
+var MoveCount, MaxMoveCount, Start;    <!-- variables de gestion de mouvement -->
 IsPlayer = new Array(2);   <!-- table pour 2 joueurs--> 
 Level = new Array(2);      <!-- table pour 2 niveau-->
 Fld = new Array(MaxFld);   <!--fld matrice de 16*16 ele présente le plateau-->
@@ -16,20 +16,20 @@ for (i=0; i<MaxFld; i++)
   Fld[i] = new Array(MaxFld); 
 MoveLine = new Array(MaxMoveLine); <!--array pour les mouvements de 32 ele--> 
 for (i=0; i<MaxMoveLine; i++)
-  MoveLine[i] = new Array(2);      <!-- chaque ele de MoveLine est une liste de deux ele-->
-<!-- deux variable identique a MoveLine :  NLine et NCLine --> 
-var NLine;                         
+  MoveLine[i] = new Array(2);      <!-- chaque ele de MoveLine est une sous-liste de coordonnés-->
+<!-- variable identique a MoveLine :  NCLine --> 
+var NLine;                         <!-- variable compteur de mouvements--> 
 MoveCLine = new Array(MaxMoveLine);
 for (i=0; i<MaxMoveLine; i++)
   MoveCLine[i] = new Array(2);
 var NCLine;
-FldH = new Array(MaxMove+7);       <!-- fldH array de 217+7 ele-->
+FldH = new Array(MaxMove+7);       <!-- fldH array de 217+7 ele il sert à gerder trace historique des mouvements-->
 for (i=0; i<MaxMove+7; i++)
-  FldH[i] = new Array(4);          <!--chaque ele de fldH est une sous liste de 4 ele-->
+  FldH[i] = new Array(4);          <!--chaque ele de fldH est une sous liste de 4 ele coordonnés départ et arrivée-->
 
 Pic= new Array(2);                 <!--Pic matrice 2*6-->
 for (i=0; i<2; i++)
-  Pic[i] = new Array(6);            <!-- cette matrice est destine a acceuillir des images-->
+  Pic[i] = new Array(6);            <!-- cette matrice est destine a acceuillir des images -->
 for (i=0; i<2; i++)
 { for (j=0; j<6; j++)
   { Pic[i][j] = new Image();
@@ -40,7 +40,7 @@ for (i=0; i<2; i++)
 Start0=1;                         <!-- Start Variable -->
 Level[0]=0;                       <!--initialiser les levels dans la table Level -->
 Level[1]=1;
-IsPlayer[0]=true;                 <!-- passer la main au joueur >>
+IsPlayer[0]=true;                 <!-- passer la main au joueur -->>
 IsPlayer[1]=false; 
 
 
@@ -61,9 +61,8 @@ function SetOption(n, m)
   else Start0=m; 
 }
 
-
 <!-- cette fonction recommence le jeu en appelant la fonction RefreshScreen selon la valeur de NDraw -->
-<!--et permet de jouer contre IA qui s execute avec la fonction MakeBestMove --> 
+<!--et permet de jouer contre IA qui s execute avec la fonction MakeBestMove() --> 
 function Timer()
 { if (NDraw>0) RefreshScreen();
   else
@@ -75,7 +74,7 @@ function Timer()
 
 <!-- cette fonction permet de valider un click -->
 <!-- pls sénario possible le jeu est terminé ,ce n est pas la tour de l utilisateur, ou lutilisateur restart le jeu rreturn --> 
-<!--sinon check la validité du coup avec Pressed(), si invalide alert à lécran -->
+<!--sinon check la validité du coup avec Pressed(), si invalide alert à l écran -->
 function Clicked(ii, jj)
 { if (IsOver) return;
   if (! IsPlayer[(MoveCount+Start)%2]) return;
@@ -86,115 +85,124 @@ function Clicked(ii, jj)
     alert ("Ungültiger Zug !");
 }
 
-function Pressed(ii, jj)
+function Pressed(ii, jj)    <!-- coordonnés ou le joueur a cliqué ii, jj -->
 { var kk, ddi, ddj, cci, ccj, dd, nn;
   cci=0; ccj=0; nn=0;
-  for (kk=0; kk<NLine-1; kk++)
-  { if ((MoveLine[kk][0]==ii)&&(MoveLine[kk][1]==jj))
-    { if (kk>0) NLine=kk+1;
-      else
-      { NLine=0;
+<!-- dans le code suivant MoveLine est matrice (32*2) qui enregistre les coordonnée des cases ou le joueur click dessus -->
+<!-- dans le code suivant I_Sel  est l abscisse de la case départ J_sel l ordonnée -->
+
+  for (kk=0; kk<NLine-1; kk++)                          <!-- ici on vérifie si le joueur click sur une case par ou il a deja passé-->
+  { if ((MoveLine[kk][0]==ii)&&(MoveLine[kk][1]==jj))   <!-- si oui-->
+    { if (kk>0) NLine=kk+1;                             <!-- s il s agit pas de la case de depart (la première), on update NLine ( je pense q on annule (overwrite ds MoveLine) les mouvement après la dite case-->
+      else                                              <!-- si il revient à la case de départ-->
+      { NLine=0;                                        <!-- on remet tous aux valeurs initiales -->
         I_Sel=-1;
         J_Sel=-1;
       }
-      return(true);
+      return(true);                                     <!-- et bien sur on return True car ses mouvement sont valides -->
     }
   }
-  if (NLine==MaxMoveLine) return(false);
-  MoveLine[NLine][0]=ii;
-  MoveLine[NLine][1]=jj;
-  if (NLine==0)
-  { if (Fld[ii][jj]!=(MoveCount+Start)%2)
+  if (NLine==MaxMoveLine) return(false);    <!-- si maximum de mouvements est joué return False (maximum= 32 mouvements) -->
+  MoveLine[NLine][0]=ii;                    <!-- sinon rajouter les ccordonnées à la matrice des mouvements MoveLine-->
+  MoveLine[NLine][1]=jj;                    <!-- Nline est le dernier index vide ds MovLine -->
+  if (NLine==0)                              <!-- cas particulier ou le jeu a commencé NLine = 0 -->
+  { if (Fld[ii][jj]!=(MoveCount+Start)%2)    <!-- je pense ici vérification si saut valide Fld est initié dans Init()-->
       return(false);
-    else
-    { NLine++;
-      I_Sel=ii;
+    else                                     <!-- sinon valider le saut  -->
+    { NLine++;                               <!-- incrémente NLine-->
+      I_Sel=ii;                              <!-- mettre I_sel et J_sel à ii, jj -->
       J_Sel=jj;
-      CanJump=true;
-      return(true);
+      CanJump=true;                          <!-- permettre le saut -->
+      return(true);                          <!-- return True -->
     }
   }
   else
-  { if (NLine==1)
-    { if ((MoveLine[0][0]==ii)&&(MoveLine[0][1]==jj))
+  { if (NLine==1)                            <!-- cas particulier second mouvement -->
+    { if ((MoveLine[0][0]==ii)&&(MoveLine[0][1]==jj)) <!-- si retour à la case départ initialise vaiables et valide le mouvement-->
       { NLine=0;
         I_Sel=-1;
         J_Sel=-1;
         return(true);
       }
     }
-    if (Fld[ii][jj]!=-1)
-      return(false);
+    if (Fld[ii][jj]!=-1)                       <!-- si case ds plateau fld est occupé (une case inoccupée est marqué -1 ds Fld)
+      return(false);                           <!--mouvement invalide -->
   }
-  if ((MoveLine[NLine-1][0]==ii)&&(MoveLine[NLine-1][1]==jj))
-  { if ((ii!=MoveLine[0][0])||(jj!=MoveLine[0][1]))
+  if ((MoveLine[NLine-1][0]==ii)&&(MoveLine[NLine-1][1]==jj)) <!-- si retour à la case précédente -->  
+  { if ((ii!=MoveLine[0][0])||(jj!=MoveLine[0][1]))           <!-- si ce n est pas la case de départ valide le mouvement-->
     { MakeMove(ii, jj);
       MoveText();
     }
-    NLine=0;
+    NLine=0;                                                  <!-- sinon remettre Nline à 0 :retour à la case départ  -->
     return(true);
   }
-  ddi=ii-MoveLine[NLine-1][0];
+  ddi=ii-MoveLine[NLine-1][0];                                <!-- calcule la distance entre coordonnées avec la case précédente-->
   ddj=jj-MoveLine[NLine-1][1];
-  if ((Math.abs(ddi)<2)&&(Math.abs(ddj)<2))
-  { if (NLine==1)
+  if ((Math.abs(ddi)<2)&&(Math.abs(ddj)<2))                   <!-- si < 2 un mouvement sans saut
+  { if (NLine==1)                                             <!-- s il s agit d un premier mouvement sans saut -->
     { CanJump=false;
       NLine++;
-      return(true);
+      return(true);                                           <!-- c est valide -->
     }
-    else return(false);
+    else return(false);                                       <!-- sinon impossible de faire plus de 1 mouvement sans saut -->
   }
   if (CanJump)
-  { if ((ddi!=0)&&(ddj!=0)&&(Math.abs(ddi)!=Math.abs(ddj))) return(false);
-    if (Math.abs(ddi)%2>0) return(false);
-    if (Math.abs(ddj)%2>0) return(false);
-    if (Fld[ii-ddi/2][jj-ddj/2]<0) return(false);
-    if ((ii-ddi/2==I_Sel)&&(jj-ddj/2==J_Sel)) return(false);
+  { if ((ddi!=0)&&(ddj!=0)&&(Math.abs(ddi)!=Math.abs(ddj))) return(false); <!-- si mouvement sur diagonale mais ddj!= ddi invalide -->
+    if (Math.abs(ddi)%2>0) return(false);                                  <!-- si saut pas symétrique invalide -->
+    if (Math.abs(ddj)%2>0) return(false);                                  <!-- même chose pour ddj --> 
+    if (Fld[ii-ddi/2][jj-ddj/2]<0) return(false);                          <!-- si la case au milieu = -1 inoccupée invalide -->
+    if ((ii-ddi/2==I_Sel)&&(jj-ddj/2==J_Sel)) return(false);               <!-- ici je pense empecher le joueur de prendre en compte le point de départ  comme point d assymétrie à vérifier sur le jeu -->
+  <!-- il faut noter que pour des mouvement droits en horizontal ou vertical cci ccj rete initié à 0 -->
     if (ddi<0) cci=-1;
     if (ddi>0) cci=1;
     if (ddj<0) ccj=-1;
     if (ddj>0) ccj=1;
     dd=Math.abs(ddi);
-    if (dd<Math.abs(ddj)) dd=Math.abs(ddj);
+    if (dd<Math.abs(ddj)) dd=Math.abs(ddj);   <!--dd contient max distance entre les deux point de mouvements -->
+    <!--ici vérification que toutes les cases intermédiares sont vides -->
     for (kk=0; kk<dd; kk++)
     { if (Fld[ii-kk*cci][jj-kk*ccj]!=-1)
       { if (((ii-kk*cci)!=I_Sel)||((jj-kk*ccj)!=J_Sel))
-          nn++;
+          nn++;                               
       }
     }
-    if (nn>1) return(false);
+    if (nn>1) return(false);           <!-- si case intermédiare occupée >1 (car on compte le point d asymétrie) mouvement invalide -->
     NLine++;
-    return(true);
+    return(true);                      <!-- sinon valider le mouvement -->
   }
-  return(false);
+  return(false);                       <!-- si CanJump set à 0 invalide mouvement  -->
 }
-
+<!-- cette fonction sert à annuler le dernier coup joué lié au bouton <<-->
 function Back()
-{ if (MoveCount>0)
-  { IsOver=false;
+{ if (MoveCount>0)                     <!--on vérifie quand meme qu un coup est joué --> 
+  { IsOver=false;                      <!--possibilité de revenir en aarière meme partie finie -->
     NLine=0;
     NCLine=0;
     MoveCount--;
-    Fld[FldH[MoveCount][2]][FldH[MoveCount][3]]=-1;
-    Fld[FldH[MoveCount][0]][FldH[MoveCount][1]]=(MoveCount+Start)%2;
+    Fld[FldH[MoveCount][2]][FldH[MoveCount][3]]=-1;      <!--marquer case comme inoccuppé avec -1 -->
+    Fld[FldH[MoveCount][0]][FldH[MoveCount][1]]=(MoveCount+Start)%2; <!-- marquer la case précédente comme occuppée 0 ou 1-->
     I_Sel=-1;
     J_Sel=-1;
-    RefreshScreen();   
+    RefreshScreen();     <!-- redessinner le plateau -->
   }
 }
-
+<!-- cette fonction sert à rejouer le dernier coup annullé lieé au bouton >>-->
 function Replay()
 { if (MoveCount<MaxMoveCount)
+  <!-- restaure les coordonnées précédent et actuelles -->
   { I_Sel=FldH[MoveCount][0];
     J_Sel=FldH[MoveCount][1];
     var ii=FldH[MoveCount][2];
     var jj=FldH[MoveCount][3];
+    <!-- rejouer le mouvement -->
     MakeMove(ii, jj);
     MoveText();
     NCLine=0;
   }
 }
 
+<!-- cette fonction initialise les variables globales elle est appelée au lancement de la page ligne 664 et aussi -->
+<--! appelé lorsque le joueur appuie sur restart -->
 function Init()
 { var ii, jj;
   for (ii=0; ii<MaxFld; ii++)
