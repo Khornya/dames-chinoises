@@ -393,7 +393,7 @@ function MakeBestMove()
     { for (jj=J_Sel-1; jj<=J_Sel+1; jj++)
       { if (IsInField(ii, jj)&&((ii!=I_Sel)||(jj!=J_Sel))&&(Fld[ii][jj]<0))
         { Fld[ii][jj]=-2;                                                                // marquer les cases adjaçante avec-2
-          if (FindJumpFields(kk, 1-kk)<-3)                                               // marquer les cases accesibles à partir d'une position adjaçante en utilisant les pions de l'adversaire, si concluante nombre de mouvement > 3
+          if (FindJumpFields(kk, 1-kk)<-3)                                               // marquer les cases accesibles à partir d'une position adjaçante en utilisant ses pions, si concluante nombre de mouvement > 3
           // ps j'ai essayé de faire ces mouvements sont pas autorisés pour un joueur ordinaire c'est injuste!
           // refaire tous le travail précédent et attribuer un poid à chaque case accessible
           { //getting best move for Field[ii][jj]   Be carefull with the weights
