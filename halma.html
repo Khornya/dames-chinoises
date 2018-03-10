@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head>
 <meta name="description" content="Halma is a PC-Game, which is a part of the '7 by one stroke' package, translated from C++ into HTML and JavaScript">
@@ -8,28 +9,31 @@
 <script language="JavaScript">
 var i, j, MaxFld=16, MaxMove=217, MaxMoveLine=32;
 var NDraw, IsOver, Start0, CanJump, I_Sel, J_Sel;
-var MoveCount, MaxMoveCount, Start;    <!-- variables de gestion de mouvement -->
-IsPlayer = new Array(2);   <!-- table pour 2 joueurs--> 
-Level = new Array(2);      <!-- table pour 2 niveau-->
-Fld = new Array(MaxFld);   <!--fld matrice de 16*16 ele présente le plateau-->
+var MoveCount, MaxMoveCount, Start;    // variables de gestion de mouvement 
+IsPlayer = new Array(2);   // table pour 2 joueurs 
+Level = new Array(2);      // table pour 2 niveau
+Fld = new Array(MaxFld);   //fld matrice de 16*16 ele présente le plateau
 for (i=0; i<MaxFld; i++)
   Fld[i] = new Array(MaxFld); 
-MoveLine = new Array(MaxMoveLine); <!--array pour les mouvements de 32 ele--> 
+MoveLine = new Array(MaxMoveLine); //array pour les mouvements intermédiares de 32 ele max=32 
 for (i=0; i<MaxMoveLine; i++)
-  MoveLine[i] = new Array(2);      <!-- chaque ele de MoveLine est une sous-liste de coordonnés-->
-<!-- variable identique a MoveLine :  NCLine --> 
-var NLine;                         <!-- variable compteur de mouvements--> 
+  MoveLine[i] = new Array(2);      // chaque ele de MoveLine est une sous-liste de coordonnés
+var NLine;                         // variable compteur de mouvements
+
+// variable identique a MoveLine :  MoveCLine  et NCLine identique à NLine utilisées par l'IA pour dessiner le meilleur chemin
 MoveCLine = new Array(MaxMoveLine);
 for (i=0; i<MaxMoveLine; i++)
   MoveCLine[i] = new Array(2);
 var NCLine;
-FldH = new Array(MaxMove+7);       <!-- fldH array de 217+7 ele il sert à gerder trace historique des mouvements-->
-for (i=0; i<MaxMove+7; i++)
-  FldH[i] = new Array(4);          <!--chaque ele de fldH est une sous liste de 4 ele coordonnés départ et arrivée-->
+FldH = new Array(MaxMove+7);       // fldH array de 217+7 ele il sert à gerder trace de l historique des coups joués
 
-Pic= new Array(2);                 <!--Pic matrice 2*6-->
+for (i=0; i<MaxMove+7; i++)
+  FldH[i] = new Array(4);          //chaque ele de fldH est une sous liste de 4 ele coordonnés départ et arrivée
+// chaque coup joué est gardé comme un ele de 4 coordonnées ele 0, 1 case départ 2, 3 case arrivée l index est MoveCount 
+
+Pic= new Array(2);                 //Pic matrice 2*6
 for (i=0; i<2; i++)
-  Pic[i] = new Array(6);            <!-- cette matrice est destine a acceuillir des images -->
+  Pic[i] = new Array(6);            // cette matrice est destine a acceuillir des image 
 for (i=0; i<2; i++)
 { for (j=0; j<6; j++)
   { Pic[i][j] = new Image();
@@ -37,18 +41,18 @@ for (i=0; i<2; i++)
   }
 }
 
-Start0=1;                         <!-- Start Variable -->
-Level[0]=0;                       <!--initialiser les levels dans la table Level -->
+Start0=1;                         // Start Variable 
+Level[0]=0;                       //initialiser les levels dans la table Level 
 Level[1]=1;
-IsPlayer[0]=true;                 <!-- passer la main au joueur -->>
+IsPlayer[0]=true;                 // passer la main au joueur >>
 IsPlayer[1]=false; 
 
 
-<!-- cette fonction update les valeurs de: Isplayer, Level, et Start0 selon les options selectionnées-->
-<!-- si m=0, le mode joueur est activé n=0 pour jaune et n=1 pour vert-->
-<!-- si m !=0, le level dans Level est updated m=1 mode avance m=2 mode expert-->
-<!-- sinon (2, 0) (2, 1) sert à initialiser la valuer de Start0 à 0 pour jaune 1 pour vert -->
-<!-- selon le valeur de Start0 lutilisateur jaune ou vert va commencer -->  
+// cette fonction update les valeurs de: Isplayer, Level, et Start0 selon les options selectionnées
+// si m=0, le mode joueur est activé n=0 pour jaune et n=1 pour vert
+// si m !=0, le level dans Level est updated m=1 mode avance m=2 mode expert
+// sinon (2, 0) (2, 1) sert à initialiser la valuer de Start0 à 0 pour jaune 1 pour vert 
+// selon le valeur de Start0 lutilisateur jaune ou vert va commencer   
 function SetOption(n, m)
 { if (n<2) 
   { if (m==0)
@@ -61,8 +65,8 @@ function SetOption(n, m)
   else Start0=m; 
 }
 
-<!-- cette fonction recommence le jeu en appelant la fonction RefreshScreen selon la valeur de NDraw -->
-<!--et permet de jouer contre IA qui s execute avec la fonction MakeBestMove() --> 
+// cette fonction recommence le jeu en appelant la fonction RefreshScreen selon la valeur de NDraw 
+//et permet de jouer contre IA qui s execute avec la fonction MakeBestMove  
 function Timer()
 { if (NDraw>0) RefreshScreen();
   else
@@ -72,9 +76,9 @@ function Timer()
 }
 
 
-<!-- cette fonction permet de valider un click -->
-<!-- pls sénario possible le jeu est terminé ,ce n est pas la tour de l utilisateur, ou lutilisateur restart le jeu rreturn --> 
-<!--sinon check la validité du coup avec Pressed(), si invalide alert à l écran -->
+// cette fonction permet de valider un click 
+// pls sénario possible le jeu est terminé ,ce n est pas la tour de l utilisateur, ou lutilisateur restart le jeu rreturn  
+//sinon check la validité du coup avec Pressed(), si invalide alert à l ecran 
 function Clicked(ii, jj)
 { if (IsOver) return;
   if (! IsPlayer[(MoveCount+Start)%2]) return;
@@ -85,129 +89,129 @@ function Clicked(ii, jj)
     alert ("Ungültiger Zug !");
 }
 
-function Pressed(ii, jj)    <!-- coordonnés ou le joueur a cliqué ii, jj -->
+function Pressed(ii, jj)    // coordonnés ou le joueur a cliqué ii, jj 
 { var kk, ddi, ddj, cci, ccj, dd, nn;
   cci=0; ccj=0; nn=0;
-<!-- dans le code suivant MoveLine est matrice (32*2) qui enregistre les coordonnée des cases ou le joueur click dessus -->
-<!-- dans le code suivant I_Sel  est l abscisse de la case départ J_sel l ordonnée -->
+// dans le code suivant MoveLine est matrice (32*2) qui enregistre les coordonnée des cases ou le joueur click dessus 
+// dans le code suivant I_Sel  est l abscisse de la case première J_sel l ordonnée 
 
-  for (kk=0; kk<NLine-1; kk++)                          <!-- ici on vérifie si le joueur click sur une case par ou il a deja passé-->
-  { if ((MoveLine[kk][0]==ii)&&(MoveLine[kk][1]==jj))   <!-- si oui-->
-    { if (kk>0) NLine=kk+1;                             <!-- s il s agit pas de la case de depart (la première), on update NLine ( je pense q on annule (overwrite ds MoveLine) les mouvement après la dite case-->
-      else                                              <!-- si il revient à la case de départ-->
-      { NLine=0;                                        <!-- on remet tous aux valeurs initiales -->
+  for (kk=0; kk<NLine-1; kk++)                          // ici on vérifie si le joueur click sur une case par ou il a deja passé
+  { if ((MoveLine[kk][0]==ii)&&(MoveLine[kk][1]==jj))   // si oui
+    { if (kk>0) NLine=kk+1;                             // s il s agit pas de la case de depart (la première), on update NLine ( je pense q on annule (overwrite ds MoveLine) les mouvement après la dite case
+      else                                              // si il revient à la case de départ
+      { NLine=0;                                        // on remet tous aux valeurs initiales 
         I_Sel=-1;
         J_Sel=-1;
       }
-      return(true);                                     <!-- et bien sur on return True car ses mouvement sont valides -->
+      return(true);                                     // et bien sur on return True car ses mouvement sont valides 
     }
   }
-  if (NLine==MaxMoveLine) return(false);    <!-- si maximum de mouvements est joué return False (maximum= 32 mouvements) -->
-  MoveLine[NLine][0]=ii;                    <!-- sinon rajouter les ccordonnées à la matrice des mouvements MoveLine-->
-  MoveLine[NLine][1]=jj;                    <!-- Nline est le dernier index vide ds MovLine -->
-  if (NLine==0)                              <!-- cas particulier ou le jeu a commencé NLine = 0 -->
-  { if (Fld[ii][jj]!=(MoveCount+Start)%2)    <!-- je pense ici vérification si saut valide Fld est initié dans Init()-->
+  if (NLine==MaxMoveLine) return(false);    // si maximum de mouvements est joué return False (maximum= 32 mouvements) 
+  MoveLine[NLine][0]=ii;                    // sinon rajouter les ccordonnées à la matrice des mouvements MoveLine
+  MoveLine[NLine][1]=jj;                    // Nline est le dernier index vide ds MovLine 
+  if (NLine==0)                              // cas particulier ou le jeu a commencé NLine = 0 click sur le pion de départ 
+  { if (Fld[ii][jj]!=(MoveCount+Start)%2)    // ici vérification le joueur ne joue pas avec les pions de l adversaire
       return(false);
-    else                                     <!-- sinon valider le saut  -->
-    { NLine++;                               <!-- incrémente NLine-->
-      I_Sel=ii;                              <!-- mettre I_sel et J_sel à ii, jj -->
+    else                                     // sinon valider le saut  
+    { NLine++;                               // incrémente NLine
+      I_Sel=ii;                              // mettre I_sel et J_sel à ii, jj 
       J_Sel=jj;
-      CanJump=true;                          <!-- permettre le saut -->
-      return(true);                          <!-- return True -->
+      CanJump=true;                          // permettre le saut 
+      return(true);                          // return True 
     }
   }
   else
-  { if (NLine==1)                            <!-- cas particulier second mouvement -->
-    { if ((MoveLine[0][0]==ii)&&(MoveLine[0][1]==jj)) <!-- si retour à la case départ initialise vaiables et valide le mouvement-->
+  { if (NLine==1)                            // cas particulier second mouvement 
+    { if ((MoveLine[0][0]==ii)&&(MoveLine[0][1]==jj)) // si retour à la case départ initialise vaiables et valide le mouvement
       { NLine=0;
         I_Sel=-1;
         J_Sel=-1;
         return(true);
       }
     }
-    if (Fld[ii][jj]!=-1)                       <!-- si case ds plateau fld est occupé (une case inoccupée est marqué -1 ds Fld)
-      return(false);                           <!--mouvement invalide -->
+    if (Fld[ii][jj]!=-1)                       // si case ds plateau fld est occupé (une case inoccupée est marqué -1 ds Fld)
+      return(false);                           //mouvement invalide 
   }
-  if ((MoveLine[NLine-1][0]==ii)&&(MoveLine[NLine-1][1]==jj)) <!-- si retour à la case précédente -->  
-  { if ((ii!=MoveLine[0][0])||(jj!=MoveLine[0][1]))           <!-- si ce n est pas la case de départ valide le mouvement-->
+  if ((MoveLine[NLine-1][0]==ii)&&(MoveLine[NLine-1][1]==jj)) // si retour à la case précédente   
+  { if ((ii!=MoveLine[0][0])||(jj!=MoveLine[0][1]))           // si ce n est pas la case de départ valide le mouvement
     { MakeMove(ii, jj);
       MoveText();
     }
-    NLine=0;                                                  <!-- sinon remettre Nline à 0 :retour à la case départ  -->
+    NLine=0;                                                  // sinon remettre Nline à 0 :retour à la case départ  
     return(true);
   }
-  ddi=ii-MoveLine[NLine-1][0];                                <!-- calcule la distance entre coordonnées avec la case précédente-->
+  ddi=ii-MoveLine[NLine-1][0];                                // calcule la distance entre coordonnées avec la case précédente
   ddj=jj-MoveLine[NLine-1][1];
-  if ((Math.abs(ddi)<2)&&(Math.abs(ddj)<2))                   <!-- si < 2 un mouvement sans saut
-  { if (NLine==1)                                             <!-- s il s agit d un premier mouvement sans saut -->
+  if ((Math.abs(ddi)<2)&&(Math.abs(ddj)<2))                   // si < 2 un mouvement sans saut
+  { if (NLine==1)                                             // s il s agit d un premier mouvement sans saut 
     { CanJump=false;
       NLine++;
-      return(true);                                           <!-- c est valide -->
+      return(true);                                           // c est valide 
     }
-    else return(false);                                       <!-- sinon impossible de faire plus de 1 mouvement sans saut -->
+    else return(false);                                       // sinon impossible de faire plus de 1 mouvement sans saut 
   }
   if (CanJump)
-  { if ((ddi!=0)&&(ddj!=0)&&(Math.abs(ddi)!=Math.abs(ddj))) return(false); <!-- si mouvement sur diagonale mais ddj!= ddi invalide -->
-    if (Math.abs(ddi)%2>0) return(false);                                  <!-- si saut pas symétrique invalide -->
-    if (Math.abs(ddj)%2>0) return(false);                                  <!-- même chose pour ddj --> 
-    if (Fld[ii-ddi/2][jj-ddj/2]<0) return(false);                          <!-- si la case au milieu = -1 inoccupée invalide -->
-    if ((ii-ddi/2==I_Sel)&&(jj-ddj/2==J_Sel)) return(false);               <!-- ici je pense empecher le joueur de prendre en compte le point de départ  comme point d assymétrie à vérifier sur le jeu -->
-  <!-- il faut noter que pour des mouvement droits en horizontal ou vertical cci ccj rete initié à 0 -->
+  { if ((ddi!=0)&&(ddj!=0)&&(Math.abs(ddi)!=Math.abs(ddj))) return(false); // si mouvement sur diagonale mais ddj!= ddi invalide 
+    if (Math.abs(ddi)%2>0) return(false);                                  // si saut pas symétrique invalide 
+    if (Math.abs(ddj)%2>0) return(false);                                  // même chose pour ddj  
+    if (Fld[ii-ddi/2][jj-ddj/2]<0) return(false);                          // si la case au milieu = -1 inoccupée invalide 
+    if ((ii-ddi/2==I_Sel)&&(jj-ddj/2==J_Sel)) return(false);               // ici je pense empecher le joueur de prendre en compte le point de départ  comme point d assymétrie à vérifier sur le jeu 
+  // il faut noter que pour des mouvement droits en horizontal ou vertical cci ccj rete initié à 0 
     if (ddi<0) cci=-1;
     if (ddi>0) cci=1;
     if (ddj<0) ccj=-1;
     if (ddj>0) ccj=1;
     dd=Math.abs(ddi);
-    if (dd<Math.abs(ddj)) dd=Math.abs(ddj);   <!--dd contient max distance entre les deux point de mouvements -->
-    <!--ici vérification que toutes les cases intermédiares sont vides -->
+    if (dd<Math.abs(ddj)) dd=Math.abs(ddj);   //dd contient max distance entre les deux point de mouvements 
+    //ici vérification que toutes les cases intermédiares sont vides 
     for (kk=0; kk<dd; kk++)
     { if (Fld[ii-kk*cci][jj-kk*ccj]!=-1)
       { if (((ii-kk*cci)!=I_Sel)||((jj-kk*ccj)!=J_Sel))
           nn++;                               
       }
     }
-    if (nn>1) return(false);           <!-- si case intermédiare occupée >1 (car on compte le point d asymétrie) mouvement invalide -->
+    if (nn>1) return(false);           // si case intermédiare occupée >1 (car on compte le point d asymétrie) mouvement invalide 
     NLine++;
-    return(true);                      <!-- sinon valider le mouvement -->
+    return(true);                      // sinon valider le mouvement 
   }
-  return(false);                       <!-- si CanJump set à 0 invalide mouvement  -->
+  return(false);                       // si CanJump set à 0 invalide mouvement  
 }
-<!-- cette fonction sert à annuler le dernier coup joué lié au bouton <<-->
+// cette fonction sert à annuler le dernier coup joué lié au bouton <<
 function Back()
-{ if (MoveCount>0)                     <!--on vérifie quand meme qu un coup est joué --> 
-  { IsOver=false;                      <!--possibilité de revenir en aarière meme partie finie -->
+{ if (MoveCount>0)                     //on vérifie quand meme qu un coup au moins est joué  
+  { IsOver=false;                      //possibilité de revenir en aarière meme partie finie 
     NLine=0;
     NCLine=0;
     MoveCount--;
-    Fld[FldH[MoveCount][2]][FldH[MoveCount][3]]=-1;      <!--marquer case comme inoccuppé avec -1 -->
-    Fld[FldH[MoveCount][0]][FldH[MoveCount][1]]=(MoveCount+Start)%2; <!-- marquer la case précédente comme occuppée 0 ou 1-->
+    Fld[FldH[MoveCount][2]][FldH[MoveCount][3]]=-1;      //marquer case arrivée  comme inoccuppé avec -1 
+    Fld[FldH[MoveCount][0]][FldH[MoveCount][1]]=(MoveCount+Start)%2; // marquer la case départ comme occuppée 0 ou 1
     I_Sel=-1;
     J_Sel=-1;
-    RefreshScreen();     <!-- redessinner le plateau -->
+    RefreshScreen();     // redessinner le plateau 
   }
 }
-<!-- cette fonction sert à rejouer le dernier coup annullé lieé au bouton >>-->
+// cette fonction sert à rejouer le dernier coup annullé lieé au bouton 
 function Replay()
 { if (MoveCount<MaxMoveCount)
-  <!-- restaure les coordonnées précédent et actuelles -->
+  // restaure les coordonnées précédent et actuelles 
   { I_Sel=FldH[MoveCount][0];
     J_Sel=FldH[MoveCount][1];
     var ii=FldH[MoveCount][2];
     var jj=FldH[MoveCount][3];
-    <!-- rejouer le mouvement -->
+    // rejouer le mouvement 
     MakeMove(ii, jj);
     MoveText();
     NCLine=0;
   }
 }
 
-<!-- cette fonction initialise les variables globales elle est appelée au lancement de la page ligne 664 et aussi -->
-<--! appelé lorsque le joueur appuie sur restart -->
+// cette fonction initialise les variables globales elle est appelée au lancement de la page ligne 951 
+// appelée aussi lorsque le joueur appuie sur rcommencer le jeu 
 function Init()
 { var ii, jj;
   for (ii=0; ii<MaxFld; ii++)
   { for (jj=0; jj<MaxFld; jj++)
-      Fld[ii][jj]=Home(jj, ii);
+      Fld[ii][jj]=Home(jj, ii);    // reamarque le passage des arg à l'inverse
   }
   IsOver=false;
   NLine=0;
@@ -221,7 +225,8 @@ function Init()
   NDraw=0;
   RefreshScreen();
 }
-
+// cette fonction permet d initialiser les valeurs dans le plateau
+// jaune :1 , vert :0, inoccupéé -1 cf voir test.py
 function Home(ii, jj)
 { var dd;
   if ((dd=MaxFld-6+ii-jj)<0) return(1);
@@ -231,6 +236,8 @@ function Home(ii, jj)
   return(-1);
 }
 
+// cette fonction permet de vérifier que le coup est joué à l interieur du plateau 
+// cette fonction est appelé par l IA pour ne pas déborder en dehors du plateau 
 function IsInField(ii, jj)
 { if (ii<0) return(false);
   if (ii>=MaxFld) return(false);
@@ -238,6 +245,9 @@ function IsInField(ii, jj)
   if (jj>=MaxFld) return(false);
   return(true);
 }
+// cette fonction marque les cases accessibles a partir d un pion de l IA (marqué -2 au départ ) avec -3 -4 -5 (var mm) succesivement..// l'ordre -3 -4 n'est pas important le but est de marquer tou point qu'on peut atteindre apartir d 'un pion donné de l'IA 
+// pour level=0 les cases accessibles est limitées à 7 : chemin limité a 7 hopes  
+// le but est de recommencer avec les emplacements marqués par mm jusqu'a obtenir le plus long chemin possible 
 
 function FindJumpFields(kk, ll)
 { var iid, jjd, iik, jjk, dd, mm, nn, iis, jjs, cc;
@@ -246,30 +256,30 @@ function FindJumpFields(kk, ll)
   { cc=false;
     for (iik=0; iik<MaxFld; iik++)
     { for (jjk=0; jjk<MaxFld; jjk++)
-      { if (Fld[iik][jjk]==mm)
-        { for (iid=-1; iid<=1; iid++)
+      { if (Fld[iik][jjk]==mm)                                // chercher la dernière case marqué par mm 
+        { for (iid=-1; iid<=1; iid++)                         // avancer dans toutes les directions possibles: ici 8 directions 
           { for(jjd=-1; jjd<=1; jjd++)
-            { if ((iid!=0)||(jjd!=0))
-              { iis=iik;
+            { if ((iid!=0)||(jjd!=0))                         // ne pas prendre en compte la case départ  
+              { iis=iik;                                      // iis, jjs initialisé à la case départ 
                 jjs=jjk;
-                while (IsInField(iis+iid, jjs+jjd)&&(Fld[iis][jjs]<0))
+                while (IsInField(iis+iid, jjs+jjd)&&(Fld[iis][jjs]<0))  // ici incrémentation de iis, jjs et avancer jusqua ce qu on tombe sur une case occupé->
                 { iis+=iid; jjs+=jjd;
                 }
-                if ((IsInField(2*iis-iik, 2*jjs-jjk))&&(Fld[iis][jjs]!=ll))
-                { iis*=2;
-                  iis-=iik;
+                if ((IsInField(2*iis-iik, 2*jjs-jjk))&&(Fld[iis][jjs]!=ll)) // trouve la case qu'on peut atteindre si existante
+                { iis*=2;                                                   // si ll=2 la condition est tjs true 
+                  iis-=iik;                                                 // set iis à l'abscisse du point à atteindre
                   jjs*=2;
-                  jjs-=jjk;
+                  jjs-=jjk;                                                 // set jjs à l'ordonnée du point à atteindre
                   dd=0;
                   nn=0;
-                  while ((iis-dd*iid!=iik)||(jjs-dd*jjd!=jjk))
-                  { if (Fld[iis-dd*iid][jjs-dd*jjd]>=0) nn++;
-                    dd++;
+                  while ((iis-dd*iid!=iik)||(jjs-dd*jjd!=jjk))              //retourne en arrière jusqu'a la case départ
+                  { if (Fld[iis-dd*iid][jjs-dd*jjd]>=0) nn++;               // si case occupéé incréménte n
+                    dd++;                                                   // dd ici counter à soustraire des coordonnées
                   }
-                  if (nn==1)
-                  { if (Fld[iis][jjs]==-1) Fld[iis][jjs]=mm-1;
+                  if (nn==1)                                                // si n =1 un seul pion est trouvé sur le chemin servant de point d'asymétrie
+                  { if (Fld[iis][jjs]==-1) Fld[iis][jjs]=mm-1;              // si point à atteindre est inoccupé marque le avec m-1
                     cc=true;
-                    if ((Level[kk]==0)&&(mm<=-7)) cc=false;
+                    if ((Level[kk]==0)&&(mm<=-7)) cc=false;                  // si level=0 s'arreter au bout de 7 mouvements
                   }
                 }
               }
@@ -278,12 +288,15 @@ function FindJumpFields(kk, ll)
         }
       }
     }
-    mm--;
+    mm--;                                                                  // recommence le travail avec les cases marquées par m-1
   }
-  while (cc);
-  return(mm);
+  while (cc);                                                              // si mouvement possible ou la contrainte du level est true
+  return(mm);                                                              // le return est utilisé dans le level 1 d el'IA
 }
 
+
+// cette fonction sert à effacer le marquage fait sur Fld par la précédente fonction
+// a mon avis on peut s'en passer car case marquée à <= -1 est tjs vide
 function CleanUpFields()
 { var iik, jjk;
   for (iik=0; iik<MaxFld; iik++)
@@ -292,30 +305,30 @@ function CleanUpFields()
     }
   }
 }
-
+// fonction de l IA  
 function MakeBestMove()
 { var ii, jj, iid, jjd, iik, jjk, kk, dd, mm, nn, iis, jjs;
   var iib, jjb, bb, bb2, bbval, pparity, iismm;
-  bbval=-1000;
+  bbval=-1000;                // valeur suffisamment grande
   pparity=0;
-  if (IsOver) return;
-  kk=(MoveCount+Start)%2;
-  if (IsPlayer[kk]) return;
+  if (IsOver) return;         //jeu terminé return 
+  kk=(MoveCount+Start)%2;     // le joueur qui a la main :0 pour vert 1 pour jaune 
+  if (IsPlayer[kk]) return;   // s il s agit  d un joueur ordinaire return 
   I_Sel=-1;
   J_Sel=-1;
   NCLine=0;
   for (ii=0; ii<MaxFld; ii++)
   { for (jj=0; jj<MaxFld; jj++)
-    { if (Fld[ii][jj]==kk) pparity=pparity+(ii+jj+1-MaxFld);
+    { if (Fld[ii][jj]==kk) pparity=pparity+(ii+jj+1-MaxFld);  //je pense pparaty aide à décider des mouvements qui privilège un point centrique par rapport aux pions de l'IA
     }
   }
   for (ii=0; ii<MaxFld; ii++)
   { for (jj=0; jj<MaxFld; jj++)
-    { if (Fld[ii][jj]==kk)
+    { if (Fld[ii][jj]==kk)          //pour chaque case qui contient un pion de l IA 
       { //setting all reachable fields to -3
-        Fld[ii][jj]=-2;
-        FindJumpFields(kk, 2);
-        Fld[ii][jj]=kk;
+        Fld[ii][jj]=-2;                 // marquer la case départ par -2   
+        FindJumpFields(kk, 2);          // marquer tous les cases accessible à partir de cette case 
+        Fld[ii][jj]=kk;                 // effacer le marquage de la case de départ 
         for (iik=ii-1; iik<=ii+1; iik++)   //FindStepFields
         { for (jjk=jj-1; jjk<=jj+1; jjk++)
           { if (IsInField(iik, jjk))
@@ -326,21 +339,30 @@ function MakeBestMove()
         //getting best move for Field[ii][jj]   Be carefull with the weights
         for (iik=0; iik<MaxFld; iik++)
         { for (jjk=0; jjk<MaxFld; jjk++)
-          { if (Fld[iik][jjk]<-1)
-            { bb=(40*kk-20)*(ii-iik-jj+jjk);  //main direction
+          { if (Fld[iik][jjk]<-1)                // si case marquée comme accesibles
+            { bb=(40*kk-20)*(ii-iik-jj+jjk);     //main direction   // donner un poid initial par raport au point de départ et dans la direction de l'étoile de l'adversaire cf voir dessin 
+            // ajouter un nombre selon le nombre de coups joué
+            // si coups joués < 19 (=9 pour chacun) on ajoute un nombre au hasard avec random ne dépasse pas 30 
               if (MoveCount<19) bb+=Math.floor(Math.random()*1000)%(30-MoveCount); 
               //random influence
+              // Sinon ajoute un nombre au poid proportionnel au nombre de coup joué et la position initial du pion
+              // prvilège les pions les plus éloigné de l'étoile de l'advesaire 
               else bb+=Math.floor(MoveCount/16)*(2*kk-1)*(ii-jj); 
               //move the last ones first
+              // si coups joués < 54 : 
+              // ajouter au poid un nombre propotienal au nombre de coups/9
+              // avec privélège pour les pions les plus élognés de point centrique des pions de l'IA
               if (MoveCount<54)
                 bb+=Math.floor(MoveCount/9)*(Math.abs(pparity)-Math.abs(pparity-ii+iik-jj+jjk));
               //parity
               else
+              // si coups joués > 54 set la constante à 6
                 bb+=6*(Math.abs(pparity)-Math.abs(pparity-ii+iik-jj+jjk)); //parity
+              // avec privilège des  mouvement qui rapproche les pions les plus éloignés de la ligne centrique
               bb2=ii+jj+1-MaxFld; //keep the stones in the middle line
-              bb+=2*bb2*bb2;
-              bb2=iik+jjk+1-MaxFld;
-              bb-=2*bb2*bb2;
+              bb+=2*bb2*bb2;      // si pion départ trop élogné du centre du plateau ajouter un poid conséquent signe ignoré
+              bb2=iik+jjk+1-MaxFld; 
+              bb-=2*bb2*bb2; // si pion départ trop élogné du centre du plateau soustraire un poid conséquent signe ignoré
               if (Level[kk]==0) bb+=Math.floor(Math.random()*1000)%20;
               else
               { if (kk==0) //don't forget the last 3 pieces
@@ -348,27 +370,32 @@ function MakeBestMove()
                 else
                 { if (MaxFld-3+jj-ii<0) bb+=2*MoveCount; }
               }
-              if (bb>bbval)
-              { I_Sel=ii;
+              if (bb>bbval)     // maintenant compare avec bbval initiale si plus grand set values 
+              { I_Sel=ii; 
                 J_Sel=jj;
                 iib=iik;
                 jjb=jjk;
-                bbval=bb;
+                bbval=bb;      // set bbval to bb permettre des comparaison ultérieur pour meilleur mouvement pour un pion donné
               }
             }
           }
         }
-        CleanUpFields();
+        CleanUpFields();       // ici nettoyage de plateau , et recommence le travaille avec un autre pion de l'IA
       }
     }
-  }
-  if ((Level[kk]==1)&&(MoveCount>49)&&(Math.abs(I_Sel-iib)<2)&&(Math.abs(J_Sel-jjb)<2))
-  { Fld[I_Sel][J_Sel]=-1;
+  }                           // à la fin (I_Sel, J_sel): coordonnées case départ (iib, jjb) : coordonnées case arrivée pour le meilleur coup pour l'IA
+
+  // traitement spécifique à l'IA level=1
+  // le but je pense est de voir si un mouvement adjaçant est concluant ou pas en prenant en compte juste ses pion comme point d'asymétrie  (une nouvelle règle de jeu??)
+  if ((Level[kk]==1)&&(MoveCount>49)&&(Math.abs(I_Sel-iib)<2)&&(Math.abs(J_Sel-jjb)<2))  //si mouvement adjaçant et nombre de coup > 49
+  { Fld[I_Sel][J_Sel]=-1;                                                                // marquer la case de départ comme vide
     for (ii=I_Sel-1; ii<=I_Sel+1; ii++)   //FindStepFields
     { for (jj=J_Sel-1; jj<=J_Sel+1; jj++)
       { if (IsInField(ii, jj)&&((ii!=I_Sel)||(jj!=J_Sel))&&(Fld[ii][jj]<0))
-        { Fld[ii][jj]=-2;
-          if (FindJumpFields(kk, 1-kk)<-3)
+        { Fld[ii][jj]=-2;                                                                // marquer les cases adjaçante avec-2
+          if (FindJumpFields(kk, 1-kk)<-3)                                               // marquer les cases accesibles à partir d'une position adjaçante en utilisant les pions de l'adversaire, si concluante nombre de mouvement > 3
+          // ps j'ai essayé de faire ces mouvements sont pas autorisés pour un joueur ordinaire c'est injuste!
+          // refaire tous le travail précédent et attribuer un poid à chaque case accessible
           { //getting best move for Field[ii][jj]   Be carefull with the weights
             for (iik=0; iik<MaxFld; iik++)
             { for (jjk=0; jjk<MaxFld; jjk++)
@@ -390,38 +417,47 @@ function MakeBestMove()
               }
             }
           }
-          CleanUpFields();
+          CleanUpFields();   // ici nettoyage de plateau , et recommence le travaille avec un autre pion de l'IA
         }
       }
     }
-    Fld[I_Sel][J_Sel]=kk;
+    Fld[I_Sel][J_Sel]=kk;   // remettre la valeur initiale à la case départ
   }
+
+  // le code suivant pour permmettre le dessin des mouvements intermédiaire de l'IA phase d'éxécution
+  // l'idée pour retrouver le chemin est de partir de la case d'arrivée pour atteindre la case deépart
+  // en enragistrant les coordonées dans MoveCLine
+  // deux choses à signaler : une case marquée du meilleur mouvement pourrait être réecrite par d'autre mouvements ds 
+  // FindJumpFields()???
+  // pourquoi marquer les cases adjascante par-3 ??  
   Fld[I_Sel][J_Sel]=-2; //All the following stuff is only for getting MoveCLine for the graphics
-  FindJumpFields(kk, 2);
+  FindJumpFields(kk, 2);   // marque toutes les cases accessibles avec -3, -4...
   for (iik=I_Sel-1; iik<=I_Sel+1; iik++)
   { for (jjk=J_Sel-1; jjk<=J_Sel+1; jjk++)
     { if (IsInField(iik, jjk))
-      { if (Fld[iik][jjk]<0) Fld[iik][jjk]=-3;
+      { if (Fld[iik][jjk]<0) Fld[iik][jjk]=-3;   // marquer les case adjaçante libre par -3 ???
+
       }
     }
   }
-  mm=Fld[iib][jjb];
-  iismm=false;
+  mm=Fld[iib][jjb];                             // mm représente le nombre de mouvement pour arriver à la case d'arrivée
+  iismm=false;                                  // booléen pour s'assurer qu'on a pas empreinter un faux chemin
   NCLine=1;
-  MoveCLine[NCLine-1][0]=iib;
-  MoveCLine[NCLine-1][1]=jjb;
-  while (mm<-3)
-  { iik=MoveCLine[NCLine-1][0];
+  MoveCLine[NCLine-1][0]=iib;                   // MoveCline représente le chemin inverse à suivre pour les mouvements
+  MoveCLine[NCLine-1][1]=jjb;                   // les premiers coordonnées represente la case d'arrivée
+  while (mm<-3)                                 // tant que mm <-3
+  { iik=MoveCLine[NCLine-1][0];                 // reprendre les coordonées de départ dans iik, jjk
     jjk=MoveCLine[NCLine-1][1];
+    // refaire le travail décrit dans la fonction FindJumpFields() mais ici en empruntant le chemin inverse
     for (iid=-1; iid<=1; iid++)
     { for(jjd=-1; jjd<=1; jjd++)
       { if ((iid!=0)||(jjd!=0))
         { iis=iik;
           jjs=jjk;
-          while (IsInField(iis+iid, jjs+jjd)&&(Fld[iis][jjs]<0))
+          while (IsInField(iis+iid, jjs+jjd)&&(Fld[iis][jjs]<0))   //aller jusqu'a case non libre
           { iis+=iid; jjs+=jjd;
           }
-          if (IsInField(2*iis-iik, 2*jjs-jjk))
+          if (IsInField(2*iis-iik, 2*jjs-jjk))                     // si la case symétrique est existante inutile de tester si libre
           { iis*=2;
             iis-=iik;
             jjs*=2;
@@ -432,11 +468,11 @@ function MakeBestMove()
             { if (Fld[iis-dd*iid][jjs-dd*jjd]>=0) nn++;
               dd++;
             }
-            if ((nn==1)&&(!iismm))
-            { if (Fld[iis][jjs]==mm+1)
+            if ((nn==1)&&(!iismm))                                // si un seul pion sur la ligne et chemin juste (successive)
+            { if (Fld[iis][jjs]==mm+1)                            // si case marquée avec un nombre succesif
               { iismm=true;
-                NCLine++;
-                MoveCLine[NCLine-1][0]=iis;
+                NCLine++;                                         // incrémente l'index
+                MoveCLine[NCLine-1][0]=iis;                       // rajoute les coordonnées  de la case
                 MoveCLine[NCLine-1][1]=jjs;
               }
             }
@@ -444,32 +480,35 @@ function MakeBestMove()
         }
       }
     }
-    mm++;
-    iismm=false;
+    mm++;                                                        // un mouvement trouvé incrémente mm
+    iismm=false;                                                 // remettre iismm à false 
   }
   NCLine++;
-  MoveCLine[NCLine-1][0]=I_Sel;
+  MoveCLine[NCLine-1][0]=I_Sel;                                  // derniers ele ds MoveCline la case départ
   MoveCLine[NCLine-1][1]=J_Sel;
-  Fld[I_Sel][J_Sel]=kk;
-  CleanUpFields();
+  Fld[I_Sel][J_Sel]=kk;                                          // remettre la valeur de la case départ à kk (0 ou 1)
+  CleanUpFields();                                               // nettoyage du plateau
   NDraw=NCLine+1;
   MakeMove(iib, jjb);
   MoveText();
 }
 
+
+//cette fonction est responsable de l'éxécution des mouvement de l'IA mais aussi du joueur oridinaire si coup valide
+// update Fld FldH et MoveCounte
 function MakeMove(ii, jj)
 { if (IsOver) return;
-  Fld[ii][jj]=(MoveCount+Start)%2;
-  Fld[I_Sel][J_Sel]=-1;
-  if (FldH[MoveCount][0]!=I_Sel)
+  Fld[ii][jj]=(MoveCount+Start)%2;     // marquer la case d'arrivée comme occupée par le pion de joueur
+  Fld[I_Sel][J_Sel]=-1;                // marquer la case départ comme libre
+  if (FldH[MoveCount][0]!=I_Sel)       // update FldH pour garder l'historique
   { FldH[MoveCount][0]=I_Sel;
-    MaxMoveCount=MoveCount+1;
+    MaxMoveCount=MoveCount+1;          // update le nombre de coups
   }
-  if (FldH[MoveCount][1]!=J_Sel)
+  if (FldH[MoveCount][1]!=J_Sel)       // même travail pour j_sel
   { FldH[MoveCount][1]=J_Sel;
     MaxMoveCount=MoveCount+1;
   }
-  if (FldH[MoveCount][2]!=ii)
+  if (FldH[MoveCount][2]!=ii)          // même chose pour ii, jj
   { FldH[MoveCount][2]=ii;
     MaxMoveCount=MoveCount+1;
   }
@@ -477,21 +516,24 @@ function MakeMove(ii, jj)
   { FldH[MoveCount][3]=jj;
     MaxMoveCount=MoveCount+1;
   }
-  MoveCount++;
+  MoveCount++;                         // incrémente le MovCount
   if (MaxMoveCount<MoveCount)
-    MaxMoveCount=MoveCount;
-  I_Sel=-1;
+    MaxMoveCount=MoveCount;            // set MaxMoveCount
+  I_Sel=-1;                            // rinitialise I_Sel, J_sel, et NLine
   J_Sel=-1;
   NLine=0;
 }
 
+// cette fonction vérifie si un joueur est gagnant et affiche un message à l'écran
+// mettre la variable IsOver à true pour empecher des coups postérieur
+
 function MoveText()
 { var ii, jj, kk, kk0=0, kk1=0;
-  RefreshScreen();
+  RefreshScreen();                    // refraichissement du plateau
   for (ii=0; ii<MaxFld; ii++)
   { for (jj=0; jj<MaxFld; jj++)
-    { if ((kk=Fld[ii][jj])==Home(ii, jj))
-      { if (kk==0) kk0++;
+    { if ((kk=Fld[ii][jj])==Home(ii, jj))  // si pions sur l'etoile de l'adversaire
+      { if (kk==0) kk0++;                  // incrémente selon la couleur du joueur
         if (kk==1) kk1++;
       }
     }
@@ -502,21 +544,23 @@ function MoveText()
   if (Fld[0][MaxFld-2]==0) kk1++;
   if (Fld[0][MaxFld-1]==0) kk1++;
   if (Fld[1][MaxFld-1]==0) kk1++;
-  if ((kk0==19)||(kk1==19)) IsOver=true;
+  if ((kk0==19)||(kk1==19)) IsOver=true;  // si l'un a faoit attérir tous ses pions sur l'etoile de l'adversaire
   if (! IsOver)
-  { if (MoveCount==MaxMove-1)
+  { if (MoveCount==MaxMove-1)             // si dépassement des mouvement autorisée 217!
     { IsOver=true;
-      alert("Unetschieden !");
+      alert("Unetschieden !");            // game over!
     }
   }
   else
-  { if ((MoveCount+Start)%2==1)
+  { if ((MoveCount+Start)%2==1)           // si joueur jaune
       alert("Gelb gewinnt !");
-    else
+    else                                  // si joueur vert
       alert("Grün gewinnt !");
   }
 }
 
+
+// fonction responsable de dessin sur l'interface
 function RefreshScreen()
 { var kk;
   if (NDraw>0) NDraw--;
@@ -568,7 +612,7 @@ function RefreshScreen()
 function Resize()
 { if(navigator.appName == "Netscape") history.go(0);
 }
-
+// fonction liée au bouton help
 function Help()
 { alert("Halma ist ein bekanntes Spiel, es wird aber meist auf einem sternförmigen"+
       "\nBrett gespielt. Diese Version von Halma wird auf einem quadratischen Brett"+
@@ -580,14 +624,16 @@ function Help()
       "\nalle Felder, die zu dem Zug gehören, in der richtigen Reihenfolge. Klicke"+
       "\nam Ende des Zuges noch einmal auf den Stein.");
 }
+
+// debut html organisation de la page 
 </script>
 </head>
-<BODY bgcolor=#CCAA77 text=#000000 onResize="javascript:Resize()">
+<body onresize="javascript:Resize()" text="#000000" bgcolor="#CCAA77">
 <form name="OptionsForm">
-<DIV ALIGN=center>
-<table noborder>
-<tr>
-  <td><table border=5 bgcolor=#A0A0A0 cellpadding=2 cellspacing=0>
+<div align="center">
+<table noborder="">
+<tbody><tr>
+  <td><table cellspacing="0" cellpadding="2" border="5" bgcolor="#A0A0A0">
       <script language="JavaScript">
       document.open("text/plain");
       for (i=0; i < MaxFld; i++)
@@ -609,60 +655,349 @@ function Help()
         document.writeln("</tr>");
       }
       document.close();
-      </script>
-      </table>
+      </script><tbody><tr align="center">
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(0,0)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(1,0)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(2,0)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(3,0)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(4,0)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(5,0)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(6,0)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(7,0)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(8,0)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(9,0)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(10,0)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(11,0)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(12,0)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(13,0)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(14,0)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(15,0)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(0,1)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(1,1)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(2,1)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(3,1)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(4,1)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(5,1)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(6,1)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(7,1)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(8,1)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(9,1)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(10,1)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(11,1)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(12,1)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(13,1)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(14,1)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(15,1)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(0,2)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(1,2)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(2,2)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(3,2)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(4,2)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(5,2)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(6,2)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(7,2)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(8,2)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(9,2)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(10,2)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(11,2)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(12,2)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(13,2)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(14,2)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(15,2)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(0,3)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(1,3)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(2,3)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(3,3)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(4,3)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(5,3)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(6,3)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(7,3)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(8,3)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(9,3)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(10,3)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(11,3)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(12,3)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(13,3)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(14,3)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(15,3)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(0,4)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(1,4)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(2,4)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(3,4)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(4,4)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(5,4)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(6,4)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(7,4)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(8,4)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(9,4)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(10,4)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(11,4)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(12,4)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(13,4)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma02.gif" onmousedown="Clicked(14,4)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma12.gif" onmousedown="Clicked(15,4)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(0,5)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(1,5)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(2,5)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(3,5)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(4,5)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(5,5)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(6,5)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(7,5)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(8,5)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(9,5)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(10,5)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(11,5)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(12,5)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(13,5)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(14,5)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(15,5)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(0,6)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(1,6)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(2,6)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(3,6)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(4,6)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(5,6)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(6,6)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(7,6)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(8,6)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(9,6)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(10,6)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(11,6)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(12,6)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(13,6)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(14,6)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(15,6)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(0,7)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(1,7)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(2,7)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(3,7)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(4,7)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(5,7)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(6,7)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(7,7)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(8,7)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(9,7)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(10,7)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(11,7)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(12,7)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(13,7)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(14,7)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(15,7)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(0,8)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(1,8)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(2,8)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(3,8)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(4,8)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(5,8)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(6,8)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(7,8)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(8,8)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(9,8)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(10,8)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(11,8)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(12,8)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(13,8)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(14,8)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(15,8)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(0,9)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(1,9)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(2,9)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(3,9)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(4,9)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(5,9)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(6,9)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(7,9)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(8,9)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(9,9)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(10,9)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(11,9)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(12,9)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(13,9)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(14,9)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(15,9)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(0,10)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(1,10)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(2,10)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(3,10)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(4,10)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(5,10)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(6,10)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(7,10)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(8,10)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(9,10)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(10,10)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(11,10)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(12,10)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(13,10)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(14,10)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(15,10)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(0,11)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(1,11)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(2,11)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(3,11)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(4,11)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(5,11)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(6,11)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(7,11)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(8,11)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(9,11)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(10,11)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(11,11)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(12,11)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(13,11)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(14,11)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(15,11)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(0,12)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(1,12)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(2,12)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(3,12)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(4,12)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(5,12)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(6,12)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(7,12)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(8,12)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(9,12)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(10,12)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(11,12)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(12,12)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(13,12)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(14,12)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(15,12)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(0,13)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(1,13)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(2,13)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(3,13)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(4,13)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(5,13)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(6,13)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(7,13)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(8,13)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(9,13)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(10,13)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(11,13)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(12,13)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(13,13)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(14,13)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(15,13)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(0,14)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(1,14)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(2,14)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(3,14)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(4,14)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(5,14)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(6,14)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(7,14)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(8,14)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(9,14)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(10,14)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(11,14)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(12,14)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(13,14)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(14,14)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(15,14)" border="0"></td>
+</tr>
+<tr align="center">
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(0,15)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(1,15)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(2,15)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma01.gif" onmousedown="Clicked(3,15)" border="0"></td>
+<td bgcolor="#000000"><img src="Halma-Dateien/halma11.gif" onmousedown="Clicked(4,15)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(5,15)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(6,15)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(7,15)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(8,15)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(9,15)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(10,15)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(11,15)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(12,15)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(13,15)" border="0"></td>
+<td bgcolor="#A0A0A0"><img src="Halma-Dateien/halma10.gif" onmousedown="Clicked(14,15)" border="0"></td>
+<td bgcolor="#E0E0E0"><img src="Halma-Dateien/halma00.gif" onmousedown="Clicked(15,15)" border="0"></td>
+</tr>
+
+      </tbody></table>
   </td>
   <td>&nbsp;</td>
   <td>
-      <table noborder cellpadding=0 cellspacing=0>
-      <tr><td>
-        <table border=3 cellpadding=2 cellspacing=1 width=100% bgcolor=#DDBB88>
-        <tr><td><input type=radio name="Yellow" checked value="Yellow: Player" onClick="javascript:SetOption(0,0)"><b>Gelb: Spieler</b></td></tr>
-        <tr><td><input type=radio name="Yellow" value="Yellow: Computer (Advanced Mode)" onClick="javascript:SetOption(0,1)"><b>Computer <I>Fortgeschrittener</I></b></td></tr>
-        <tr><td><input type=radio name="Yellow" value="Yellow: Computer (Expert Mode)" onClick="javascript:SetOption(0,2)"><b>Computer <I>Experte</I></b></td></tr>
-        </table>      
+      <table noborder="" cellspacing="0" cellpadding="0">
+      <tbody><tr><td>
+        <table width="100%" cellspacing="1" cellpadding="2" border="3" bgcolor="#DDBB88">
+        <tbody><tr><td><input name="Yellow" checked="checked" value="Yellow: Player" onclick="javascript:SetOption(0,0)" type="radio"><b>Gelb: Spieler</b></td></tr>
+        <tr><td><input name="Yellow" value="Yellow: Computer (Advanced Mode)" onclick="javascript:SetOption(0,1)" type="radio"><b>Computer <i>Fortgeschrittener</i></b></td></tr>
+        <tr><td><input name="Yellow" value="Yellow: Computer (Expert Mode)" onclick="javascript:SetOption(0,2)" type="radio"><b>Computer <i>Experte</i></b></td></tr>
+        </tbody></table>      
       </td></tr>
       <tr><td>&nbsp;</td></tr>
       <tr><td>
-        <table border=3 cellpadding=2 cellspacing=1 width=100% bgcolor=#DDBB88>
-        <tr><td><input type=radio name="Green" value="Green: Player" onClick="javascript:SetOption(1,0)"><b>Gr&uuml;n: Spieler</b></td></tr>
-        <tr><td><input type=radio name="Green" value="Green: Computer (Advanced Mode)" onClick="javascript:SetOption(1,1)"><b>Computer <I>Fortgeschrittener</b></I></td></tr>
-        <tr><td><input type=radio name="Green" checked value="Green: Computer (Expert Mode)" onClick="javascript:SetOption(1,2)"><b>Computer <I>Experte</I></b></td></tr>
-        </table>
+        <table width="100%" cellspacing="1" cellpadding="2" border="3" bgcolor="#DDBB88">
+        <tbody><tr><td><input name="Green" value="Green: Player" onclick="javascript:SetOption(1,0)" type="radio"><b>Grün: Spieler</b></td></tr>
+        <tr><td><input name="Green" value="Green: Computer (Advanced Mode)" onclick="javascript:SetOption(1,1)" type="radio"><b>Computer <i>Fortgeschrittener</i></b></td></tr>
+        <tr><td><input name="Green" checked="checked" value="Green: Computer (Expert Mode)" onclick="javascript:SetOption(1,2)" type="radio"><b>Computer <i>Experte</i></b></td></tr>
+        </tbody></table>
       </td></tr>
       <tr><td>&nbsp;</td></tr>
       <tr><td>
-        <table border=3 cellpadding=2 cellspacing=1 width=100% bgcolor=#DDBB88>
-        <tr><td width=60%><input type=radio name="Start" checked value="Yellow" onClick="javascript:SetOption(2,1)"><b>Gelb beginnt</b></td></tr>
-        <tr><td width=60%><input type=radio name="Start" value="Green" onClick="javascript:SetOption(2,0)"><b>Gr&uuml;n beginnt</b></td></tr>
-        </table>
+        <table width="100%" cellspacing="1" cellpadding="2" border="3" bgcolor="#DDBB88">
+        <tbody><tr><td width="60%"><input name="Start" checked="checked" value="Yellow" onclick="javascript:SetOption(2,1)" type="radio"><b>Gelb beginnt</b></td></tr>
+        <tr><td width="60%"><input name="Start" value="Green" onclick="javascript:SetOption(2,0)" type="radio"><b>Grün beginnt</b></td></tr>
+        </tbody></table>
       </td></tr>
       <tr><td>&nbsp;</td></tr>
       <tr><td>
-        <table border=3 cellpadding=2 cellspacing=1 width=100% bgcolor=#DDBB88><tr>
-        <td width=20% align=center><input type=button value="&lt;&lt;" width=35 style="width:35" onClick="javascript:Back();Back()" title="zwei Z&uuml;ge zur&uuml;ck"></td>
-        <td width=20% align=center><input type=button value="&lt;" width=35 style="width:35" onClick="javascript:Back()" title="einen Zug zur&uuml;ck"></td>
-        <td width=20% align=center><input type=button value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" width=35 style="width:33;background-color:#FFFFFF;font-weight:bold" disabled name="Moves"></td>
-        <td width=20% align=center><input type=button value="&gt;" width=35 style="width:35" onClick="javascript:Replay()" title="einen Zug vorw&auml;rts"></td>
-        <td width=20% align=center><input type=button value="&gt;&gt;" width=35 style="width:35" onClick="javascript:Replay();Replay()" title="zwei Z&uuml;ge vorw&auml;rts"></td>
-        </tr></table>
+        <table width="100%" cellspacing="1" cellpadding="2" border="3" bgcolor="#DDBB88"><tbody><tr>
+        <td width="20%" align="center"><input value="&lt;&lt;" style="width:35" onclick="javascript:Back();Back()" title="zwei Züge zurück" width="35" type="button"></td>
+        <td width="20%" align="center"><input value="&lt;" style="width:35" onclick="javascript:Back()" title="einen Zug zurück" width="35" type="button"></td>
+        <td width="20%" align="center"><input value="  0  " style="width:33;background-color:#FFFFFF;font-weight:bold" disabled="disabled" name="Moves" width="35" type="button"></td>
+        <td width="20%" align="center"><input value="&gt;" style="width:35" onclick="javascript:Replay()" title="einen Zug vorwärts" width="35" type="button"></td>
+        <td width="20%" align="center"><input value="&gt;&gt;" style="width:35" onclick="javascript:Replay();Replay()" title="zwei Züge vorwärts" width="35" type="button"></td>
+        </tr></tbody></table>
       </td></tr>
       <tr><td>&nbsp;</td></tr>
       <tr><td>
-        <table border=3 cellpadding=2 cellspacing=1 width=100% bgcolor=#DDBB88><tr>
-        <td align=center><input type=button value="Neues Spiel" width=100 style="width:100" onClick="javascript:Init()"></td>
-        <td align=center><input type=button value="Hilfe" width=100 style="width:100" onClick="javascript:Help()"></td></tr>
-        </table>
+        <table width="100%" cellspacing="1" cellpadding="2" border="3" bgcolor="#DDBB88"><tbody><tr>
+        <td align="center"><input value="Neues Spiel" style="width:100" onclick="javascript:Init()" width="100" type="button"></td>
+        <td align="center"><input value="Hilfe" style="width:100" onclick="javascript:Help()" width="100" type="button"></td></tr>
+        </tbody></table>
       </td></tr>
-      </table>
+      </tbody></table>
   </td>
 </tr>
-</table>
-</DIV>
+</tbody></table>
+</div>
 </form>
 <script language="JavaScript">
 Init();
 setInterval("Timer()",500);
 </script>
-</BODY>
-</HTML>
+
+
+</body></html>
