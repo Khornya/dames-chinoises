@@ -1,4 +1,44 @@
-p
+@font-face
 {
-  
+  font-family: 'MusicWarrior';
+  src: url('fonts/MusicWarrior.eot');
+  src: url('fonts/MusicWarrior.eot?#iefix') format('embedded-opentype'),
+       url('fonts/MusicWarrior.woff') format('woff'),
+       url('fonts/MusicWarrior.ttf')  format('truetype'),
+       url('fonts/MusicWarrior.svg#MusicWarrior') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+#main_wrapper
+{
+  width: 900px;
+  margin: auto;
+}
+
+header
+{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#main_title
+{
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+#banner
+{
+  margin: auto;
+}
+
+header h1
+{
+  font-family: 'MusicWarrior';
+}
+
+body
+{
+  font-family: sans-serif;
 }
