@@ -87,7 +87,6 @@ class Dames :
         self.Start = (w.R, w.C)
         w.create_oval(3, 3, 25, 25, fill = self.Dic[self.J+1], width = 3)
         self.get_traject(w.R, w.C)
-        print self.Tree
         self.M[w.R][w.C] = -1
         return
       else :
@@ -133,20 +132,15 @@ class Dames :
     #chercher saut sur ligne 2 directions:
       for j in (-2, 2) :                        # avancer de deux pas sur la ligne
         pivot_c = C+j
-        print "pivot_c = %i\n" % pivot_c
         while self.in_etoile(R, pivot_c) and self.M[R][pivot_c] == -1 :            # avancer jusqu'a case occupée
           pivot_c += j
-          print "pivot_c = %i\n" % pivot_c
         n=0
-        for k in range(pivot_c+j, 2*pivot_c-C+1, 2):
-          print "index_k= %i\n" % k
+        for k in range(pivot_c+j, 2*pivot_c-C+1, 2) :
           if not self.in_etoile(R, k) : break
           if self.M[R][k] != -1 : n+=1         # si un autre pion sur le chemin break
         if (n==0) :
           index = 2*pivot_c-C 
-          print "index case arrivée = %i\n" % index 
           if self.in_etoile(R, index) and self.M[R][index]== -1 :   # si la case en asymétrie est vide valide:     
-            print "saut réussi vers la case (%i, %i)\n" % (R, index)
             traject = parent + [(R, index)] 
             self.Tree[(R,index)] = traject
             self.liste.append((R, index))
@@ -155,22 +149,17 @@ class Dames :
         for j in (-1, 1) :
           pivot_r = R+i
           pivot_c = C+j
-          print "pivot_r = %i, pivot_c = %i\n" % (pivot_r, pivot_c)
           while self.in_etoile(pivot_r, pivot_c) and self.M[pivot_r][pivot_c] == -1 :            # avancer jusqu'a case occupée
             pivot_r += i
             pivot_c += j
-          print "pivot_r = %i, pivot_c = %i\n" % (pivot_r, pivot_c)
           n=0
           for k in range(1, j * (pivot_c-C)+1,):
-            print "index_k= %i, %i\n" % (pivot_r+i*k,pivot_c+j*k)
             if not self.in_etoile(pivot_r+i*k, pivot_c+j*k) : break
             if self.M[pivot_r+i*k][pivot_c+j*k] != -1 : n+=1         # si un autre pion sur le chemin break
             if (n==0) :
               index_r = 2*pivot_r-R
-              index_c = 2*pivot_c-C 
-              print "index case arrivée = (%i, %i)\n" % (index_r, index_c) 
+              index_c = 2*pivot_c-C
               if self.in_etoile(index_r, index_c) and self.M[index_r][index_c]== -1 :   # si la case en asymétrie est vide valide:     
-                print "saut réussi vers la case (%i, %i)\n" % (index_r, index_c)
                 traject = parent + [(index_r, index_c)] 
                 self.Tree[(index_r,index_c)] = traject
                 self.liste.append((index_r, index_c))
