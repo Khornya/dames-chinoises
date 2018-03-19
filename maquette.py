@@ -5,13 +5,14 @@
 
 from Tkinter import * 
 from random import randrange
-import time
+import pygame
 
  
 
 class Dames :
   
     def __init__(self, top):
+      self.top = top
       self.X = 17; self.Y = 25                                       # rows and columns
       self.J = False                                                 #pour désigner le joueur symbolique  
       self.IsOver = False
@@ -36,8 +37,7 @@ class Dames :
       self.relance.pack(side = 'left', padx = 5)
       self.info = Label(top)
       self.info.pack()
-
-
+      pygame.mixer.init(44100)
 
 
     def init_matrice(self) :
@@ -88,44 +88,38 @@ class Dames :
         w.create_oval(3, 3, 25, 25, fill = self.Dic[self.J+1], width = 3)
         self.get_traject(w.R, w.C)
         self.M[w.R][w.C] = -1
-        return
       else :
         if (w.R, w.C) == self.Start :                                  # retour à la case départ anulle le mouvement
           self.M[w.R][w.C] = self.J+1        
           self.Start = (0,0)
           w.delete(ALL)
           w.create_oval(3, 3, 25, 25, fill = self.Dic[self.J+1])
+          self.Tree = {}
         if self.M[w.R][w.C] != -1 : return                            # case non vide
         if (w.R, w.C) not in self.Tree : 
-          self.info['text']= 'chemin invalide pour le joueur %s'  % self.Dic[self.J+1]              
+          self.info.config(fg="red")
+          self.info['text']= 'chemin invalide pour le joueur %s'  % self.Dic[self.J+1]  
+          pygame.mixer.music.load("fail.mp3")
+          pygame.mixer.music.play()            
           return                              
         traject = self.Tree[(w.R, w.C)]
-        self.make_move(traject) 
-        self.Start = (0,0)
-        self.J = not self.J
-        self.Tree = {}
-        if self.gagnant(self.J+1) :
-          self.score_liste[self.J] +=1
-          self.score['text'] = 'score: \n ordi= %s - vous= %s' % (self.score_liste[0], self.score_liste[1]) #afficher ce score
-          self.info['text']= 'Bravo!, le jouer %s a gagné'  % self.Dic[self.J+1]                # le filiciter
-          self.IsOver = True
+        self.make_move(traject)
 
-    def fais_pion(self, w, color) :
-      w.create_oval(3, 3, 25, 25, fill = color)
+    def fais_pion(self, w, color, largeur=1) :
+      w.create_oval(3, 3, 25, 25, fill = color, width=largeur)
     
 
     def get_traject(self, R, C) :
       for i in range(R-1, R+2) :                # premier  mouvement adjaçant
         for j in range (C-2, C+3) :
-          if (i!=R or j!=C) and self.M[i][j]== -1 :
+          if (i!=R or j!=C) and self.in_etoile(i,j) and self.M[i][j]== -1 :
             self.Tree[(i,j)] =  [(R,C) ,(i,j)]
       self.get_hope(R,C) 
       while (self.liste) :
         new= self.liste.pop(0)
         if new != self.Start :
-          parent = self.Tree[new]
-          if len(parent) > 2 and new == self.Tree[new][-3] : continue
           self.get_hope(new[0], new[1], self.Tree[new])
+
 
     def get_hope(self, R, C, parent=0) :
       if  not parent : parent = [(R,C)]
@@ -135,16 +129,17 @@ class Dames :
         while self.in_etoile(R, pivot_c) and self.M[R][pivot_c] == -1 :            # avancer jusqu'a case occupée
           pivot_c += j
         n=0
-        for k in range(pivot_c+j, 2*pivot_c-C+1, 2) :
+        for k in range(pivot_c+j, 2*pivot_c-C+1, j) :
           if not self.in_etoile(R, k) : break
           if self.M[R][k] != -1 : n+=1         # si un autre pion sur le chemin break
         if (n==0) :
           index = 2*pivot_c-C 
-          if self.in_etoile(R, index) and self.M[R][index]== -1 :   # si la case en asymétrie est vide valide:     
+          if (R, index) in self.Tree : continue                     # éviter de tourner rond
+          if self.in_etoile(R, index) and self.M[R][index]== -1 :   # si la case en asymétrie est vide valide:  
             traject = parent + [(R, index)] 
             self.Tree[(R,index)] = traject
             self.liste.append((R, index))
-    #chercher saut sur diagonal 4 direction :
+    #chercher saut sur diagonal 4 directions :
       for i in (-1, 1) :                        # avancer d'un seul pas sur le diagonal
         for j in (-1, 1) :
           pivot_r = R+i
@@ -156,10 +151,12 @@ class Dames :
           for k in range(1, j * (pivot_c-C)+1,):
             if not self.in_etoile(pivot_r+i*k, pivot_c+j*k) : break
             if self.M[pivot_r+i*k][pivot_c+j*k] != -1 : n+=1         # si un autre pion sur le chemin break
-            if (n==0) :
-              index_r = 2*pivot_r-R
-              index_c = 2*pivot_c-C
-              if self.in_etoile(index_r, index_c) and self.M[index_r][index_c]== -1 :   # si la case en asymétrie est vide valide:     
+          if (n==0) :
+            index_r = 2*pivot_r-R
+            index_c = 2*pivot_c-C
+            if (index_r, index_c) in self.Tree : continue                     # éviter de tourner rond
+            if self.in_etoile(index_r, index_c) and self.M[index_r][index_c]== -1 :   # si la case en asymétrie est vide valide: 
+                print "case access (%i, %i) avec comme pivot (%i, %i)" % (index_r, index_c, pivot_r, pivot_c)     
                 traject = parent + [(index_r, index_c)] 
                 self.Tree[(index_r,index_c)] = traject
                 self.liste.append((index_r, index_c))
@@ -167,18 +164,35 @@ class Dames :
     
 
     def make_move(self, mov_list):
-      actuel = mov_list[0]
-      for i in range(1, len(mov_list)) :
-        previous = actuel
-        actuel = mov_list[i]
-        self.M[previous[0]][previous[1]] = -1
-        self.M[actuel[0]][actuel[1]] = self.J+1
-        self.ID[previous[0]][previous[1]].delete(ALL)                                            # effacer tout 
-        self.fais_pion(self.ID[previous[0]][previous[1]], self.Dic[-1])
-        self.fais_pion(self.ID[actuel[0]][actuel[1]], self.Dic[self.J+1])
+        previous = mov_list[0]
+        try : 
+          actuel = mov_list[1]
+          self.M[previous[0]][previous[1]] = -1
+          self.M[actuel[0]][actuel[1]] = self.J+1
+          self.ID[previous[0]][previous[1]].delete(ALL)                                            # effacer tout 
+          self.fais_pion(self.ID[previous[0]][previous[1]], self.Dic[-1])
+          self.fais_pion(self.ID[actuel[0]][actuel[1]], self.Dic[self.J+1], 2)
+          pygame.mixer.music.load("click.mp3")
+          pygame.mixer.music.play()
+          self.top.after(500, self.make_move, mov_list[1:])
+        except IndexError :
+          self.ID[previous[0]][previous[1]].delete(ALL)                                            # effacer tout 
+          self.fais_pion(self.ID[previous[0]][previous[1]], self.Dic[self.J+1]) 
+          self.Start = (0,0)
+          self.Tree = {}
+          self.info['text']= ''
+          if self.gagnant(self.J+1) :
+            self.score_liste[self.J] +=1
+            self.score['text'] = 'score: \n  green = %s - yellow= %s' % (self.score_liste[0], self.score_liste[1]) #afficher ce score
+            self.info['text']= 'Bravo!, le jouer %s a gagné'  % self.Dic[self.J+1]                             # le filiciter
+            self.IsOver = True
+          self.J = not self.J
+
+        
+
 
     def in_etoile(self, x,y) :
-     return -1<x<17 and -1<y<25 and self.M[x][y] != 0
+     return -1<x<17 and -1<y<25
 
     def gagnant(self, s) :
       for R in range(4) : 
