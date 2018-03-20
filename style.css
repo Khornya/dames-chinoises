@@ -31,6 +31,7 @@ header
 #banner
 {
   margin: auto;
+  display: none; /* penser à remettre */
 }
 
 header h1
@@ -41,6 +42,13 @@ header h1
 body
 {
   font-family: sans-serif;
+}
+
+#game_zone
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #board
@@ -57,14 +65,33 @@ body
   justify-content: center;
 }
 
-.evenLine > .cell
+.cell
 {
-  padding-left: 5px;
-  padding-right: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  height: 32px;
+  /*cursor: move;*/
 }
 
-.oddLine > .cell
+.cell > img
 {
-  padding-left: 5px;
-  padding-right: 5px;
+  align-items: center;
+}
+
+.player_info
+{
+  /*display: flex;*/
+  border: 1px solid black;
+  padding: 0 10px 0 10px;
+  margin: 10px;
+}
+
+.player_name
+{
+  margin: 5px 0 0 0;
+}
+
+.player_score
+{
+  margin: 0 0 2px 0;
 }
