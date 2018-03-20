@@ -42,3 +42,29 @@ body
 {
   font-family: sans-serif;
 }
+
+#board
+{
+  display: flex;
+  flex-direction: column;
+
+}
+
+.line
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.evenLine > .cell
+{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.oddLine > .cell
+{
+  padding-left: 5px;
+  padding-right: 5px;
+}
