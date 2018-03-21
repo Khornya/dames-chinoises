@@ -13,9 +13,9 @@ for (var i=0, max=players.length; i<max; i++) {
 // ***** création du plateau de jeu *****
 
 var X = 17, Y = 25; // lignes et colonnes
-var J = false;  // joueur symbolique
-var isOver = false; // partie terminée ?
-var Start = (0,0); // case départ pour un mouvement
+var Player = false;  // joueur symbolique
+var IsOver = false; // partie terminée ?
+var Start_Cell = (0,0) ;                                      // case départ pour un mouvement
 var Tree = {};
 var liste = [];
 var score_liste = [0, 0]; // score initial égal à zéro
@@ -29,7 +29,8 @@ for (var R=0; R<X; R++) {
   }
 }
 
-// création de la matrice vide pour les canvas
+// création de la matrice vide pour les canvas  
+// est ce que necessaire dans notre code la metrice ID?
 var ID = [];
 for (var R=0; R<X; R++) {
   ID[R] = [];
@@ -38,6 +39,15 @@ for (var R=0; R<X; R++) {
   }
 }
 
+
+/* var Row = 17, Col = 25;                                       // rows and columns
+var Player = false, IsOver = false ;
+var Start_Cell = (0,0) ;                                      // case départ pour un mouvement     
+var Tree = {}, list = [] ;                                                     
+Fld = new Array(Row);                                         // fld matrice de 17*25 ele
+for (i=0; i<Row; i++)
+  Fld[i] = new Array(Col); 
+*/
 init_matrice();
 create_board();
 
@@ -98,6 +108,68 @@ function create_canevas(R, C, option) {
   ID[R][C] = cell; // identité de chaque canvas dans la matrice ID
   return cell;
 }
+/*   fonction presque identique a mon avis il faut tester la valeur dans Fld avant meme d'inserer des img
+ca evite d'inserer des img vides
+function createCell(i,j) {
+  var cell = document.createElement('div');
+  var value = Fld[i][j];
+  if (value) {
+    cell.classList.add('cell');
+    cell.setAttribute('row',i);
+    cell.setAttribute('column',j);
+    cell.innerHTML = "<img alt='pion' src='images/pion" + value + ".png' />";
+    cell.addEventListener('click', function() { play(cell); });
+  }
+  return cell;
+}
+*/
+
+/* fonction pour ercommencer le jeu  
+function restart() {
+  init_fld() ;
+  init_board() ;
+  Player=false  ;
+}  
+ */
+function validate_movement(cell) {                                   
+  row , col = cell.getAttribute("row"),  cell.getAttribute("column");
+  if (Start_Cell == (0,0)) {                                        // premier click
+    if (Fld[row][col] != Player+1) return  ;                        // on click sur le pion du joueur qui a la main
+    Start_Cell = (row, col)  ;
+    RefreshScreen();                                       
+    Fld[row][col] = -1;                                             // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_hope()
+  }
+  else {
+    if ((row,col) == self.Start) {                                    // retour à la case départ anulle le mouvement
+      fld[row][col] = Player+1  ;                                            
+      Start_Cell = (0,0);
+      RefreshScreen();
+    }
+    if (fld[row][col] != -1) return ;                               //    cell not empty
+        get_traject(Start_Cell[0], Start_Cell[1]);
+        if (!(row, col) in Tree) {
+          alert("Invalide Move!");           
+          return ;
+        }                             
+        traject = Tree[(row, col)];
+        make_move(traject);
+     }
+}
+
+function get_traject(row, col) {
+  for (i =row-1; i <= row+1; i++)  {               // add mouvement adjaçant
+    for (j=col-2; j<= col+2; j++) {
+       if (i!=row or j!=col) and in_board(i,j) and Fld[i][j]== -1)
+         Tree[(i,j)] =  [(row,col) ,(i,j)] ;
+    }
+  }
+  get_hope(row,col)  ;                                   // check for hopes                        
+  while (Liste) {                                        // recursif
+    new= Liste.shift() ;
+    if (new != Start_Cell)                                
+      get_hope(new[0], new[1], Tree[new]) ;
+  }
+}
 
 // crée un cadre pour les infos d'un joueur
 function createPlayerFrame(player) {
@@ -131,6 +203,6 @@ function Player(name, score, colors) {
 }
 
 // se déclenche à chaque clic sur une case du plateau
-function joue() {
+function play() {
   console.log('Vous avez cliqué !');
 }
