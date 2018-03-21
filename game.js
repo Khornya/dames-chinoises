@@ -15,7 +15,7 @@ for (var i=0, max=players.length; i<max; i++) {
 var X = 17, Y = 25; // lignes et colonnes
 var Player = false;  // joueur symbolique
 var IsOver = false; // partie terminée ?
-var Start_Cell = (0,0) ;                                      // case départ pour un mouvement
+var Start_Cell = (0,0) ; // case départ pour un mouvement
 var Tree = {};
 var liste = [];
 var score_liste = [0, 0]; // score initial égal à zéro
@@ -139,28 +139,28 @@ function validate_movement(cell) {
     }
     if (M[R][C] !== -1) return ; // cell not empty
         get_traject(Start_Cell[0], Start_Cell[1]);
-        if (!(R, C) in Tree) {
+        if (!Tree[(R, C)]) {
           alert("Invalid Move!");
           return ;
         }
         traject = Tree[(R,C)];
-        // make_move(traject);
+        make_move(traject);
      }
 }
 
 function get_traject(R, C) {
-  // ces boucles se comportent n'importe comment !
-  for (var i = R-1; i <= R+1; i++)  { // add mouvement adjacent
-    for (var j = C-2; j <= C+2; j++) {
-      if ((i !== R || j !== C) && in_board(i,j) && M[i][j] === -1) {
-        Tree[(i,j)] =  [(R,C), (i,j)];
-      }
-    }
-  }
+  // // ces boucles se comportent n'importe comment ! je ne comprends pas pourquoi
+  // for (var i = R-1; i <= R+1; i++)  { // add mouvement adjacent
+  //   for (var j = C-2; j <= C+2; j++) {
+  //     if ((i !== R || j !== C) && in_board(i,j) && M[i][j] === -1) {
+  //       Tree[(i,j)] =  [(R,C), (i,j)];
+  //     }
+  //   }
+  // }
   get_hope(R,C); // check for hopes
   var newList;
-  while (Liste) { // recursif
-    newList = Liste.shift() ;
+  while (liste.length > 0) { // recursif
+    newList = liste.shift() ;
     if (newList != Start_Cell)
       get_hope(newList[0], newList[1], Tree[newList]) ;
   }
@@ -171,6 +171,10 @@ function in_board(x,y) {
 }
 
 function get_hope(R, C, parent) {
+
+}
+
+function make_move(mov_list) {
 
 }
 
