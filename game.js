@@ -1,89 +1,105 @@
-// création du plateau de jeu
+// ***** infos des joueurs ***** (juste pour l'exemple, à récupérer via PHP)
 
-var Fld = [['x','x','x','x','x','x','x','x','x','x','x','x',1,'x','x','x','x','x','x','x','x','x','x','x','x'],
-            ['x','x','x','x','x','x','x','x','x','x','x',1,'x',1,'x','x','x','x','x','x','x','x','x','x','x'],
-            ['x','x','x','x','x','x','x','x','x','x',1,'x',1,'x',1,'x','x','x','x','x','x','x','x','x','x'],
-            ['x','x','x','x','x','x','x','x','x',1,'x',1,'x',1,'x',1,'x','x','x','x','x','x','x','x','x'],
-            [2,'x',2,'x',2,'x',2,'x',0,'x',0,'x',0,'x',0,'x',0,'x',3,'x',3,'x',3,'x',3],
-            ['x',2,'x',2,'x',2,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',3,'x',3,'x',3,'x'],
-            ['x','x',2,'x',2,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',3,'x',3,'x','x'],
-            ['x','x','x',2,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',3,'x','x','x'],
-            ['x','x','x','x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x','x','x','x'],
-            ['x','x','x',4,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',5,'x','x','x'],
-            ['x','x',4,'x',4,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',5,'x',5,'x','x'],
-            ['x',4,'x',4,'x',4,'x',0,'x',0,'x',0,'x',0,'x',0,'x',0,'x',5,'x',5,'x',5,'x'],
-            [4,'x',4,'x',4,'x',4,'x',0,'x',0,'x',0,'x',0,'x',0,'x',5,'x',5,'x',5,'x',5],
-            ['x','x','x','x','x','x','x','x','x',6,'x',6,'x',6,'x',6,'x','x','x','x','x','x','x','x','x'],
-            ['x','x','x','x','x','x','x','x','x','x',6,'x',6,'x',6,'x','x','x','x','x','x','x','x','x','x'],
-            ['x','x','x','x','x','x','x','x','x','x','x',6,'x',6,'x','x','x','x','x','x','x','x','x','x','x'],
-            ['x','x','x','x','x','x','x','x','x','x','x','x',6,'x','x','x','x','x','x','x','x','x','x','x','x']];
+var player1 = new Player('Joueur1',220,[1,2,3]);
+var player2 = new Player('Joueur2',190,[4,5,6]);
+var players = [player1, player2];
 
-var cell, cells = [], line;
+for (var i=0, max=players.length; i<max; i++) {
+  createPlayerFrame(players[i]);
+}
 
-for (var i = 0; i < 17; i++) {
-  cells.push([]);
-  line = document.createElement('div');
-  line.id = 'line'+i;
-  line.className = 'line';
-  document.getElementById('board').appendChild(line);
-  if (i%2) { // ligne impaire
-    for (var j = 1; j < 25; j+=2) {
-      cell = createCell(i,j);
-      line.appendChild(cell);
-      cells[i].push(cell);
+
+
+// ***** création du plateau de jeu *****
+
+var X = 17, Y = 25; // lignes et colonnes
+var J = false;  // joueur symbolique
+var isOver = false; // partie terminée ?
+var Start = (0,0); // case départ pour un mouvement
+var Tree = {};
+var liste = [];
+var score_liste = [0, 0]; // score initial égal à zéro
+
+// création de la matrice vide pour le plateau de jeu
+var M = [];
+for (var R=0; R<X; R++) {
+  M[R] = [];
+  for (var C=0; C<Y; C++) {
+    M[R][C] = false;
+  }
+}
+
+// création de la matrice vide pour les canvas
+var ID = [];
+for (var R=0; R<X; R++) {
+  ID[R] = [];
+  for (var C=0; C<Y; C++) {
+    ID[R][C] = false;
+  }
+}
+
+init_matrice();
+create_board();
+
+// ***** fonctions *****
+
+// initialise la matrice pour le plateau de jeu
+function init_matrice() {
+  for (var R=0; R<4; R++) { // R pour row, C pour column
+    for (var C=12-R; C<12+R+1; C+=2) {
+      M[R][C] = 1;
+      M[16-R][C] = 2;
     }
   }
-  else { // ligne paire
-    for (var j = 0; j < 25; j+=2) {
-      cell = createCell(i,j);
-      line.appendChild(cell);
-      cells[i].push(cell);
+  for (var R=4; R<8; R++) {
+    for (var C=12-R; C<12+R+1; C+=2) {
+      M[R][C] = -1;
+      M[16-R][C] = -1;
+    }
+    for (var C=R-4; C<10-R+1; C+=2) {
+      M[R][C] = 3;
+      M[16-R][C] = 4;
+      M[R][24-C] = 5;
+      M[16-R][24-C] = 6;
+    }
+  }
+  for (var C=4; C<21; C+=2) { M[8][C] = -1 }
+}
+
+// crée le plateau de jeu
+function create_board() {
+  var line, cell;
+  for (var R=0; R<X; R++) { // crée un div pour chaque ligne
+    line = document.createElement('div');
+    line.id = 'line'+R;
+    line.className = 'line';
+    document.getElementById('board').appendChild(line);
+    for (var C=0; C<Y; C++) { // crée un div pour chaque cellule
+      if (M[R][C] !== false) {
+        cell = create_canevas(R, C, M[R][C]);
+        line.appendChild(cell);
+      }
     }
   }
 }
 
-function createCell(i,j) {
+// crée une case
+function create_canevas(R, C, option) {
   var cell = document.createElement('div');
-  var color = Fld[i][j];
+  var color = M[R][C];
   cell.classList.add('cell');
-  cell.setAttribute('line',i);
-  cell.setAttribute('column',j);
-  // cell.setAttribute('color', color);
+  cell.setAttribute('line', R);
+  cell.setAttribute('column', C);
+  // ajoute l'image de base pour la case
   cell.innerHTML = "<img alt='pion' src='images/pion" + color + ".png' />";
-  if (color !== 'x') {
-    cell.addEventListener('click', function() {
-      clicked(this.getAttribute('line'), this.getAttribute('column'));
-    });
+  if (color !== false) { // si la case appartient à l'étoile, gère l'event 'clic'
+    cell.addEventListener('click', joue);
   }
+  ID[R][C] = cell; // identité de chaque canvas dans la matrice ID
   return cell;
 }
 
-var currentPlayer = 1;
-var I_Sel, J_Sel;
-
-function clicked(i,j) {
-  if (I_Sel || J_Sel) {
-    Fld[I_Sel][J_Sel] = currentPlayer;
-    I_Sel = J_Sel = null;
-  }
-  else {
-    I_Sel = i;
-    J_Sel = j;
-    Fld[I_Sel][J_Sel] = currentPlayer*10;
-  }
-  refreshScreen();
-}
-
-function refreshScreen() {
-  for (i=0, max=cells.length; i<max; i++) {
-    for (j=0, max=cells[i].length; j<max; j++) {
-      // cells[i][j].setAttribute('refreshed', true);
-    }
-  }
-}
-
-// infos des joueurs
-
+// crée un cadre pour les infos d'un joueur
 function createPlayerFrame(player) {
   var frame = document.createElement('div');
   frame.className = 'player_info';
@@ -95,26 +111,26 @@ function createPlayerFrame(player) {
   score.innerHTML = ('score : ' + player['score']);
   var colors = document.createElement('span');
   colors.className = 'player_colors';
+  var code = '';
   for (var i=0, max=player['colors'].length, color; i<max; i++) {
     color = player['colors'][i];
-    colors.innerHTML += "<img alt='color' src='images/pion" + color + ".png' />"
+     code += "<img alt='color' src='images/pion" + color + ".png' />"
   }
+  colors.innerHTML = code;
   frame.appendChild(name);
   frame.appendChild(colors);
   frame.appendChild(score);
   document.getElementById('left_panel').appendChild(frame);
 }
 
+// constructeur pour la classe Player
 function Player(name, score, colors) {
   this.name = name;
   this.score = score;
   this.colors = colors;
 }
 
-var player1 = new Player('Joueur1',220,[1,2,3]);
-var player2 = new Player('Joueur2',190,[4,5,6]);
-var players = [player1, player2];
-
-for (var i=0, max=players.length; i<max; i++) {
-  createPlayerFrame(players[i]);
+// se déclenche à chaque clic sur une case du plateau
+function joue() {
+  console.log('Vous avez cliqué !');
 }
