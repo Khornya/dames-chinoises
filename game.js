@@ -28,15 +28,15 @@ for (var R=0; R<X; R++) {
   }
 }
 
-// // création de la matrice vide pour les canvas
-// // est ce que necessaire dans notre code la metrice ID?
-// var ID = [];
-// for (var R=0; R<X; R++) {
-//   ID[R] = [];
-//   for (var C=0; C<Y; C++) {
-//     ID[R][C] = false;
-//   }
-// }
+// création de la matrice vide pour les canvas
+// est ce que necessaire dans notre code la metrice ID?
+var ID = [];
+for (var R=0; R<X; R++) {
+  ID[R] = [];
+  for (var C=0; C<Y; C++) {
+    ID[R][C] = false;
+  }
+}
 
 init_matrice();
 create_board();
@@ -96,7 +96,7 @@ function create_canevas(R, C, option) {
     // gère l'event 'click'
     cell.addEventListener('click', play);
   }
-  // ID[R][C] = cell; // identité de chaque canvas dans la matrice ID
+  ID[R][C] = cell.firstChild; // identité de chaque image dans la matrice ID
   return cell;
 }
 
@@ -165,7 +165,6 @@ function get_hope(R, C, parent=0) {
     pivot_c = C+j;
     while (in_board(R, pivot_c) && M[R][pivot_c] === -1) { //avancer jusqu'a case occupée
       pivot_c += j;
-
     }
     n=0;
     for (k=pivot_c+j; k<=2*pivot_c-C; k+=j) {
@@ -191,9 +190,9 @@ function get_hope(R, C, parent=0) {
         pivot_c += j;
       }
       n=0;
-      for (k=1; k<= j * (pivot_c-C); k+=j) {
+      for (k=1; k<= j * (pivot_c-C); k+=1) {
         if (!in_board(pivot_r+i*k, pivot_c+j*k)) break;
-        if (M[pivot_r+i*k][pivot_c+j*k] != -1) n+=1; // si un autre pion sur le chemin break
+        if (M[pivot_r+i*k][pivot_c+j*k] !== -1) n+=1; // si un autre pion sur le chemin break
       }
       if (n===0) {
         index_r = 2*pivot_r-R;
@@ -212,17 +211,17 @@ function get_hope(R, C, parent=0) {
 
 function make_move(mov_list) {
   var previous = mov_list[0];
-  // try :
+  try {
     var actuel = mov_list[1];
-    M[previous[0]][previous[1]] = -1
-    M[actuel[0]][actuel[1]] = J+1
-    // ID[previous[0]][previous[1]].delete(ALL); # effacer tout
-    // fais_pion(ID[previous[0]][previous[1]], Dic[-1])
-    // fais_pion(ID[actuel[0]][actuel[1]], Dic[J+1], 2)
+    M[previous[0]][previous[1]] = -1;
+    M[actuel[0]][actuel[1]] = Player+1;
+    ID[previous[0]][previous[1]].src = "images/pion-1.png";
+    ID[actuel[0]][actuel[1]].src = "images/pion" + M[actuel[0]][actuel[1]] + ".png";
     // pygame.mixer.music.load("click.mp3")
     // pygame.mixer.music.play()
     // top.after(500, make_move, mov_list[1:])
-  // except IndexError :
+  }
+  catch(err) {
   //   ID[previous[0]][previous[1]].delete(ALL)                                            # effacer tout
   //   fais_pion(ID[previous[0]][previous[1]], Dic[J+1])
   //   Start = (0,0)
@@ -234,6 +233,7 @@ function make_move(mov_list) {
   //     info['text']= 'Bravo!, le jouer %s a gagné'  % Dic[J+1]                             # le féliciter
   //     IsOver = True
   //     J = not J
+  }
 }
 
 // crée un cadre pour les infos d'un joueur
@@ -275,10 +275,6 @@ function play(event) {
 
 function in_board(x,y) {
   return (x > -1 && x < 17 && y > -1 && y<25);
-}
-
-function make_move(mov_list) {
-
 }
 
 // crée un cadre pour les infos d'un joueur
