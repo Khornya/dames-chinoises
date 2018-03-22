@@ -1,7 +1,7 @@
 // ***** infos des joueurs ***** (juste pour l'exemple, à récupérer via PHP)
 
-var player1 = new Player('Joueur1',220,[1,2,3]);
-var player2 = new Player('Joueur2',190,[4,5,6]);
+var player1 = new Player('Joueur1',220,[1,2,3],1);
+var player2 = new Player('Joueur2',190,[4,5,6],2);
 var players = [player1, player2];
 
 for (var i=0, max=players.length; i<max; i++) {
@@ -40,6 +40,7 @@ for (var R=0; R<X; R++) {
 
 init_matrice();
 create_board();
+update_player_frames();
 
 // ***** fonctions *****
 
@@ -211,7 +212,7 @@ function get_hope(R, C, parent=0) {
 
 function make_move(mov_list) {
   var previous = mov_list[0];
-  try {
+  // try {
     var actuel = mov_list[1];
     M[previous[0]][previous[1]] = -1;
     M[actuel[0]][actuel[1]] = Player+1;
@@ -219,27 +220,39 @@ function make_move(mov_list) {
     ID[actuel[0]][actuel[1]].src = "images/pion" + M[actuel[0]][actuel[1]] + ".png";
     // pygame.mixer.music.load("click.mp3")
     // pygame.mixer.music.play()
-    // top.after(500, make_move, mov_list[1:])
-  }
-  catch(err) {
+    if (mov_list.length > 2) {
+      (function(mov_list) {
+        setTimeout(function(){
+          make_move(mov_list);
+        }, 500);
+      })(mov_list.slice(1));
+    }
+    else {
+      Start_Cell = [0,0];
+      Tree = {};
+      Player = !Player;
+      update_player_frames();
+    }
+  // }
+  // catch(err) {
   //   ID[previous[0]][previous[1]].delete(ALL)                                            # effacer tout
   //   fais_pion(ID[previous[0]][previous[1]], Dic[J+1])
-  //   Start = (0,0)
-  //   Tree = {}
+
   //   info['text']= ''
   //   if gagnant(J+1) :
   //     score_liste[J] +=1
   //     score['text'] = 'score: \n  green = %s - yellow= %s' % (score_liste[0], score_liste[1]) #afficher ce score
   //     info['text']= 'Bravo!, le jouer %s a gagné'  % Dic[J+1]                             # le féliciter
   //     IsOver = True
-  //     J = not J
-  }
+
+  // }
 }
 
 // crée un cadre pour les infos d'un joueur
 function createPlayerFrame(player) {
   var frame = document.createElement('div');
   frame.className = 'player_info';
+  frame.id = 'player' + player['number'];
   var name = document.createElement('p');
   name.className = 'player_name';
   name.innerHTML = player['name'];
@@ -261,10 +274,11 @@ function createPlayerFrame(player) {
 }
 
 // constructeur pour la classe Player
-function Player(name, score, colors) {
+function Player(name, score, colors, number) {
   this.name = name;
   this.score = score;
   this.colors = colors;
+  this.number = number;
 }
 
 // se déclenche à chaque clic sur une case du plateau
@@ -277,39 +291,14 @@ function in_board(x,y) {
   return (x > -1 && x < 17 && y > -1 && y<25);
 }
 
-// crée un cadre pour les infos d'un joueur
-function createPlayerFrame(player) {
-  var frame = document.createElement('div');
-  frame.className = 'player_info';
-  var name = document.createElement('p');
-  name.className = 'player_name';
-  name.innerHTML = player['name'];
-  var score = document.createElement('p');
-  score.className = 'player_score';
-  score.innerHTML = ('score : ' + player['score']);
-  var colors = document.createElement('span');
-  colors.className = 'player_colors';
-  var code = '';
-  for (var i=0, max=player['colors'].length, color; i<max; i++) {
-    color = player['colors'][i];
-     code += "<img alt='color' src='images/pion" + color + ".png' />"
+function update_player_frames() {
+  var player_frames = document.querySelectorAll('.player_info');
+  for (var i=0, max=player_frames.length; i<max; i++) {
+    if (player_frames[i].id === 'player' + (Player+1)) {
+      player_frames[i].style.border = '2px solid black';
+    }
+    else {
+      player_frames[i].style.border = '2px dotted grey';
+    }
   }
-  colors.innerHTML = code;
-  frame.appendChild(name);
-  frame.appendChild(colors);
-  frame.appendChild(score);
-  document.getElementById('left_panel').appendChild(frame);
-}
-
-// constructeur pour la classe Player
-function Player(name, score, colors) {
-  this.name = name;
-  this.score = score;
-  this.colors = colors;
-}
-
-// se déclenche à chaque clic sur une case du plateau
-function play(event) {
-  if (IsOver) return;
-  validate_movement(event.currentTarget);
 }
