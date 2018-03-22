@@ -14,7 +14,7 @@ for (var i=0, max=players.length; i<max; i++) {
 var X = 17, Y = 25; // lignes et colonnes
 var Player = false;  // joueur symbolique
 var IsOver = false; // partie terminée ?
-var Start_Cell =  (0,0) ; // case départ pour un mouvement
+var Start_Cell =  [0,0] ; // case départ pour un mouvement // pas de couples en JS
 var Tree = {};
 var Liste = [];
 var score_liste = [0, 0]; // score initial égal à zéro
@@ -108,33 +108,30 @@ function restart() {
 }
  */
 
-// syntaxe a revoir
 function validate_movement(cell) {
-  var R = cell.getAttribute('line');
-  var C = cell.getAttribute('column');
-  if (Start_Cell === (0,0)) { // premier click
-    if (M[R][C] !== Player+1) return; // vérifie qu'on click sur le pion du joueur qui a la main // pourquoi Player+1 ?
-    Start_Cell = [R,C];               // player = false =0 --> joueur de pion numéroté (1) = player +1; 
-    // RefreshScreen();               // player = true = 1  --> joueur (2) = player+1
+  var R = parseInt(cell.getAttribute('line'),10);
+  var C = parseInt(cell.getAttribute('column'),10);
+  if (Start_Cell[0] === 0 && Start_Cell[1] === 0) { // premier click
+    if (M[R][C] !== Player+1) return; // vérifie qu'on click sur le pion du joueur qui a la main
+    Start_Cell = [R,C];
+    // RefreshScreen();
     cell.firstChild.src = "images/pion" + M[R][C] + "vide.png";
-    M[R][C] = -1;                    // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_hope()
+    M[R][C] = -1; // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_hope()
   }
   else {
-    if (Start_Cell[0] == R && Start_Cell[1] == C) { // retour à la case départ annule le mouvement
+    if (Start_Cell[0] === R && Start_Cell[1] === C) { // retour à la case départ annule le mouvement
       M[R][C] = Player+1;
-      Start_Cell = (0,0);
-      cell.firstChild.src = "images/pion" + M[R][C] + ".png";    //ok je vois l'intéret c'est mieux que d'utilser refershscreen
+      Start_Cell = [0,0];
+      cell.firstChild.src = "images/pion" + M[R][C] + ".png"; //ok je vois l'intéret c'est mieux que d'utilser refershscreen
       // RefreshScreen();
     }
     if (M[R][C] !== -1) return ; // cell not empty
     get_traject(Start_Cell[0], Start_Cell[1]);
-    console.log(Tree);
-    if (!Tree[[R, C]]) {
+    if (! ([R, C] in Tree)) { // certains mouvements sont détectés invalides à tort
       alert("Invalid Move!");
       return ;
     }
     traject = Tree[[R,C]];
-    console.log(traject);
     make_move(traject);
   }
 }
@@ -144,15 +141,15 @@ function get_traject(R, C) {
   for (i =R-1; i <= R+1; i++)  {               // add mouvement adjaçant
     for (j=C-2; j<= C+2; j++) {
        if ((i!=R || j!=C) && in_board(i,j) && M[i][j]== -1)
-         Tree[[i,j]] =  [[R,C] ,[i,j]] ;
+         Tree[[i,j]] = [[R,C],[i,j]];
     }
   }
   get_hope(R,C) ;
-  console.log(Liste)
-  while (Liste) {
-    cell= Liste.shift() ;
-    if (cell != Start_Cell)
+  while (Liste.length>0) {
+  cell = Liste.shift() ;
+    if (cell !== Start_Cell) {
       get_hope(cell[0], cell[1], Tree[cell]) ;
+    }
   }
 }
 
@@ -162,46 +159,48 @@ function get_hope(R, C, parent=0) {
   var i, j, k;
   var pivot_r , pivot_c;
   var n, index;
-  if (!parent) parent = [(R,C)];
+  if (!parent) parent = [[R,C]];
   // chercher saut sur ligne dans 2 directions:
-  for (j of [(-2, 2)]) {                       // avancer de deux pas sur la ligne
+  for (j=-2; j<3; j+=4) { // avancer de deux pas sur la ligne
     pivot_c = C+j;
-    while (in_board(R, pivot_c) && M[R][pivot_c] == -1)           //avancer jusqu'a case occupée
+    while (in_board(R, pivot_c) && M[R][pivot_c] === -1) { //avancer jusqu'a case occupée
       pivot_c += j;
-    n=0
+
+    }
+    n=0;
     for (k=pivot_c+j; k<=2*pivot_c-C; k+=j) {
       if (!in_board(R, k)) break ;
-      if (M[R][k] != -1) n+=1 ;         //si un autre pion sur le chemin
+      if (M[R][k] != -1) n+=1 ; //si un autre pion sur le chemin
     }
-    if (n==0) {                           // seulement s'il ya un seul pion sur le chemin servant de pivot
-       index = 2*pivot_c-C 
-       if ((R, index) in Tree) continue ;                    // éviter de tourner rond
-       if (in_board(R, index) && M[R][index]== -1) {     // si la case en symétrie est vide valide:  
-         Tree[[R,index]] = parent + [[R, index]];
+    if (n==0) { // seulement s'il ya un seul pion sur le chemin servant de pivot
+       index = 2*pivot_c-C;
+       if ([R, index] in Tree) continue ; // éviter de tourner rond
+       if (in_board(R, index) && M[R][index]=== -1) { // si la case en symétrie est vide valide:
+         Tree[[R,index]] = parent.concat([[R, index]]);
          Liste.push([R, index])
        }
     }
   }
   // chercher saut sur diagonal 4 directions :
-  for (i of [(-1, 1)]) {                        // avancer d'un seul pas sur le diagonal
-    for (j of [(-1, 1)]) {
-      pivot_r = R+i
-      pivot_c = C+j
-      while (in_board(pivot_r, pivot_c) && M[pivot_r][pivot_c] == -1) {            // avancer jusqu'a case occupée
+  for (i=-1; i<2; i+=2) { // avancer d'un seul pas sur le diagonal
+    for (j=-1; j<2; j+=2) {
+      pivot_r = R+i;
+      pivot_c = C+j;
+      while (in_board(pivot_r, pivot_c) && M[pivot_r][pivot_c] === -1) { // avancer jusqu'a case occupée
         pivot_r += i;
         pivot_c += j;
       }
-      n=0
+      n=0;
       for (k=1; k<= j * (pivot_c-C); k+=j) {
         if (!in_board(pivot_r+i*k, pivot_c+j*k)) break;
-        if (M[pivot_r+i*k][pivot_c+j*k] != -1) n+=1;         // si un autre pion sur le chemin break
-      }  
-      if (n==0) {
+        if (M[pivot_r+i*k][pivot_c+j*k] != -1) n+=1; // si un autre pion sur le chemin break
+      }
+      if (n===0) {
         index_r = 2*pivot_r-R;
         index_c = 2*pivot_c-C;
-        if ((index_r, index_c) in Tree) continue ;                     // éviter de tourner rond
-        if (in_board(index_r, index_c) && M[index_r][index_c]== -1) {   // si la case en asymétrie est vide valide: 
-          Tree[[index_r,index_c]] = parent + [[index_r, index_c]];
+        if ([index_r, index_c] in Tree) continue ; // éviter de tourner rond
+        if (in_board(index_r, index_c) && M[index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
+          Tree[[index_r,index_c]] = parent.concat([[index_r, index_c]]);
           Liste.push([index_r, index_c]);
         }
       }
@@ -212,7 +211,29 @@ function get_hope(R, C, parent=0) {
 
 
 function make_move(mov_list) {
-
+  var previous = mov_list[0];
+  // try :
+    var actuel = mov_list[1];
+    M[previous[0]][previous[1]] = -1
+    M[actuel[0]][actuel[1]] = J+1
+    // ID[previous[0]][previous[1]].delete(ALL); # effacer tout
+    // fais_pion(ID[previous[0]][previous[1]], Dic[-1])
+    // fais_pion(ID[actuel[0]][actuel[1]], Dic[J+1], 2)
+    // pygame.mixer.music.load("click.mp3")
+    // pygame.mixer.music.play()
+    // top.after(500, make_move, mov_list[1:])
+  // except IndexError :
+  //   ID[previous[0]][previous[1]].delete(ALL)                                            # effacer tout
+  //   fais_pion(ID[previous[0]][previous[1]], Dic[J+1])
+  //   Start = (0,0)
+  //   Tree = {}
+  //   info['text']= ''
+  //   if gagnant(J+1) :
+  //     score_liste[J] +=1
+  //     score['text'] = 'score: \n  green = %s - yellow= %s' % (score_liste[0], score_liste[1]) #afficher ce score
+  //     info['text']= 'Bravo!, le jouer %s a gagné'  % Dic[J+1]                             # le féliciter
+  //     IsOver = True
+  //     J = not J
 }
 
 // crée un cadre pour les infos d'un joueur
@@ -255,7 +276,6 @@ function play(event) {
 function in_board(x,y) {
   return (x > -1 && x < 17 && y > -1 && y<25);
 }
-
 
 function make_move(mov_list) {
 
