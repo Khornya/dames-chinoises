@@ -53,7 +53,7 @@ function init_matrice() {
   for (var R=0; R<4; R++) { // R pour row, C pour column
     for (var C=12-R; C<=12+R; C+=2) {
       M[R][C] = 1;
-      M[16-R][C] = 6;
+      M[16-R][C] = 2;
     }
   }
   for (var R=4; R<8; R++) {
