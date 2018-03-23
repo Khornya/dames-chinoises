@@ -1,7 +1,11 @@
 // ***** infos des joueurs ***** (juste pour l'exemple, à récupérer via PHP)
+n_color = sessionStorage.color_number; 
+ordi_player = sessionStorage.ordi_player;
 
-var player1 = new Player('Joueur1',220,[1,2,3],1);
-var player2 = new Player('Joueur2',190,[4,5,6],2);
+var player1 = new Player('Joueur1',220,n_color, 1);
+var player2 = new Player('Joueur2',190,n_color, 2);
+var players = [player1, player2];
+
 var players = [player1, player2];
 
 for (var i=0, max=players.length; i<max; i++) {
@@ -17,7 +21,7 @@ var IsOver = false; // partie terminée ?
 var Start_Cell =  [0,0] ; // case départ pour un mouvement // pas de couples en JS
 var Tree = {};
 var Liste = [];
-var score_liste = [0, 0]; // score initial égal à zéro
+var Color;
 
 // création de la matrice vide pour le plateau de jeu
 var M = [];
@@ -113,17 +117,18 @@ function validate_movement(cell) {
   var R = parseInt(cell.getAttribute('line'),10);
   var C = parseInt(cell.getAttribute('column'),10);
   if (Start_Cell[0] === 0 && Start_Cell[1] === 0) { // premier click
-    if (M[R][C] !== Player+1) return; // vérifie qu'on click sur le pion du joueur qui a la main
+    if (!(Player+M[R][C]%2) || M[R][C]> 2*n_color) return; // vérifie qu'on click sur le pion du joueur qui a la main
     Start_Cell = [R,C];
     // RefreshScreen();
     cell.firstChild.src = "images/pion" + M[R][C] + "vide.png";
+    Color = M[R][C]
     M[R][C] = -1; // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_hope()
   }
   else {
     if (Start_Cell[0] === R && Start_Cell[1] === C) { // retour à la case départ annule le mouvement
-      M[R][C] = Player+1;
+      M[R][C] = Color;
       Start_Cell = [0,0];
-      cell.firstChild.src = "images/pion" + M[R][C] + ".png"; //ok je vois l'intéret c'est mieux que d'utilser refershscreen
+      cell.firstChild.src = "images/pion" + Color + ".png"; //ok je vois l'intéret c'est mieux que d'utilser refershscreen
       // RefreshScreen();
     }
     if (M[R][C] !== -1) return ; // cell not empty
@@ -168,7 +173,7 @@ function get_hope(R, C, parent=0) {
       pivot_c += j;
     }
     n=0;
-    for (k=pivot_c+j; k<=2*pivot_c-C; k+=j) {
+    for (k=pivot_c+j; k<2*pivot_c-C; k+=j) {
       if (!in_board(R, k)) break ;
       if (M[R][k] != -1) n+=1 ; //si un autre pion sur le chemin
     }
@@ -191,7 +196,7 @@ function get_hope(R, C, parent=0) {
         pivot_c += j;
       }
       n=0;
-      for (k=1; k<= j * (pivot_c-C); k+=1) {
+      for (k=1; k< (pivot_c-C); k+=1) {
         if (!in_board(pivot_r+i*k, pivot_c+j*k)) break;
         if (M[pivot_r+i*k][pivot_c+j*k] !== -1) n+=1; // si un autre pion sur le chemin break
       }
@@ -232,20 +237,52 @@ function make_move(mov_list) {
       Tree = {};
       Player = !Player;
       update_player_frames();
+      if (check_winner(Color)) IsOver = true
+
     }
-  // }
-  // catch(err) {
-  //   ID[previous[0]][previous[1]].delete(ALL)                                            # effacer tout
-  //   fais_pion(ID[previous[0]][previous[1]], Dic[J+1])
+}
 
-  //   info['text']= ''
-  //   if gagnant(J+1) :
-  //     score_liste[J] +=1
-  //     score['text'] = 'score: \n  green = %s - yellow= %s' % (score_liste[0], score_liste[1]) #afficher ce score
-  //     info['text']= 'Bravo!, le jouer %s a gagné'  % Dic[J+1]                             # le féliciter
-  //     IsOver = True
-
-  // }
+function check_winner(player) {
+  switch (player) {
+    case 1:
+      for (var R=0; R<4; R++) {
+        if (M[16-R][C] != 1) return false ; 
+      }
+      return true;  
+    case 2:
+      for (var R=0; R<4; R++) {
+        if (M[R][C] != 2)  return false ; 
+      }
+      return true; 
+    case 3:     
+      for (var R=4; R<8; R++) {
+        for (var C=R-4; C<=10-R; C+=2) {
+          if (M[16-R][24-C] != 3) return false;
+        }
+      }
+      return true;
+    case 4:     
+      for (var R=4; R<8; R++) {
+        for (var C=R-4; C<=10-R; C+=2) {
+          if (M[R][C] != 4) return false;
+        }
+      }
+      return true;
+    case 5:     
+      for (var R=4; R<8; R++) {
+        for (var C=R-4; C<=10-R; C+=2) {
+          if (M[16-R][C] != 5) return false;
+        }
+      }
+      return true;
+    case 6:     
+      for (var R=4; R<8; R++) {
+        for (var C=R-4; C<=10-R; C+=2) {
+          if (M[R][24-C] != 6) return false;
+        }
+      }
+      return true;
+  }
 }
 
 // crée un cadre pour les infos d'un joueur
@@ -274,12 +311,17 @@ function createPlayerFrame(player) {
 }
 
 // constructeur pour la classe Player
-function Player(name, score, colors, number) {
+function Player(name, score, n_color, number) {
   this.name = name;
   this.score = score;
+  colors = [];
+  for (var i=number; i<= 2*n_color; i+=2) {
+    colors.push(i);
+  }  
   this.colors = colors;
   this.number = number;
 }
+
 
 // se déclenche à chaque clic sur une case du plateau
 function play(event) {
