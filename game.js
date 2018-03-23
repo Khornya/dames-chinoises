@@ -220,9 +220,9 @@ function make_move(mov_list) {
   // try {
     var actuel = mov_list[1];
     M[previous[0]][previous[1]] = -1;
-    M[actuel[0]][actuel[1]] = Player+1;
+    M[actuel[0]][actuel[1]] = Color;
     ID[previous[0]][previous[1]].src = "images/pion-1.png";
-    ID[actuel[0]][actuel[1]].src = "images/pion" + M[actuel[0]][actuel[1]] + ".png";
+    ID[actuel[0]][actuel[1]].src = "images/pion" + Color + ".png";
     // pygame.mixer.music.load("click.mp3")
     // pygame.mixer.music.play()
     if (mov_list.length > 2) {
