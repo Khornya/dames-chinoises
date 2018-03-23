@@ -86,6 +86,8 @@ function create_board() {
       }
     }
   }
+  hope = new sound("Sounds/click.mp3");
+  fail = new sound("Sounds/fail.mp3");
 }
 
 // crée une case
@@ -134,6 +136,7 @@ function validate_movement(cell) {
     if (M[R][C] !== -1) return ; // cell not empty
     get_traject(Start_Cell[0], Start_Cell[1]);
     if (! ([R, C] in Tree)) { // certains mouvements sont détectés invalides à tort
+      fail.play();
       alert("Invalid Move!");
       return ;
     }
@@ -223,8 +226,7 @@ function make_move(mov_list) {
     M[actuel[0]][actuel[1]] = Color;
     ID[previous[0]][previous[1]].src = "images/pion-1.png";
     ID[actuel[0]][actuel[1]].src = "images/pion" + Color + ".png";
-    // pygame.mixer.music.load("click.mp3")
-    // pygame.mixer.music.play()
+    hope.play();
     if (mov_list.length > 2) {
       (function(mov_list) {
         setTimeout(function(){
@@ -343,4 +345,19 @@ function update_player_frames() {
       player_frames[i].style.border = '2px dotted grey';
     }
   }
+}
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
 }
