@@ -22,18 +22,32 @@
     </section>
     <section>
       <h1>Jouer une partie</h1>
+      <script>
+        if (typeof(Storage) !== "undefined") {
+          sessionStorage.color_number=0 ;
+          sessionStorage.ordi_player=0 ;
+        }
+
+        function choose_player(n) {
+          sessionStorage.ordi_player=n;
+        }
+        function choose_color(n) {
+          sessionStorage.color_number=n;
+        }
+      </script>
+      
       <form>
-        <input type="radio" name="mode" value="1vs1" id="1vs1" />
+        <input type="radio" name="mode" value="1vs1" id="1vs1" onclick="choose_player(0);" />
         <label for="1vs1">2 joueurs</label>
-        <input type="radio" name="mode" value="1vsAI" id="1vsAI" />
+        <input type="radio" name="mode" value="1vsAI" id="1vsAI" onclick="choose-player(1);" />
         <label for="1vs1">1 joueur contre l'IA</label>
         <br />
         Nombre de couleurs :
-        <input type="radio" name="colors" value="1" id="1" />
+        <input type="radio" name="colors" value="1" id="1" onclick="choose_color(1);"/>
         <label for="1">1</label>
-        <input type="radio" name="colors" value="2" id="2" />
+        <input type="radio" name="colors" value="2" id="2" onclick="choose_color(2);"/>
         <label for="2">2</label>
-        <input type="radio" name="colors" value="3" id="3" />
+        <input type="radio" name="colors" value="3" id="3" onclick="choose_color(3);"/>
         <label for="3">3</label>
         <br />
         <label for="player1">Nom joueur 1 :</label>
@@ -42,7 +56,7 @@
         <label for="player2">Nom joueur 2 :</label>
         <input type="text" name="player2" id="player2" />
         <br />
-        <input type="button" value="Jouer !"/>
+        <input type="button" value="Jouer !" onclick="location.href='game.html';"/>
       </form>
     </section>
     <aside>
