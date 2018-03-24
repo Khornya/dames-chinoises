@@ -119,7 +119,7 @@ function validate_movement(cell) {
   var R = parseInt(cell.getAttribute('line'),10);
   var C = parseInt(cell.getAttribute('column'),10);
   if (Start_Cell[0] === 0 && Start_Cell[1] === 0) { // premier click
-    if (!(Player+M[R][C]%2) || M[R][C]> 2*n_color) return; // vérifie qu'on click sur le pion du joueur qui a la main
+    if (!((Player+M[R][C])%2) || M[R][C]> 2*n_color) return; // vérifie qu'on click sur le pion du joueur qui a la main
     Start_Cell = [R,C];
     // RefreshScreen();
     cell.firstChild.src = "images/pion" + M[R][C] + "vide.png";
