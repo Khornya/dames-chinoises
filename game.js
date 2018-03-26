@@ -1,5 +1,5 @@
 // POUR LES TESTS : ajoute un script supplémentaire
-var test = true; // true pour lancer les tests
+var test = false; // true pour lancer les tests
 if (test) {
   var test_script = document.createElement('script');
   test_script.src = 'tests/test-check_winner.js'; // le script de test à exécuter
