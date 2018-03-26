@@ -2,7 +2,7 @@
 var test = true; // true pour lancer les tests
 if (test) {
   var test_script = document.createElement('script');
-  test_script.src = 'test-check_winner.js'; // le script de test à exécuter
+  test_script.src = 'tests/test-check_winner.js'; // le script de test à exécuter
   document.getElementById('main_wrapper').insertBefore(test_script, document.getElementsByTagName('footer')[0]);
 }
 // FIN TESTS
