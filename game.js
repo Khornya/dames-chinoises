@@ -2,7 +2,7 @@
 var test = false; // true pour lancer les tests
 if (test) {
   var test_script = document.createElement('script');
-  test_script.src = 'tests/test-check_winner.js'; // le script de test à exécuter
+  test_script.src = 'tests/test-game.js'; // le script de test à exécuter
   document.getElementById('main_wrapper').insertBefore(test_script, document.getElementsByTagName('footer')[0]);
 }
 // FIN TESTS
@@ -225,6 +225,7 @@ var methods = { // je mets les fonctions dans un objet pour pouvoir les importer
       else {
         Start_Cell = [0,0];
         Tree = {};
+        players[Player+1].updateScore();
         Player = !Player;
         methods.update_player_frames();
         if (methods.check_winner(Color)) IsOver = true
@@ -275,33 +276,8 @@ var methods = { // je mets les fonctions dans un objet pour pouvoir les importer
     }
   },
 
-  // crée un cadre pour les infos d'un joueur
-  createPlayerFrame: function(player) {
-    var frame = document.createElement('div');
-    frame.className = 'player_info';
-    frame.id = 'player' + player['number'];
-    var name = document.createElement('p');
-    name.className = 'player_name';
-    name.innerHTML = player['name'];
-    var score = document.createElement('p');
-    score.className = 'player_score';
-    score.innerHTML = ('score : ' + player['score']);
-    var colors = document.createElement('span');
-    colors.className = 'player_colors';
-    var code = '';
-    for (var i=0, max=player['colors'].length, color; i<max; i++) {
-      color = player['colors'][i];
-       code += "<img alt='color' src='images/pion" + color + ".png' />"
-    }
-    colors.innerHTML = code;
-    frame.appendChild(name);
-    frame.appendChild(colors);
-    frame.appendChild(score);
-    document.getElementById('left_panel').appendChild(frame);
-  },
-
   // constructeur pour la classe Player
-  Player: function(name, score, n_color, number) {
+  Player: function(name, score, n_color, number, frame) {
     this.name = name;
     this.score = score;
     colors = [];
@@ -310,6 +286,37 @@ var methods = { // je mets les fonctions dans un objet pour pouvoir les importer
     }
     this.colors = colors;
     this.number = number;
+    this.frame = frame;
+
+    this.updateScore = function() {
+      this.score += 1;
+      this.frame.lastChild.innerHTML = ('score : ' + this.score);
+    };
+
+    this.createFrame = function() {  // crée un cadre pour les infos d'un joueur
+        var frame = document.createElement('div');
+        frame.className = 'player_info';
+        frame.id = 'player' + this.number;
+        var name = document.createElement('p');
+        name.className = 'player_name';
+        name.innerHTML = this.name;
+        var score = document.createElement('p');
+        score.className = 'player_score';
+        score.innerHTML = ('score : ' + this.score);
+        var colors = document.createElement('span');
+        colors.className = 'player_colors';
+        var code = '';
+        for (var i=0, max=this.colors.length, color; i<max; i++) {
+          color = this.colors[i];
+           code += "<img alt='color' src='images/pion" + color + ".png' />"
+        }
+        colors.innerHTML = code;
+        frame.appendChild(name);
+        frame.appendChild(colors);
+        frame.appendChild(score);
+        document.getElementById('left_panel').appendChild(frame);
+        this.frame = frame;
+      };
   },
 
   // se déclenche à chaque clic sur une case du plateau
@@ -354,12 +361,14 @@ var methods = { // je mets les fonctions dans un objet pour pouvoir les importer
 n_color = sessionStorage.color_number;
 ordi_player = sessionStorage.ordi_player;
 
-var player1 = new methods.Player('Joueur1',220,n_color, 1);
-var player2 = new methods.Player('Joueur2',190,n_color, 2);
-var players = [player1, player2];
+var player1 = new methods.Player('Joueur1', 0, n_color, 1);
+var player2 = new methods.Player('Joueur2', 0, n_color, 2);
+var players = [false, player1, player2, false, false, false, false];
 
-for (var i=0, max=players.length; i<max; i++) {
-  methods.createPlayerFrame(players[i]);
+for (var i=1, max=players.length; i<=max; i++) {
+  if (players[i]) {
+    players[i].createFrame();
+  }
 }
 
 methods.init_matrice();
