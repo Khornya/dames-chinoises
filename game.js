@@ -1,5 +1,14 @@
+// POUR LES TESTS : ajoute un script supplémentaire
+
+var test = true; // true pour lancer les tests
+var test_script = document.createElement('script');
+test_script.src = 'test-game.js';
+if (test) {
+  document.getElementById('main_wrapper').insertBefore(test_script, document.getElementsByTagName('footer')[0]);
+}
+
 // ***** infos des joueurs ***** (juste pour l'exemple, à récupérer via PHP)
-n_color = sessionStorage.color_number; 
+n_color = sessionStorage.color_number;
 ordi_player = sessionStorage.ordi_player;
 
 var player1 = new Player('Joueur1',220,n_color, 1);
@@ -231,7 +240,7 @@ function make_move(mov_list) {
       (function(mov_list) {
         setTimeout(function(){
           make_move(mov_list);
-        }, 500);
+        }, 500*(!test)); // modifie le temps d'exécution uniquement pour les tests
       })(mov_list.slice(1));
     }
     else {
@@ -248,36 +257,36 @@ function check_winner(player) {
   switch (player) {
     case 1:
       for (var R=0; R<4; R++) {
-        if (M[16-R][C] != 1) return false ; 
+        if (M[16-R][C] != 1) return false ;
       }
-      return true;  
+      return true;
     case 2:
       for (var R=0; R<4; R++) {
-        if (M[R][C] != 2)  return false ; 
+        if (M[R][C] != 2)  return false ;
       }
-      return true; 
-    case 3:     
+      return true;
+    case 3:
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[16-R][24-C] != 3) return false;
         }
       }
       return true;
-    case 4:     
+    case 4:
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[R][C] != 4) return false;
         }
       }
       return true;
-    case 5:     
+    case 5:
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[16-R][C] != 5) return false;
         }
       }
       return true;
-    case 6:     
+    case 6:
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[R][24-C] != 6) return false;
@@ -319,7 +328,7 @@ function Player(name, score, n_color, number) {
   colors = [];
   for (var i=number; i<= 2*n_color; i+=2) {
     colors.push(i);
-  }  
+  }
   this.colors = colors;
   this.number = number;
 }
