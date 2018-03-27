@@ -404,6 +404,7 @@ function make_move(mov_list) {
     }       
     Player = !Player     
     Start_Cell = (0,0);
+    players[Player+1-1].updateScore();
     update_player_frames();
 
   }
