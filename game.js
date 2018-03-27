@@ -21,10 +21,12 @@ var IsOver = false; // partie terminée ?
 var Start_Cell =  (0,0) ; // case départ pour un mouvement // pas de couples en JS
 var Color;
 var isOver = [];
-for (var i=0; i<2; i++)  // 2 nombre de joueur
-  isOver[i]=[]
-  for(j=0; j<n_color;j++)
-  isOver[i][j]=false;
+for (var i=0; i<2; i++) { // 2 nombre de joueur
+  isOver[i]=[];
+  for(j=0; j<n_color;j++) {
+    isOver[i][j]=false;
+  }
+}
 
 // création de la matrice vide pour le plateau de jeu
 var M = [];
@@ -102,26 +104,6 @@ else {
     case 3: {
       // ***** ENVIRONNEMENT *****
       var testVars = {};
-      M = [ // plateau vide
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]
-      ]
-
       testVars.mov_list = [];
       testVars.last = [];
       testVars.M = M;
@@ -145,6 +127,7 @@ else {
     }
   }
 }
+
 
 // ***** fonctions pour les tests *****
 
@@ -399,30 +382,29 @@ function get_jump(liste , R1, C1, traject=[]) {
 
 function make_move(mov_list) {
   var previous = mov_list[0];
-  // try {
-    var actuel = mov_list[1];
-    M[previous[0]][previous[1]] = -1;
-    M[actuel[0]][actuel[1]] = Color;
-    ID[previous[0]][previous[1]].src = "images/pion-1.png";
-    ID[actuel[0]][actuel[1]].src = "images/pion" + Color + ".png";
-    jump.play();
-    if (mov_list.length > 2) {
-      (function(mov_list) {
-        setTimeout(function(){
-          make_move(mov_list);
-        }, 500);
-      })(mov_list.slice(1));
-    }
-    else {
-      Start_Cell = (0,0);
-      Tree = {};
-      players[Player+1].updateScore();
-      Player = !Player;
-      update_player_frames();
-      check_winner(Player, Color);
-
-    }
+  var actuel = mov_list[1];
+  M[previous[0]][previous[1]] = -1;
+  M[actuel[0]][actuel[1]] = Color;
+  ID[previous[0]][previous[1]].src = "images/pion-1.png";
+  ID[actuel[0]][actuel[1]].src = "images/pion" + Color + ".png";
+  jump.play();
+  if (mov_list.length > 2) {
+    (function(mov_list) {
+      setTimeout(function(){
+        make_move(mov_list);
+      }, 500);
+    })(mov_list.slice(1));
+  }
+  else {
+    Start_Cell = (0,0);
+    Tree = {};
+    players[Player+1-1].updateScore();
+    Player = !Player;
+    update_player_frames();
+    check_winner(Player, Color);
+  }
 }
+
 
 // constructeur pour la classe Player
 function Player(name, score, n_color, number, frame) {
