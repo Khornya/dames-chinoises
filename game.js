@@ -80,6 +80,16 @@ else {
       }
       break;
     }
+// la version suivante est adaptée au code actuel de deux joueurs a revoir apres adopter le multijoueur
+//      for (var color=1; color<=6; color++) {
+//        check_winner(color);
+//      }
+//      for (var player=1; player<=2; player++) {
+//        testVars.result = (! (isOver[player-1].includes(false)))
+//        if (testVars.result) continue;
+//        else console.log('ERROR: check_winner(' + player + ') is ' + testVars.result + ', should be true.');
+//      }
+//      break;
 
     case 2: {
       // ***** ENVIRONNEMENT *****
