@@ -381,7 +381,7 @@ function get_jump(liste , R1, C1, traject=[]) {
 
 
 
-ffunction make_move(mov_list) {
+function make_move(mov_list) {
   var previous = mov_list[0];
   var actuel = mov_list[1];
   M[previous[0]][previous[1]] = -1;
