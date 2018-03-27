@@ -20,13 +20,8 @@ var Player = false;  // joueur symbolique
 var IsOver = false; // partie terminée ?
 var Start_Cell =  (0,0) ; // case départ pour un mouvement // pas de couples en JS
 var Color;
+// création de la matrice pour les parties finies
 var isOver = [];
-for (var i=0; i<2; i++) { // 2 nombre de joueur
-  isOver[i]=[];
-  for(j=0; j<n_color;j++) {
-    isOver[i][j]=false;
-  }
-}
 
 // création de la matrice vide pour le plateau de jeu
 var M = [];
@@ -271,6 +266,12 @@ function restart() {
   Player=false  ;
   IsOver = false;
   Start_Cell =  (0,0) ;
+  for (var i=0; i<2; i++) {   // 2 représente le  nombre de joueurs
+    isOver[i] = [];
+    for (var j=0; j<n_color; j++) {
+      isOver[i][j] = false;
+    }
+  }
   for (var i=0, max=players.length; i<max; i++) {
     players[i].createFrame();
   }
@@ -380,7 +381,7 @@ function get_jump(liste , R1, C1, traject=[]) {
 
 
 
-function make_move(mov_list) {
+ffunction make_move(mov_list) {
   var previous = mov_list[0];
   var actuel = mov_list[1];
   M[previous[0]][previous[1]] = -1;
@@ -396,12 +397,66 @@ function make_move(mov_list) {
     })(mov_list.slice(1));
   }
   else {
+    check_winner(Player+1-1, Color);    // la c'est j'essaye de transférer false en 0 et true en 1 pas trop esthétique
+    if (! (isOver[Player-1+1].includes(false))) {
+      IsOver = true; 
+      send_msg("le jouer"+ (Player+1) + " a gangé", win)
+    }       
+    Player = !Player     
     Start_Cell = (0,0);
-    Tree = {};
-    players[Player+1-1].updateScore();
-    Player = !Player;
     update_player_frames();
-    check_winner(Player, Color);
+
+  }
+}
+
+function check_winner(player, color) {
+  //théoriquement une fois les pions sont ds le triangle opposé on peut plus les faire bouger
+  //à coder dans validate_movement()
+  if (isOver[player][(color-1)/2 >> 0]) return ;
+
+  switch (color) {
+    case 1:
+      for (var R=0; R<4; R++) {
+        for (var C=12-R; C<=12+R; C+=2) {
+          if (M[16-R][C] != 1) return ; 
+        }
+      }
+      isOver[0][0]=true;  
+    case 2:
+      for (var R=0; R<4; R++) {
+        for (var C=12-R; C<=12+R; C+=2) {
+          if (M[R][C] != 2)  return ; 
+        }
+      }
+      isOver[1][0]=true; 
+    case 3:     
+      for (var R=4; R<8; R++) {
+        for (var C=R-4; C<=10-R; C+=2) {
+          if (M[16-R][24-C] != 3) return;
+        }
+      }
+      isOver[0][1]=true;
+    case 4:     
+      for (var R=4; R<8; R++) {
+        for (var C=R-4; C<=10-R; C+=2) {
+          if (M[R][C] != 4) return;
+        }
+      }
+      isOver[1][1]=true;
+    case 5:     
+      for (var R=4; R<8; R++) {
+        for (var C=R-4; C<=10-R; C+=2) {
+          if (M[16-R][C] != 5) return;
+        }
+      }
+      isOver[0][2]=true;
+    case 6:     
+      for (var R=4; R<8; R++) {
+        for (var C=R-4; C<=10-R; C+=2) {
+          if (M[R][24-C] != 6) return;
+        }
+      }
+      isOver[1][2]=true;
   }
 }
 
