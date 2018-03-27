@@ -6,22 +6,19 @@ var player1 = new Player('Joueur1',220,n_color, 1);
 var player2 = new Player('Joueur2',190,n_color, 2);
 var players = [player1, player2];
 
-var players = [player1, player2];
-
-for (var i=0, max=players.length; i<max; i++) {
-  createPlayerFrame(players[i]);
-}
-
 
 // ***** création du plateau de jeu *****
 
 var X = 17, Y = 25; // lignes et colonnes
 var Player = false;  // joueur symbolique
 var IsOver = false; // partie terminée ?
-var Start_Cell =  [0,0] ; // case départ pour un mouvement // pas de couples en JS
-var Tree = {};
-var Liste = [];
+var Start_Cell =  (0,0) ; // case départ pour un mouvement // pas de couples en JS
 var Color;
+var isOver = [];
+for (var i=0; i<2; i++)  // 2 nombre de joueur
+  isOver[i]=[]
+  for(j=0; j<n_color;j++)
+  isOver[i][j]=false; 
 
 // création de la matrice vide pour le plateau de jeu
 var M = [];
@@ -42,9 +39,9 @@ for (var R=0; R<X; R++) {
   }
 }
 
-init_matrice();
-create_board();
-update_player_frames();
+restart();
+
+
 
 // ***** fonctions *****
 
@@ -81,117 +78,119 @@ function create_board() {
     document.getElementById('board').appendChild(line);
     for (var C=0; C<Y; C++) { // crée un div pour chaque cellule
       if (M[R][C] !== false) {
-        cell = create_canevas(R, C, M[R][C]);
+        cell = create_cell(R, C, M[R][C]);
         line.appendChild(cell);
       }
     }
   }
-  hope = new sound("Sounds/click.mp3");
+  jump = new sound("Sounds/click.mp3");
   fail = new sound("Sounds/fail.mp3");
+  win = new sound("Sound/win.mp3");
 }
 
 // crée une case
-function create_canevas(R, C, option) {
+function create_cell(R, C, option) {
   var cell = document.createElement('div');
-  var color = M[R][C];
   cell.classList.add('cell');
   cell.setAttribute('line', R);
   cell.setAttribute('column', C);
-  if (color !== false) { // si la case appartient à l'étoile
+  // if (color !== false) { // si la case appartient à l'étoile // test redondant deja testé dans create_board()
     // ajoute l'image de base pour la case
-    cell.innerHTML = "<img alt='pion' src='images/pion" + color + ".png' />";
+  cell.innerHTML = "<img alt='pion' src='images/pion" + M[R][C] + ".png' />";
     // gère l'event 'click'
-    cell.addEventListener('click', play);
-  }
+  cell.addEventListener('click', play);
   ID[R][C] = cell.firstChild; // identité de chaque image dans la matrice ID
   return cell;
 }
 
-/* fonction pour ercommencer le jeu
+// fonction pour recommencer le jeu
 function restart() {
-  init_fld() ;
-  init_board() ;
+  init_matrice() ;
+  create_board() ;
   Player=false  ;
+  IsOver = false;
+  Start_Cell =  (0,0) ;
+  for (var i=0, max=players.length; i<max; i++) {
+    createPlayerFrame(players[i]);
+  }
+  update_player_frames();
 }
- */
 
 function validate_movement(cell) {
   var R = parseInt(cell.getAttribute('line'),10);
   var C = parseInt(cell.getAttribute('column'),10);
-  if (Start_Cell[0] === 0 && Start_Cell[1] === 0) { // premier click
-    if (!((Player+M[R][C])%2) || M[R][C]> 2*n_color) return; // vérifie qu'on click sur le pion du joueur qui a la main
+  if (Start_Cell === (0,0)) {                                    // premier click
+    if (!((Player+M[R][C])%2) || M[R][C]> 2*n_color) {           // vérifie qu'on click sur le pion du joueur qui a la main
+      send_msg("please click on your own pieces", fail); 
+      return;
+    }
     Start_Cell = [R,C];
-    // RefreshScreen();
-    cell.firstChild.src = "images/pion" + M[R][C] + "vide.png";
+    ID[R][C].src = "images/pion" + M[R][C] + "vide.png";
     Color = M[R][C]
-    M[R][C] = -1; // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_hope()
+    M[R][C] = -1;                                                // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_jump()
   }
   else {
-    if (Start_Cell[0] === R && Start_Cell[1] === C) { // retour à la case départ annule le mouvement
+    if (Start_Cell[0] === R && Start_Cell[1] === C) {            // retour à la case départ annule le mouvement
       M[R][C] = Color;
-      Start_Cell = [0,0];
-      cell.firstChild.src = "images/pion" + Color + ".png"; //ok je vois l'intéret c'est mieux que d'utilser refershscreen
-      // RefreshScreen();
+      Start_Cell = (0,0);
+      ID[R][C].src = "images/pion" + Color + ".png";
+      return;
     }
-    if (M[R][C] !== -1) return ; // cell not empty
-    get_traject(Start_Cell[0], Start_Cell[1]);
-    if (! ([R, C] in Tree)) { // certains mouvements sont détectés invalides à tort
-      fail.play();
-      alert("Invalid Move!");
+    if (M[R][C] !== -1)                                          // cell not empty
+      {send_msg("Cell not empty!", fail); return;} 
+    if (!(traject = get_traject(Start_Cell, R, C))) {// mouvement invalide     
+      send_msg("Invalide Move!", fail);
       return ;
     }
-    traject = Tree[[R,C]];
     make_move(traject);
   }
 }
 
-function get_traject(R, C) {
+function get_traject(start, R1, C1) {
+  var R = start[0]; var C = start[1]; 
   var i, j;
   for (i =R-1; i <= R+1; i++)  {               // add mouvement adjaçant
     for (j=C-2; j<= C+2; j++) {
        if ((i!=R || j!=C) && in_board(i,j) && M[i][j]== -1)
-         Tree[[i,j]] = [[R,C],[i,j]];
+         if (i==R1 && j==C1) return [start,[i,j]];
     }
   }
-  get_hope(R,C) ;
-  while (Liste.length>0) {
-  cell = Liste.shift() ;
-    if (cell !== Start_Cell) {
-      get_hope(cell[0], cell[1], Tree[cell]) ;
-    }
-  }
+  return get_jump([start], R1,C1) ;
 }
 
 
 
-function get_hope(R, C, parent=0) {
+function get_jump(liste , R1, C1, traject=[]) {
+  if (liste.length<1) return;
   var i, j, k;
   var pivot_r , pivot_c;
   var n, index;
-  if (!parent) parent = [[R,C]];
+  var access_cell = []
+  var R = liste[0][0]; var C = liste[0][1];
   // chercher saut sur ligne dans 2 directions:
-  for (j=-2; j<3; j+=4) { // avancer de deux pas sur la ligne
+  for (j of [-2, 2]) { // avancer de deux pas sur la ligne
     pivot_c = C+j;
-    while (in_board(R, pivot_c) && M[R][pivot_c] === -1) { //avancer jusqu'a case occupée
-      pivot_c += j;
+    while (in_board(R, pivot_c) && M[R][pivot_c] === -1) {  //avancer jusqu'a case occupée
+        pivot_c += j;
     }
     n=0;
-    for (k=pivot_c+j; k<2*pivot_c-C; k+=j) {
-      if (!in_board(R, k)) break ;
-      if (M[R][k] != -1) n+=1 ; //si un autre pion sur le chemin
+    for (k=2; k< (j/2)*(pivot_c-C); k+=2) {
+      if (!in_board(R, pivot_c+j*k)) break ;
+      if (M[R][pivot_c+j*k] != -1) n+=1 ; //si un autre pion sur le chemin
     }
     if (n==0) { // seulement s'il ya un seul pion sur le chemin servant de pivot
-       index = 2*pivot_c-C;
-       if ([R, index] in Tree) continue ; // éviter de tourner rond
-       if (in_board(R, index) && M[R][index]=== -1) { // si la case en symétrie est vide valide:
-         Tree[[R,index]] = parent.concat([[R, index]]);
-         Liste.push([R, index])
-       }
+      index = 2*pivot_c-C;
+      if (contains(traject, [R, index])) continue ; // éviter de tourner rond
+      if (in_board(R, index) && M[R][index]=== -1) { // si la case en symétrie est vide valide:
+       if (R==R1 && index==C1) return traject.concat([[R, C], [R, index]]) ;
+       else access_cell.push([R, index]);
+      }
     }
   }
+
   // chercher saut sur diagonal 4 directions :
-  for (i=-1; i<2; i+=2) { // avancer d'un seul pas sur le diagonal
-    for (j=-1; j<2; j+=2) {
+  for (i of [-1, 1]) { // avancer d'un seul pas sur le diagonal
+    for (j of [-1, 1]) {
       pivot_r = R+i;
       pivot_c = C+j;
       while (in_board(pivot_r, pivot_c) && M[pivot_r][pivot_c] === -1) { // avancer jusqu'a case occupée
@@ -199,21 +198,23 @@ function get_hope(R, C, parent=0) {
         pivot_c += j;
       }
       n=0;
-      for (k=1; k< (pivot_c-C); k+=1) {
+      for (k=1; k< j*(pivot_c-C); k+=1) {
         if (!in_board(pivot_r+i*k, pivot_c+j*k)) break;
         if (M[pivot_r+i*k][pivot_c+j*k] !== -1) n+=1; // si un autre pion sur le chemin break
       }
       if (n===0) {
         index_r = 2*pivot_r-R;
         index_c = 2*pivot_c-C;
-        if ([index_r, index_c] in Tree) continue ; // éviter de tourner rond
+        if (contains(traject,[index_r, index_c])) continue ; // éviter de tourner rond
         if (in_board(index_r, index_c) && M[index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
-          Tree[[index_r,index_c]] = parent.concat([[index_r, index_c]]);
-          Liste.push([index_r, index_c]);
+          if (index_r==R1 && index_c==C1) return traject.concat([[R,C], [index_r, index_c]]);
+          else access_cell.push([index_r, index_c]);
         }
       }
     }
   }
+  return (get_jump(liste.slice(1), R1, C1, traject) || 
+          get_jump(access_cell, R1, C1, traject.concat([liste[0]])));
 }
 
 
@@ -226,7 +227,7 @@ function make_move(mov_list) {
     M[actuel[0]][actuel[1]] = Color;
     ID[previous[0]][previous[1]].src = "images/pion-1.png";
     ID[actuel[0]][actuel[1]].src = "images/pion" + Color + ".png";
-    hope.play();
+    jump.play();
     if (mov_list.length > 2) {
       (function(mov_list) {
         setTimeout(function(){
@@ -235,57 +236,16 @@ function make_move(mov_list) {
       })(mov_list.slice(1));
     }
     else {
-      Start_Cell = [0,0];
+      Start_Cell = (0,0);
       Tree = {};
       Player = !Player;
       update_player_frames();
-      if (check_winner(Color)) IsOver = true
+      check_winner(Player, Color);
 
     }
 }
 
-function check_winner(player) {
-  switch (player) {
-    case 1:
-      for (var R=0; R<4; R++) {
-        if (M[16-R][C] != 1) return false ; 
-      }
-      return true;  
-    case 2:
-      for (var R=0; R<4; R++) {
-        if (M[R][C] != 2)  return false ; 
-      }
-      return true; 
-    case 3:     
-      for (var R=4; R<8; R++) {
-        for (var C=R-4; C<=10-R; C+=2) {
-          if (M[16-R][24-C] != 3) return false;
-        }
-      }
-      return true;
-    case 4:     
-      for (var R=4; R<8; R++) {
-        for (var C=R-4; C<=10-R; C+=2) {
-          if (M[R][C] != 4) return false;
-        }
-      }
-      return true;
-    case 5:     
-      for (var R=4; R<8; R++) {
-        for (var C=R-4; C<=10-R; C+=2) {
-          if (M[16-R][C] != 5) return false;
-        }
-      }
-      return true;
-    case 6:     
-      for (var R=4; R<8; R++) {
-        for (var C=R-4; C<=10-R; C+=2) {
-          if (M[R][24-C] != 6) return false;
-        }
-      }
-      return true;
-  }
-}
+
 
 // crée un cadre pour les infos d'un joueur
 function createPlayerFrame(player) {
@@ -347,15 +307,35 @@ function update_player_frames() {
   }
 }
 
+function send_msg(msg, sound) {
+  sound.play();
+  alert(msg);
+}
+
+function contains(liste, obj) {
+  var i = liste.length;
+  while (i--) {
+    if (liste[i] == obj.join()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function sound(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
-    this.play = function(){
-        this.sound.play();
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function(){
+    this.sound.play();
+  }
+  this.stop = function(){
+    this.sound.pause();
+  }
+}
     }
     this.stop = function(){
         this.sound.pause();
