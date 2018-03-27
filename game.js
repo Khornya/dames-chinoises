@@ -142,7 +142,6 @@ else {
       if (M !== testVars.M) console.log('ERROR: make_move(' + testVars.mov_list + ') is ' + M + ', should be ' + testVars.M);
 
       break;
-      }
     }
   }
 }
@@ -519,9 +518,4 @@ function sound(src) {
   this.stop = function(){
     this.sound.pause();
   }
-}
-    }
-    this.stop = function(){
-        this.sound.pause();
-    }
 }
