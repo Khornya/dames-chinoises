@@ -1,5 +1,9 @@
+var test = false; // true pour lancer un test
+var testType = 1; /* valeurs possibles pour testType :
+  1: teste la fonction check_winner() */
+
 // ***** infos des joueurs ***** (juste pour l'exemple, à récupérer via PHP)
-n_color = sessionStorage.color_number; 
+n_color = sessionStorage.color_number;
 ordi_player = sessionStorage.ordi_player;
 
 var player1 = new Player('Joueur1',220,n_color, 1);
@@ -18,7 +22,7 @@ var isOver = [];
 for (var i=0; i<2; i++)  // 2 nombre de joueur
   isOver[i]=[]
   for(j=0; j<n_color;j++)
-  isOver[i][j]=false; 
+  isOver[i][j]=false;
 
 // création de la matrice vide pour le plateau de jeu
 var M = [];
@@ -39,7 +43,12 @@ for (var R=0; R<X; R++) {
   }
 }
 
-restart();
+if (!test) {
+  restart();
+}
+else {
+  // Marine code ici !
+}
 
 
 
@@ -94,10 +103,9 @@ function create_cell(R, C, option) {
   cell.classList.add('cell');
   cell.setAttribute('line', R);
   cell.setAttribute('column', C);
-  // if (color !== false) { // si la case appartient à l'étoile // test redondant deja testé dans create_board()
-    // ajoute l'image de base pour la case
+  // ajoute l'image de base pour la case
   cell.innerHTML = "<img alt='pion' src='images/pion" + M[R][C] + ".png' />";
-    // gère l'event 'click'
+  // gère l'event 'click'
   cell.addEventListener('click', play);
   ID[R][C] = cell.firstChild; // identité de chaque image dans la matrice ID
   return cell;
@@ -121,7 +129,7 @@ function validate_movement(cell) {
   var C = parseInt(cell.getAttribute('column'),10);
   if (Start_Cell === (0,0)) {                                    // premier click
     if (!((Player+M[R][C])%2) || M[R][C]> 2*n_color) {           // vérifie qu'on click sur le pion du joueur qui a la main
-      send_msg("please click on your own pieces", fail); 
+      send_msg("please click on your own pieces", fail);
       return;
     }
     Start_Cell = [R,C];
@@ -137,8 +145,8 @@ function validate_movement(cell) {
       return;
     }
     if (M[R][C] !== -1)                                          // cell not empty
-      {send_msg("Cell not empty!", fail); return;} 
-    if (!(traject = get_traject(Start_Cell, R, C))) {// mouvement invalide     
+      {send_msg("Cell not empty!", fail); return;}
+    if (!(traject = get_traject(Start_Cell, R, C))) {// mouvement invalide
       send_msg("Invalide Move!", fail);
       return ;
     }
@@ -147,7 +155,7 @@ function validate_movement(cell) {
 }
 
 function get_traject(start, R1, C1) {
-  var R = start[0]; var C = start[1]; 
+  var R = start[0]; var C = start[1];
   var i, j;
   for (i =R-1; i <= R+1; i++)  {               // add mouvement adjaçant
     for (j=C-2; j<= C+2; j++) {
@@ -213,7 +221,7 @@ function get_jump(liste , R1, C1, traject=[]) {
       }
     }
   }
-  return (get_jump(liste.slice(1), R1, C1, traject) || 
+  return (get_jump(liste.slice(1), R1, C1, traject) ||
           get_jump(access_cell, R1, C1, traject.concat([liste[0]])));
 }
 
@@ -279,7 +287,7 @@ function Player(name, score, n_color, number) {
   colors = [];
   for (var i=number; i<= 2*n_color; i+=2) {
     colors.push(i);
-  }  
+  }
   this.colors = colors;
   this.number = number;
 }
