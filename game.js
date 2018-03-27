@@ -290,7 +290,7 @@ function restart() {
   IsOver = false;
   Start_Cell =  (0,0) ;
   for (var i=0, max=players.length; i<max; i++) {
-    createPlayerFrame(players[i]);
+    players[i].createFrame();
   }
   update_player_frames();
 }
@@ -417,6 +417,7 @@ function make_move(mov_list) {
     else {
       Start_Cell = (0,0);
       Tree = {};
+      players[Player+1].updateScore();
       Player = !Player;
       update_player_frames();
       check_winner(Player, Color);
@@ -424,44 +425,48 @@ function make_move(mov_list) {
     }
 }
 
-
-
-// crée un cadre pour les infos d'un joueur
-function createPlayerFrame(player) {
-  var frame = document.createElement('div');
-  frame.className = 'player_info';
-  frame.id = 'player' + player['number'];
-  var name = document.createElement('p');
-  name.className = 'player_name';
-  name.innerHTML = player['name'];
-  var score = document.createElement('p');
-  score.className = 'player_score';
-  score.innerHTML = ('score : ' + player['score']);
-  var colors = document.createElement('span');
-  colors.className = 'player_colors';
-  var code = '';
-  for (var i=0, max=player['colors'].length, color; i<max; i++) {
-    color = player['colors'][i];
-     code += "<img alt='color' src='images/pion" + color + ".png' />"
-  }
-  colors.innerHTML = code;
-  frame.appendChild(name);
-  frame.appendChild(colors);
-  frame.appendChild(score);
-  document.getElementById('left_panel').appendChild(frame);
-}
-
 // constructeur pour la classe Player
-function Player(name, score, n_color, number) {
-  this.name = name;
-  this.score = score;
-  colors = [];
-  for (var i=number; i<= 2*n_color; i+=2) {
-    colors.push(i);
+function Player(name, score, n_color, number, frame) {
+    this.name = name;
+    this.score = score;
+    colors = [];
+    for (var i=number; i<= 2*n_color; i+=2) {
+      colors.push(i);
+    }
+    this.colors = colors;
+    this.number = number;
+    this.frame = frame;
+
+    this.updateScore = function() {
+      this.score += 1;
+      this.frame.lastChild.innerHTML = ('score : ' + this.score);
+    };
+
+    this.createFrame = function() {  // crée un cadre pour les infos d'un joueur
+        var frame = document.createElement('div');
+        frame.className = 'player_info';
+        frame.id = 'player' + this.number;
+        var name = document.createElement('p');
+        name.className = 'player_name';
+        name.innerHTML = this.name;
+        var score = document.createElement('p');
+        score.className = 'player_score';
+        score.innerHTML = ('score : ' + this.score);
+        var colors = document.createElement('span');
+        colors.className = 'player_colors';
+        var code = '';
+        for (var i=0, max=this.colors.length, color; i<max; i++) {
+          color = this.colors[i];
+           code += "<img alt='color' src='images/pion" + color + ".png' />"
+        }
+        colors.innerHTML = code;
+        frame.appendChild(name);
+        frame.appendChild(colors);
+        frame.appendChild(score);
+        document.getElementById('left_panel').appendChild(frame);
+        this.frame = frame;
+      };
   }
-  this.colors = colors;
-  this.number = number;
-}
 
 
 // se déclenche à chaque clic sur une case du plateau
