@@ -6,45 +6,25 @@ var testType = 1; /* valeurs possibles pour testType :
 
 
 
-// ********************************** configuration nombre de joueur nombre de couleur *************************** 
+// ********************************** configuration nombre de joueur nombre de couleur ***************************
 
-var n_player= 2 ;   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
-var n_color=3;        // inutile de définir n_color pour 3, 4, et 6 joueurs
+var n_player = 3;   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
+var n_color = 2;
 
+var Colors = {
+  2: {
+    1: [[1],[2]],
+    2: [[1,3],[2,4]],
+    3: [[1,3,5],[2,4,6]]
+  },
+  3: { 2: [[1,3],[4,5],[2,6]] },
+  4: { 1: [[1],[2],[3],[4]] },
+  6: { 1: [[1],[3],[6],[2],[4],[5]] }
+}[n_player][n_color];
 
-var Colors = []
-for (var i=0; i<n_player; i++) {
-  Colors[i] = [];
-}
-
-switch (n_player) {
-  case 2 :
-    for (var i=1; i<=2*n_color; i+=2) {
-      Colors[0].push(i);
-      Colors[1].push(i+1);
-    }
-    break;
-  case 3 :
-    n_color = 2;
-    Colors[0].push(1, 3);
-    Colors[1].push(4, 5);
-    Colors[2].push(2, 6);
-    break;
-  case 4 :
-    n_color = 1;
-    for (var i =0; i< n_player; i++) {
-      Colors[i].push(i+1);
-    }
-    break;
-  case 6 : 
-   n_color=1;
-   var ordre = [1, 3, 6, 2, 4, 5];    // pour sauvgarder l'ordre de droite à gauche quand le nombre de joueur est 6
-   for (var i=0; i < ordre.length; i++) 
-     Colors[i].push(ordre[i]);
-}
 // ************************************* infos des joueurs (juste pour l'exemple, à récupérer via PHP)************
 
-        
+
 var players = []
 for (var n=1; n<=n_player; n++) {
   var player = new Player('Joueur'+n,220,Colors[n-1], n);
@@ -140,7 +120,7 @@ else {
       }
       break;
     }
-    
+
     case 2: {
       // ***** ENVIRONNEMENT *****
       var testVars = {};
@@ -341,7 +321,7 @@ function restart() {
 function validate_movement(cell) {
   var R = parseInt(cell.getAttribute('line'),10);
   var C = parseInt(cell.getAttribute('column'),10);
-  if (Start_Cell === (0,0)) {                                     // premier click                                   
+  if (Start_Cell === (0,0)) {                                     // premier click
     if (!(Colors[Player].includes(M[R][C]))) {                         // vérifie qu'on click sur le pion du joueur qui a la main
       send_msg("please click on your own pieces", fail);
       return;
@@ -457,13 +437,13 @@ function make_move(mov_list) {
     })(mov_list.slice(1));
   }
   else {
-    check_winner(Color);  
+    check_winner(Color);
     if (! (isOver[Player].includes(false))) {
-      IsOver = true; 
+      IsOver = true;
       send_msg("le jouer"+ (Player+1) + " a gangé", win)
-    } 
-    players[Player].updateScore();      
-    Player = (Player+1)%n_player;     
+    }
+    players[Player].updateScore();
+    Player = (Player+1)%n_player;
     Start_Cell = (0,0);
     update_player_frames();
 
@@ -475,62 +455,62 @@ function check_winner(color) {
     case 1:
       for (var R=0; R<4; R++) {
         for (var C=12-R; C<=12+R; C+=2) {
-          if (M[16-R][C] != 1) return ; 
+          if (M[16-R][C] != 1) return ;
         }
       }
       for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player] === color) 
-          isOver[Player][n]=true; 
-      } 
+        if (Colors[Player] === color)
+          isOver[Player][n]=true;
+      }
     case 2:
       for (var R=0; R<4; R++) {
         for (var C=12-R; C<=12+R; C+=2) {
-          if (M[R][C] != 2)  return ; 
+          if (M[R][C] != 2)  return ;
         }
       }
       for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color) 
-          isOver[Player][n]=true; 
-      } 
-    case 3:     
+        if (Colors[Player][n] === color)
+          isOver[Player][n]=true;
+      }
+    case 3:
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[16-R][24-C] != 3) return;
         }
       }
       for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color) 
-          isOver[Player][n]=true; 
+        if (Colors[Player][n] === color)
+          isOver[Player][n]=true;
       }
-    case 4:     
+    case 4:
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[R][C] != 4) return;
         }
       }
       for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color) 
-          isOver[Player][n]=true; 
+        if (Colors[Player][n] === color)
+          isOver[Player][n]=true;
       }
-    case 5:     
+    case 5:
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[16-R][C] != 5) return;
         }
       }
       for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color) 
-          isOver[Player][n]=true; 
+        if (Colors[Player][n] === color)
+          isOver[Player][n]=true;
       }
-    case 6:     
+    case 6:
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[R][24-C] != 6) return;
         }
       }
       for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color) 
-          isOver[Player][n]=true; 
+        if (Colors[Player][n] === color)
+          isOver[Player][n]=true;
       }
   }
 }
