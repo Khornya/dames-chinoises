@@ -4,24 +4,67 @@ var testType = 1; /* valeurs possibles pour testType :
   2: simule une partie à 2 joueurs 1 couleur
   3: teste la fonction make_move */
 
-// ***** infos des joueurs ***** (juste pour l'exemple, à récupérer via PHP)
-n_color = sessionStorage.color_number;
-ordi_player = sessionStorage.ordi_player;
-
-var player1 = new Player('Joueur1',220,n_color, 1);
-var player2 = new Player('Joueur2',190,n_color, 2);
-var players = [player1, player2];
 
 
-// ***** création du plateau de jeu *****
+// ********************************** configuration nombre de joueur nombre de couleur *************************** 
+
+var n_player= 2 ;   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
+var n_color=3;        // inutile de définir n_color pour 3, 4, et 6 joueurs
+
+
+var Colors = []
+for (var i=0; i<n_player; i++) {
+  Colors[i] = [];
+}
+
+switch (n_player) {
+  case 2 :
+    for (var i=1; i<=2*n_color; i+=2) {
+      Colors[0].push(i);
+      Colors[1].push(i+1);
+    }
+    break;
+  case 3 :
+    Colors[0].push(1, 3);
+    Colors[1].push(4, 5);
+    Colors[2].push(2, 6);
+    break;
+  case 4 :
+    for (var i =0; i< n_player; i++) {
+      Colors[i].push(i+1);
+    }
+    break;
+  case 6 : 
+   var ordre = [1, 3, 6, 2, 4, 5];    // pour sauvgarder l'ordre de droite à gauche quand le nombre de joueur est 6
+   for (var i=0; i < ordre.length; i++) 
+     Colors[i].push(ordre[i]);
+}
+
+// ************************************* infos des joueurs (juste pour l'exemple, à récupérer via PHP)************
+
+        
+var players = []
+for (var n=1; n<=n_player; n++) {
+  var player = new Player('Joueur'+n,220,Colors[n-1], n);
+  players.push(player);
+}
+
+
+// ******************************************* création du plateau de jeu ****************************************
 
 var X = 17, Y = 25; // lignes et colonnes
-var Player = false;  // joueur symbolique
+var Player = 0;  // joueur symbolique
 var IsOver = false; // partie terminée ?
 var Start_Cell =  (0,0) ; // case départ pour un mouvement // pas de couples en JS
 var Color;
 // création de la matrice pour les parties finies
 var isOver = [];
+for (var i=0; i<n_player; i++) {   // 2 représente le  nombre de joueurs
+  isOver[i] = [];
+  for (var j=0; j<n_color; j++) {
+    isOver[i][j] = false;
+  }
+}
 
 // création de la matrice vide pour le plateau de jeu
 var M = [];
@@ -33,7 +76,6 @@ for (var R=0; R<X; R++) {
 }
 
 // création de la matrice vide pour les canvas
-// est ce que necessaire dans notre code la metrice ID?
 var ID = [];
 for (var R=0; R<X; R++) {
   ID[R] = [];
@@ -41,6 +83,10 @@ for (var R=0; R<X; R++) {
     ID[R][C] = false;
   }
 }
+
+
+
+// ************************************************** tests automatisés *************************************************
 
 if (!test) {
   restart();
@@ -73,24 +119,27 @@ else {
       create_board() ;
 
       // ***** TESTS *****
-      for (var player=1; player<=6; player++) {
-        testVars.result = check_winner(player);
-        if (testVars.result) continue;
-        else console.log('ERROR: check_winner(' + player + ') is ' + testVars.result + ', should be true.');
-      }
-      break;
-    }
-// la version suivante est adaptée au code actuel de deux joueurs a revoir apres adopter le multijoueur
-//      for (var color=1; color<=6; color++) {
-//        check_winner(color);
-//      }
-//      for (var player=1; player<=2; player++) {
-//        testVars.result = (! (isOver[player-1].includes(false)))
+//      for (var player=1; player<=6; player++) {
+//        testVars.result = check_winner(player);
 //        if (testVars.result) continue;
 //        else console.log('ERROR: check_winner(' + player + ') is ' + testVars.result + ', should be true.');
 //      }
 //      break;
 
+// la version suivante est adaptée au code actuel multijoueur inclus
+      Player=0;
+      for (var color=1; color<=6; color++) {
+        check_winner(color);
+        Player = (Player+1)%n_player;
+      }
+      for (var player=1; player<=n_player; player++) {
+        testVars.result = (! (isOver[player-1].includes(false)))
+        if (testVars.result) continue;
+        else console.log('ERROR: check_winner(' + player + ') is ' + testVars.result + ', should be true.');
+      }
+      break;
+    }
+    
     case 2: {
       // ***** ENVIRONNEMENT *****
       var testVars = {};
@@ -210,7 +259,7 @@ var sim = {
 
 
 
-// ***** fonctions *****
+// *********************************************** fonctions de jeu ************************************************
 
 // initialise la matrice pour le plateau de jeu
 function init_matrice() {
@@ -273,10 +322,10 @@ function create_cell(R, C, option) {
 function restart() {
   init_matrice() ;
   create_board() ;
-  Player=false  ;
+  Player=0;
   IsOver = false;
   Start_Cell =  (0,0) ;
-  for (var i=0; i<2; i++) {   // 2 représente le  nombre de joueurs
+  for (var i=0; i<n_player; i++) {   // 2 représente le  nombre de joueurs
     isOver[i] = [];
     for (var j=0; j<n_color; j++) {
       isOver[i][j] = false;
@@ -291,8 +340,8 @@ function restart() {
 function validate_movement(cell) {
   var R = parseInt(cell.getAttribute('line'),10);
   var C = parseInt(cell.getAttribute('column'),10);
-  if (Start_Cell === (0,0)) {                                    // premier click
-    if (!((Player+M[R][C])%2) || M[R][C]> 2*n_color) {           // vérifie qu'on click sur le pion du joueur qui a la main
+  if (Start_Cell === (0,0)) {                                     // premier click                                   
+    if (!(Colors[Player].includes(M[R][C]))) {                         // vérifie qu'on click sur le pion du joueur qui a la main
       send_msg("please click on your own pieces", fail);
       return;
     }
@@ -310,7 +359,7 @@ function validate_movement(cell) {
     }
     if (M[R][C] !== -1)                                          // cell not empty
       {send_msg("Cell not empty!", fail); return;}
-    if (!(traject = get_traject(Start_Cell, R, C))) {// mouvement invalide
+    if (!(traject = get_traject(Start_Cell, R, C))) {            // mouvement invalide
       send_msg("Invalide Move!", fail);
       return ;
     }
@@ -407,24 +456,20 @@ function make_move(mov_list) {
     })(mov_list.slice(1));
   }
   else {
-    check_winner(Player+1-1, Color);    // la c'est j'essaye de transférer false en 0 et true en 1 pas trop esthétique
-    if (! (isOver[Player-1+1].includes(false))) {
+    check_winner(Color);  
+    if (! (isOver[Player].includes(false))) {
       IsOver = true; 
       send_msg("le jouer"+ (Player+1) + " a gangé", win)
-    }       
-    Player = !Player     
+    } 
+    players[Player].updateScore();      
+    Player = (Player+1)%n_player;     
     Start_Cell = (0,0);
-    players[Player+1-1].updateScore();
     update_player_frames();
 
   }
 }
 
-function check_winner(player, color) {
-  //théoriquement une fois les pions sont ds le triangle opposé on peut plus les faire bouger
-  //à coder dans validate_movement()
-  if (isOver[player][(color-1)/2 >> 0]) return ;
-
+function check_winner(color) {
   switch (color) {
     case 1:
       for (var R=0; R<4; R++) {
@@ -432,54 +477,68 @@ function check_winner(player, color) {
           if (M[16-R][C] != 1) return ; 
         }
       }
-      isOver[0][0]=true;  
+      for (var n=0; n< Colors[Player].length; n++) {
+        if (Colors[Player] === color) 
+          isOver[Player][n]=true; 
+      } 
     case 2:
       for (var R=0; R<4; R++) {
         for (var C=12-R; C<=12+R; C+=2) {
           if (M[R][C] != 2)  return ; 
         }
       }
-      isOver[1][0]=true; 
+      for (var n=0; n< Colors[Player].length; n++) {
+        if (Colors[Player][n] === color) 
+          isOver[Player][n]=true; 
+      } 
     case 3:     
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[16-R][24-C] != 3) return;
         }
       }
-      isOver[0][1]=true;
+      for (var n=0; n< Colors[Player].length; n++) {
+        if (Colors[Player][n] === color) 
+          isOver[Player][n]=true; 
+      }
     case 4:     
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[R][C] != 4) return;
         }
       }
-      isOver[1][1]=true;
+      for (var n=0; n< Colors[Player].length; n++) {
+        if (Colors[Player][n] === color) 
+          isOver[Player][n]=true; 
+      }
     case 5:     
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[16-R][C] != 5) return;
         }
       }
-      isOver[0][2]=true;
+      for (var n=0; n< Colors[Player].length; n++) {
+        if (Colors[Player][n] === color) 
+          isOver[Player][n]=true; 
+      }
     case 6:     
       for (var R=4; R<8; R++) {
         for (var C=R-4; C<=10-R; C+=2) {
           if (M[R][24-C] != 6) return;
         }
       }
-      isOver[1][2]=true;
+      for (var n=0; n< Colors[Player].length; n++) {
+        if (Colors[Player][n] === color) 
+          isOver[Player][n]=true; 
+      }
   }
 }
 
 
 // constructeur pour la classe Player
-function Player(name, score, n_color, number, frame) {
+function Player(name, score, colors, number, frame) {
     this.name = name;
     this.score = score;
-    colors = [];
-    for (var i=number; i<= 2*n_color; i+=2) {
-      colors.push(i);
-    }
     this.colors = colors;
     this.number = number;
     this.frame = frame;
