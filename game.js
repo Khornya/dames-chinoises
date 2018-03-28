@@ -301,7 +301,7 @@ function create_board() {
   }
   jump = new sound("Sounds/click.mp3");
   fail = new sound("Sounds/fail.mp3");
-  win = new sound("Sound/win.mp3");
+  win = new sound("Sounds/win.mp3");
 }
 
 // crée une case
