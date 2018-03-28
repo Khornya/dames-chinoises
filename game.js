@@ -9,7 +9,7 @@ var testType = 1; /* valeurs possibles pour testType :
 var n_player = 2;   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
 var n_color = 1;
 
-var Colors = {
+var Colors = { // attribution des couleurs à chaque joueur
   2: {
     1: [[1],[2]],
     2: [[1,3],[2,4]],
@@ -32,20 +32,22 @@ for (var n=1; n<=n_player; n++) {
 
 // ******************************************* création du plateau de jeu ****************************************
 
-var Player = 0;  // joueur symbolique
-var IsOver = false; // partie terminée ?
-var Start_Cell =  (0,0) ; // case départ pour un mouvement // pas de couples en JS
-var Color;
-// création de la matrice pour les parties finies
-var isOver = [];
-for (var i=0; i<n_player; i++) {   // 2 représente le  nombre de joueurs
-  isOver[i] = [];
-  for (var j=0; j<n_color; j++) {
-    isOver[i][j] = false;
-  }
-}
+var Player;  // joueur symbolique
+var IsOver; // partie terminée ?
+var Start_Cell; // case départ pour un mouvement // pas de couples en JS
+var Color; // couleur jouée
+var isOver; // matrice pour les couleurs finies
+var M; // matrice pour le plateau
+var ID; // matrice pour les images
 
-var M,ID;
+var coordTriangles = [
+  [[0,12],[1,11],[1,13],[2,10],[2,12],[2,14],[3,9],[3,11],[3,13],[3,15]],
+  [[16,12],[15,11],[15,13],[14,10],[14,12],[14,14],[13,9],[13,11],[13,13],[13,15]],
+  [[4,0],[4,2],[4,4],[4,6],[5,1],[5,3],[5,5],[6,2],[6,4],[7,3]],
+  [[9,21],[10,20],[10,22],[11,19],[11,21],[11,23],[12,18],[12,20],[12,22],[12,24]],
+  [[4,18],[4,20],[4,22],[4,24],[5,19],[5,21],[5,23],[6,20],[6,22],[7,21]],
+  [[9,3],[10,2],[10,4],[11,1],[11,3],[11,5],[12,0],[12,2],[12,4],[12,6]],
+];
 
 var Sounds = {
   jump : new sound("Sounds/click.mp3"),
@@ -263,7 +265,7 @@ function create_board() {
     document.getElementById('board').appendChild(line);
     for (var C=0; C<25; C++) { // crée un div pour chaque cellule
       if (M[R][C] !== false) {
-        cell = create_cell(R, C, M[R][C]);
+        cell = create_cell(R, C);
         line.appendChild(cell);
         board[R][C] = cell.firstChild; // identité de chaque image
       }
@@ -273,7 +275,7 @@ function create_board() {
 }
 
 // crée une case
-function create_cell(R, C, option) {
+function create_cell(R, C) {
   var cell = document.createElement('div');
   cell.classList.add('cell');
   cell.setAttribute('line', R);
@@ -292,12 +294,7 @@ function restart() {
   Player=0;
   IsOver = false;
   Start_Cell =  (0,0) ;
-  for (var i=0; i<n_player; i++) {   // 2 représente le  nombre de joueurs
-    isOver[i] = [];
-    for (var j=0; j<n_color; j++) {
-      isOver[i][j] = false;
-    }
-  }
+  isOver = initArray(n_player-1, n_color-1, false);
   for (var i=0, max=players.length; i<max; i++) {
     players[i].createFrame();
   }
