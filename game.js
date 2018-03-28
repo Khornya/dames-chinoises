@@ -25,21 +25,23 @@ switch (n_player) {
     }
     break;
   case 3 :
+    n_color = 2;
     Colors[0].push(1, 3);
     Colors[1].push(4, 5);
     Colors[2].push(2, 6);
     break;
   case 4 :
+    n_color = 1;
     for (var i =0; i< n_player; i++) {
       Colors[i].push(i+1);
     }
     break;
   case 6 : 
+   n_color=1;
    var ordre = [1, 3, 6, 2, 4, 5];    // pour sauvgarder l'ordre de droite à gauche quand le nombre de joueur est 6
    for (var i=0; i < ordre.length; i++) 
      Colors[i].push(ordre[i]);
 }
-
 // ************************************* infos des joueurs (juste pour l'exemple, à récupérer via PHP)************
 
         
@@ -127,12 +129,11 @@ else {
 //      break;
 
 // la version suivante est adaptée au code actuel multijoueur inclus
-      Player=0;
-      for (var color=1; color<=6; color++) {
-        check_winner(color);
-        Player = (Player+1)%n_player;
-      }
       for (var player=1; player<=n_player; player++) {
+        Player=player-1;
+        for (color of Colors[player-1]) {
+          check_winner(color);
+        }
         testVars.result = (! (isOver[player-1].includes(false)))
         if (testVars.result) continue;
         else console.log('ERROR: check_winner(' + player + ') is ' + testVars.result + ', should be true.');
