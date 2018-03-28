@@ -4,12 +4,10 @@ var testType = 1; /* valeurs possibles pour testType :
   2: simule une partie à 2 joueurs 1 couleur
   3: teste la fonction make_move */
 
+// ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
-
-// ********************************** configuration nombre de joueur nombre de couleur ***************************
-
-var n_player = 3;   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
-var n_color = 2;
+var n_player = 2;   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
+var n_color = 1;
 
 var Colors = {
   2: {
@@ -34,7 +32,6 @@ for (var n=1; n<=n_player; n++) {
 
 // ******************************************* création du plateau de jeu ****************************************
 
-var X = 17, Y = 25; // lignes et colonnes
 var Player = 0;  // joueur symbolique
 var IsOver = false; // partie terminée ?
 var Start_Cell =  (0,0) ; // case départ pour un mouvement // pas de couples en JS
@@ -48,25 +45,13 @@ for (var i=0; i<n_player; i++) {   // 2 représente le  nombre de joueurs
   }
 }
 
-// création de la matrice vide pour le plateau de jeu
-var M = [];
-for (var R=0; R<X; R++) {
-  M[R] = [];
-  for (var C=0; C<Y; C++) {
-    M[R][C] = false;
-  }
+var M,ID;
+
+var Sounds = {
+  jump : new sound("Sounds/click.mp3"),
+  fail : new sound("Sounds/fail.mp3"),
+  win : new sound("Sounds/win.mp3")
 }
-
-// création de la matrice vide pour les canvas
-var ID = [];
-for (var R=0; R<X; R++) {
-  ID[R] = [];
-  for (var C=0; C<Y; C++) {
-    ID[R][C] = false;
-  }
-}
-
-
 
 // ************************************************** tests automatisés *************************************************
 
@@ -244,45 +229,47 @@ var sim = {
 
 // initialise la matrice pour le plateau de jeu
 function init_matrice() {
+  var matrice = initArray(16,24,false);
   for (var R=0; R<4; R++) { // R pour row, C pour column
     for (var C=12-R; C<=12+R; C+=2) {
-      M[R][C] = 1;
-      M[16-R][C] = 2;
+      matrice[R][C] = 1;
+      matrice[16-R][C] = 2;
     }
   }
   for (var R=4; R<8; R++) {
     for (var C=12-R; C<=12+R; C+=2) {
-      M[R][C] = -1;
-      M[16-R][C] = -1;
+      matrice[R][C] = -1;
+      matrice[16-R][C] = -1;
     }
     for (var C=R-4; C<=10-R; C+=2) {
-      M[R][C] = 3;
-      M[16-R][24-C] = 4;
-      M[R][24-C] = 5;
-      M[16-R][C] = 6;
+      matrice[R][C] = 3;
+      matrice[16-R][24-C] = 4;
+      matrice[R][24-C] = 5;
+      matrice[16-R][C] = 6;
     }
   }
-  for (var C=4; C<21; C+=2) { M[8][C] = -1 }
+  for (var C=4; C<21; C+=2) { matrice[8][C] = -1 }
+  return matrice;
 }
 
 // crée le plateau de jeu
 function create_board() {
+  var board = initArray(16,24,false);
   var line, cell;
-  for (var R=0; R<X; R++) { // crée un div pour chaque ligne
+  for (var R=0; R<17; R++) { // crée un div pour chaque ligne
     line = document.createElement('div');
     line.id = 'line'+R;
     line.className = 'line';
     document.getElementById('board').appendChild(line);
-    for (var C=0; C<Y; C++) { // crée un div pour chaque cellule
+    for (var C=0; C<25; C++) { // crée un div pour chaque cellule
       if (M[R][C] !== false) {
         cell = create_cell(R, C, M[R][C]);
         line.appendChild(cell);
+        board[R][C] = cell.firstChild; // identité de chaque image
       }
     }
   }
-  jump = new sound("Sounds/click.mp3");
-  fail = new sound("Sounds/fail.mp3");
-  win = new sound("Sounds/win.mp3");
+  return board;
 }
 
 // crée une case
@@ -295,14 +282,13 @@ function create_cell(R, C, option) {
   cell.innerHTML = "<img alt='pion' src='images/pion" + M[R][C] + ".png' />";
   // gère l'event 'click'
   cell.addEventListener('click', play);
-  ID[R][C] = cell.firstChild; // identité de chaque image dans la matrice ID
   return cell;
 }
 
 // fonction pour recommencer le jeu
 function restart() {
-  init_matrice() ;
-  create_board() ;
+  M = init_matrice() ;
+  ID = create_board() ;
   Player=0;
   IsOver = false;
   Start_Cell =  (0,0) ;
@@ -323,7 +309,7 @@ function validate_movement(cell) {
   var C = parseInt(cell.getAttribute('column'),10);
   if (Start_Cell === (0,0)) {                                     // premier click
     if (!(Colors[Player].includes(M[R][C]))) {                         // vérifie qu'on click sur le pion du joueur qui a la main
-      send_msg("please click on your own pieces", fail);
+      send_msg("please click on your own pieces", Sounds.fail);
       return;
     }
     Start_Cell = [R,C];
@@ -339,9 +325,9 @@ function validate_movement(cell) {
       return;
     }
     if (M[R][C] !== -1)                                          // cell not empty
-      {send_msg("Cell not empty!", fail); return;}
+      {send_msg("Cell not empty!", Sounds.fail); return;}
     if (!(traject = get_traject(Start_Cell, R, C))) {            // mouvement invalide
-      send_msg("Invalide Move!", fail);
+      send_msg("Invalide Move!", Sounds.fail);
       return ;
     }
     make_move(traject);
@@ -428,7 +414,7 @@ function make_move(mov_list) {
   M[actuel[0]][actuel[1]] = Color;
   ID[previous[0]][previous[1]].src = "images/pion-1.png";
   ID[actuel[0]][actuel[1]].src = "images/pion" + Color + ".png";
-  jump.play();
+  Sounds.jump.play();
   if (mov_list.length > 2) {
     (function(mov_list) {
       setTimeout(function(){
@@ -440,7 +426,7 @@ function make_move(mov_list) {
     check_winner(Color);
     if (! (isOver[Player].includes(false))) {
       IsOver = true;
-      send_msg("le jouer"+ (Player+1) + " a gangé", win)
+      send_msg("le jouer"+ (Player+1) + " a gangé", Sounds.win)
     }
     players[Player].updateScore();
     Player = (Player+1)%n_player;
@@ -606,4 +592,15 @@ function sound(src) {
   this.stop = function(){
     this.sound.pause();
   }
+}
+
+function initArray(lignes, colonnes, valeur) {
+  var array = [];
+  for (var i=0; i<=lignes; i++) {
+    array[i] = [];
+    for (var j=0; j<=colonnes; j++) {
+      array[i][j] = valeur;
+    }
+  }
+  return array;
 }
