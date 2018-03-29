@@ -1,20 +1,10 @@
 var test = false; // true pour lancer un test
-var testType = '';
+var testType = 'game';
 
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
 var n_player = 2;   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
 var n_color = 1;
-
-/************************************ chargement du script de test *******************/
-
-(function () {
-  if (test) {
-    var script = document.createElement('script');
-    script.src = 'tests.js';
-    document.getElementsByTagName('body')[0].appendChild(script);
-  }
-})();
 
 var Colors = { // attribution des couleurs à chaque joueur
   2: {
@@ -261,7 +251,7 @@ function make_move(mov_list) {
     (function(mov_list) {
       setTimeout(function(){
         make_move(mov_list);
-      }, 500);
+      }, 500*(!test)); // temps d'exécution réduit pour les tests
     })(mov_list.slice(1));
   }
   else {
