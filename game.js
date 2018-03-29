@@ -255,83 +255,33 @@ function make_move(mov_list) {
     })(mov_list.slice(1));
   }
   else {
-    check_winner(Color);
-    if (! (isOver[Player].includes(false))) {
+    if (check_winner(Color)) {
       IsOver = true;
       send_msg("le jouer"+ (Player+1) + " a gangé", Sounds.win)
     }
     players[Player].updateScore();
-    Player = (Player+1)%n_player;
+    Player = (Player+1) % n_player;
     Start_Cell = (0,0);
     update_player_frames();
 
   }
 }
-
 function check_winner(color) {
-  switch (color) {
-    case 1:
-      for (var R=0; R<4; R++) {
-        for (var C=12-R; C<=12+R; C+=2) {
-          if (M[16-R][C] != 1) return ;
-        }
-      }
-      for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player] === color)
-          isOver[Player][n]=true;
-      }
-    case 2:
-      for (var R=0; R<4; R++) {
-        for (var C=12-R; C<=12+R; C+=2) {
-          if (M[R][C] != 2)  return ;
-        }
-      }
-      for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color)
-          isOver[Player][n]=true;
-      }
-    case 3:
-      for (var R=4; R<8; R++) {
-        for (var C=R-4; C<=10-R; C+=2) {
-          if (M[16-R][24-C] != 3) return;
-        }
-      }
-      for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color)
-          isOver[Player][n]=true;
-      }
-    case 4:
-      for (var R=4; R<8; R++) {
-        for (var C=R-4; C<=10-R; C+=2) {
-          if (M[R][C] != 4) return;
-        }
-      }
-      for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color)
-          isOver[Player][n]=true;
-      }
-    case 5:
-      for (var R=4; R<8; R++) {
-        for (var C=R-4; C<=10-R; C+=2) {
-          if (M[16-R][C] != 5) return;
-        }
-      }
-      for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color)
-          isOver[Player][n]=true;
-      }
-    case 6:
-      for (var R=4; R<8; R++) {
-        for (var C=R-4; C<=10-R; C+=2) {
-          if (M[R][24-C] != 6) return;
-        }
-      }
-      for (var n=0; n< Colors[Player].length; n++) {
-        if (Colors[Player][n] === color)
-          isOver[Player][n]=true;
-      }
+  var R, C;
+  var n =  (color%2 ? color : color-2);
+  for (var i=0; i<10; i++) {
+    R = coordTriangles[n][i][0];
+    C = coordTriangles[n][i][1] 
+    if (M[R][C] != color) return false ;
   }
+  for (n=0; n< Colors[Player].length; n++) {
+    if (Colors[Player] === color)
+      isOver[Player][n]=true;
+  }
+  return (! (isOver[Player].includes(false)))
 }
+
+
 
 
 // constructeur pour la classe Player
