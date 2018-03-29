@@ -1,5 +1,5 @@
-var test = false; // true pour lancer un test
-var testType = 'game';
+var test = true; // true pour lancer un test
+var testType = 'initArray';
 
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
@@ -66,7 +66,7 @@ else {
 
 // initialise la matrice pour le plateau de jeu
 function init_matrice() {
-  var matrice = initArray(16,24,false);
+  var matrice = initArray(17,25,false);
   for (var R=0; R<4; R++) { // R pour row, C pour column
     for (var C=12-R; C<=12+R; C+=2) {
       matrice[R][C] = 1;
@@ -91,7 +91,7 @@ function init_matrice() {
 
 // crée le plateau de jeu
 function create_board() {
-  var board = initArray(16,24,false);
+  var board = initArray(17,25,false);
   var line, cell;
   for (var R=0; R<17; R++) { // crée un div pour chaque ligne
     line = document.createElement('div');
@@ -129,7 +129,7 @@ function restart() {
   Player=0;
   IsOver = false;
   Start_Cell =  (0,0) ;
-  isOver = initArray(n_player-1, n_color-1, false);
+  isOver = initArray(n_player, n_color, false);
   for (var i=0, max=players.length; i<max; i++) {
     players[i].createFrame();
   }
@@ -428,11 +428,14 @@ function sound(src) {
 
 function initArray(lignes, colonnes, valeur) {
   var array = [];
-  for (var i=0; i<=lignes; i++) {
-    array[i] = [];
-    for (var j=0; j<=colonnes; j++) {
-      array[i][j] = valeur;
+  for (var i=0; i<lignes; i++) {
+    if (colonnes) {
+      array[i] = [];
+      for (var j=0; j<colonnes; j++) {
+        array[i][j] = valeur;
+      }
     }
+    else array[i] = valeur;
   }
   return array;
 }
