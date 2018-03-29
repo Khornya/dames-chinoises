@@ -67,6 +67,88 @@ var Tests = {
     if (M !== testVars.M) console.log('ERROR: make_move(' + testVars.mov_list + ') is ' + M + ', should be ' + testVars.M);*/
   },
 
+  restart : {
+
+    run_test : function() {
+      var test = {
+        M : [
+          [false, false, false, false, false, false, false, false, false, false, false, false, 1, false, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, 1, false, 1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, 1, false, 1, false, 1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, 1, false, 1, false, 1, false, 1, false, false, false, false, false, false, false, false, false],
+          [3, false, 3, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, 5, false, 5],
+          [false, 3, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, 5, false],
+          [false, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, false],
+          [false, false, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, false, false],
+          [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+          [false, false, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, false, false],
+          [false, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, false],
+          [false, 6, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, 4, false],
+          [6, false, 6, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, 4, false, 4],
+          [false, false, false, false, false, false, false, false, false, 2, false, 2, false, 2, false, 2, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, 2, false, 2, false, 2, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, 2, false, 2, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, false, 2, false, false, false, false, false, false, false, false, false, false, false, false]
+        ],
+        ID : '?', // comment tester ?
+        Player : 0,
+        IsOver : false,
+        Start_Cell : (0,0),
+        isOver : [[false],[false]],
+        players : '?' // comment tester ?
+      }
+      n_player = 2;
+      n_color = 1;
+      M = ID = Player = IsOver = Start_Cell = isOver = null;
+      restart();
+      var errors = false;
+      if (!Tests.Assert.arraysEqual(M, test.M)) {
+        console.log('M is ', M, ', should be ', test.M);
+        errors = true;
+      }
+      if (Player !== test.Player) {
+        console.log('Player is ', Player, ', should be ', test.Player);
+        errors = true;
+      }
+      if (IsOver !== test.IsOver) {
+        console.log('IsOver is ', IsOver, ', should be ', test.IsOver);
+        errors = true;
+      }
+      if (!Tests.Assert.arraysEqual(Start_Cell, test.Start_Cell)) {
+        console.log('Start_Cell is ', Start_Cell, ', should be ', test.Start_Cell);
+        errors = true;
+      }
+      if (!Tests.Assert.arraysEqual(isOver, test.isOver)) {
+        console.log('isOver is ', isOver, ', should be ', test.isOver);
+        errors = true;
+      }
+      if (errors) console.log('test restart : FAIL');
+      else console.log('test restart : SUCCESS');
+    }
+
+  },
+
+  create_cell : {
+
+    // run_test : function() {
+    //   var tests = {
+    //     1: {
+    //       name : 'create_cell(2,10,3)',
+    //       result : create_cell(2,10,3),
+    //       expected : ?
+    //     }
+    //   }
+    //   for (var i=1; i<=1; i++) {
+    //     if (tests[i].result === tests[i].expected) console.log('test ' + tests[i].name + ': SUCCESS');
+    //     else {
+    //       console.log('test ' + tests[i].name + ': FAIL');
+    //       console.log('result is ', tests[i].result, ', should be ', tests[i].expected);
+    //     }
+    //   }
+    // }
+
+  },
+
   create_board : {
 
     run_test : function() {
