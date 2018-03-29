@@ -1,5 +1,5 @@
-var test = true; // true pour lancer un test
-var testType = 'initArray';
+var test = false; // true pour lancer un test
+var testType = 'create_board';
 
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
@@ -90,7 +90,7 @@ function init_matrice() {
 }
 
 // crée le plateau de jeu
-function create_board() {
+function create_board(matrice) {
   var board = initArray(17,25,false);
   var line, cell;
   for (var R=0; R<17; R++) { // crée un div pour chaque ligne
@@ -99,8 +99,8 @@ function create_board() {
     line.className = 'line';
     document.getElementById('board').appendChild(line);
     for (var C=0; C<25; C++) { // crée un div pour chaque cellule
-      if (M[R][C] !== false) {
-        cell = create_cell(R, C);
+      if (matrice[R][C] !== false) {
+        cell = create_cell(R, C, matrice[R][C]);
         line.appendChild(cell);
         board[R][C] = cell.firstChild; // identité de chaque image
       }
@@ -110,13 +110,13 @@ function create_board() {
 }
 
 // crée une case
-function create_cell(R, C) {
+function create_cell(R, C, color) {
   var cell = document.createElement('div');
   cell.classList.add('cell');
   cell.setAttribute('line', R);
   cell.setAttribute('column', C);
   // ajoute l'image de base pour la case
-  cell.innerHTML = "<img alt='pion' src='images/pion" + M[R][C] + ".png' />";
+  cell.innerHTML = "<img alt='pion' src='images/pion" + color + ".png' />";
   // gère l'event 'click'
   cell.addEventListener('click', play);
   return cell;
@@ -125,7 +125,7 @@ function create_cell(R, C) {
 // fonction pour recommencer le jeu
 function restart() {
   M = init_matrice() ;
-  ID = create_board() ;
+  ID = create_board(M) ;
   Player=0;
   IsOver = false;
   Start_Cell =  (0,0) ;
