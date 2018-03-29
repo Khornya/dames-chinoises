@@ -156,14 +156,40 @@ function validate_movement(cell) {
       ID[R][C].src = "images/pion" + Color + ".png";
       return;
     }
-    if (M[R][C] !== -1)                                          // cell not empty
-      {send_msg("Cell not empty!", Sounds.fail); return;}
+    if (M[R][C] !== -1) {                                        // cell not empty
+      send_msg("Cell not empty!", Sounds.fail); return;
+    }
+
+    if (go_outside(Color,Start_Cell, [R, C])) {                  // mouvement illégal vers l'extérieur du triangle opposé  
+      send_msg("You can't moove this pieces outside!", Sounds.fail); return;
+    }
+
+    if (go_back(Color, Start_Cell[0], Start_Cell[1], R, C)) {    // mouvement illégal en réculant
+      send_msg("You can't go back!", Sounds.fail); return;
+    }
+
+
     if (!(traject = get_traject(Start_Cell, R, C))) {            // mouvement invalide
       send_msg("Invalide Move!", Sounds.fail);
       return ;
     }
     make_move(traject);
   }
+}
+
+
+function go_back(color,R,C,R1,C1) {
+  if (color===1)  return R1-R < 0;
+  if (color===2)  return R1-R > 0;
+  if (color===3 || color=== 6) return C1-C < 0;
+  if (color===4 || color=== 5) return C1-C >  0;
+}
+// en réfléchissant je pense que c'est un test redanadant de la fonction précédente;
+//car une fois dans le triangle opposé on peut pas de toute facon reculer y compris sortir
+function go_outside(color, start, cell) {
+  var n =  (color%2 ? color : color-2);
+  return (contains(coordTriangles[n], start) &&
+         (! contains(coordTriangles[n],cell)))
 }
 
 function get_traject(start, R1, C1) {
@@ -354,7 +380,7 @@ function send_msg(msg, sound) {
 function contains(liste, obj) {
   var i = liste.length;
   while (i--) {
-    if (liste[i] == obj.join()) {
+    if (liste[i].x ==obj.x && liste[i].y == obj.y) {
       return true;
     }
   }
