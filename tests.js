@@ -67,6 +67,149 @@ var Tests = {
     if (M !== testVars.M) console.log('ERROR: make_move(' + testVars.mov_list + ') is ' + M + ', should be ' + testVars.M);*/
   },
 
+  create_board : {
+
+    run_test : function() {
+
+      var tests = {
+        1: {
+          name : 'plateau de base',
+          matrice : [
+            [false, false, false, false, false, false, false, false, false, false, false, false, 1, false, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, 1, false, 1, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, 1, false, 1, false, 1, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, 1, false, 1, false, 1, false, 1, false, false, false, false, false, false, false, false, false],
+            [3, false, 3, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, 5, false, 5],
+            [false, 3, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, 5, false],
+            [false, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, false],
+            [false, false, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, false, false],
+            [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+            [false, false, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, false, false],
+            [false, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, false],
+            [false, 6, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, 4, false],
+            [6, false, 6, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, 4, false, 4],
+            [false, false, false, false, false, false, false, false, false, 2, false, 2, false, 2, false, 2, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, 2, false, 2, false, 2, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, 2, false, 2, false, false, false, false, false, false, false, false, false, false, false],
+            [false, false, false, false, false, false, false, false, false, false, false, false, 2, false, false, false, false, false, false, false, false, false, false, false, false]
+          ],
+          result : []
+        },
+        2 : {
+          name : 'aucune case',
+          matrice : initArray(17,25,false),
+          result : []
+        },
+        3 : {
+          name : 'toutes les cases vides',
+          matrice : initArray(17,25,-1),
+          result : []
+        }
+      };
+
+      for (var i=1; i<=3; i++) {
+        if (i == 1) {
+          console.log("test '" + tests[i].name + "' en cours." );
+          console.log("Prochain test dans 5s.");
+          tests[i].result = create_board(tests[i].matrice);
+        }
+        else {
+          setTimeout(function(tests,n){
+            for (var i=0; i<17; i++) { // supprime le résultat du test précédent
+              for (var j=0; j<25; j++) {
+                if (tests[n-1].result[i][j]) {
+                  tests[n-1].result[i][j].parentNode.parentNode.removeChild(tests[n-1].result[i][j].parentNode);
+                }
+              }
+            }
+            console.log("test '" + tests[n].name + "' en cours.");
+            if (n<3) console.log("Prochain test dans 5s.");
+            tests[n].result = create_board(tests[n].matrice);
+          }, 5000*(i-1), tests, i);
+        }
+      }
+    }
+
+  },
+
+  init_matrice : {
+
+    run_test : function() {
+      var test = {
+        name : "init_matrice()",
+        result : init_matrice(),
+        expected : [
+          [false, false, false, false, false, false, false, false, false, false, false, false, 1, false, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, 1, false, 1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, 1, false, 1, false, 1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, 1, false, 1, false, 1, false, 1, false, false, false, false, false, false, false, false, false],
+          [3, false, 3, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, 5, false, 5],
+          [false, 3, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, 5, false],
+          [false, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, false],
+          [false, false, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, false, false],
+          [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+          [false, false, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, false, false],
+          [false, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, false],
+          [false, 6, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, 4, false],
+          [6, false, 6, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, 4, false, 4],
+          [false, false, false, false, false, false, false, false, false, 2, false, 2, false, 2, false, 2, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, 2, false, 2, false, 2, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, 2, false, 2, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, false, 2, false, false, false, false, false, false, false, false, false, false, false, false]
+        ]
+      };
+
+      if (Tests.Assert.arraysEqual(test.result,test.expected)) console.log('test ' + test.name + ': SUCCESS');
+      else {
+        console.log('test ' + test.name + ': FAIL');
+        console.log('result is ', test.result, ', should be ', test.expected);
+      }
+    }
+
+  },
+
+  initArray : {
+
+    run_test : function() {
+      var tests = {
+        1: {
+          name : "initArray(2,3,0)",
+          result : initArray(2,3,0),
+          expected : [[0,0,0],[0,0,0]]
+        },
+        2: {
+          name : 'initArray(4,0,false)',
+          result : initArray(4,0,false),
+          expected : [false,false,false,false]
+        },
+        3: {
+          name : 'initArray(2,3)',
+          result : initArray(2,3),
+          expected : [[undefined, undefined, undefined],[undefined, undefined, undefined]]
+        },
+        4: {
+          name : 'initArray(0,3,0)',
+          result : initArray(0,3,0),
+          expected : []
+        },
+        5: {
+          name : 'initArray(2)',
+          result : initArray(2),
+          expected : [undefined, undefined]
+        }
+      };
+
+      for (var i=1; i<=5; i++) {
+        if (Tests.Assert.arraysEqual(tests[i].result,tests[i].expected)) console.log('test ' + tests[i].name + ': SUCCESS');
+        else {
+          console.log('test ' + tests[i].name + ': FAIL');
+          console.log('result is ', tests[i].result, ', should be ', tests[i].expected);
+        }
+      }
+    }
+
+  },
+
   game : {
 
     clicks : { // coordonnées des cases à cliquer
@@ -79,8 +222,8 @@ var Tests = {
     run_test : function() {
       // ***** ENVIRONNEMENT *****
       restart();
-      var clicks = Tests.game.clicks[n_player][n_color];
       // ***** TESTS *****
+      var clicks = Tests.game.clicks[n_player][n_color];
       for (var i=0, max = clicks.length; i<max; i++) {
         setTimeout(Tests.sim.simulate,100*i,ID[clicks[i][0]][clicks[i][1]], "click");
       };
@@ -158,5 +301,23 @@ var Tests = {
       return array;
     }
 
+  },
+
+  Assert : {
+
+    arraysEqual : function (a, b) {
+      if (a === b) return true;
+      if (a == null || b == null) return false;
+      if (a.length != b.length) return false;
+      for (var i = 0; i < a.length; ++i) {
+        try {
+          if ((a[i].length || b[i].length) && (!Tests.Assert.arraysEqual(a[i],b[i]))) return false;
+        }
+        catch (e) {if (a[i] !== b[i]) return false;}
+      }
+      return true;
+    }
+
   }
+
 };
