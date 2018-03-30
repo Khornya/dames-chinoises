@@ -1,5 +1,76 @@
 var Tests = {
 
+  validate_movement : { // pas fonctionnel
+
+    init : function() {
+      M = initArray(17,25) ;
+      ID = create_board(M) ;
+      Player=0;
+      IsOver = false;
+      isOver = initArray(n_player, n_color, false);
+      for (var i=0, max=players.length; i<max; i++) {
+        players[i].createFrame();
+      }
+      update_player_frames();
+    },
+
+    run_test : function() {
+      Tests.validate_movement.init();
+      Start_Cell = [0,12];
+      validate_movement(ID[1][11].parentNode);
+    }
+  },
+
+  get_jump : {
+
+      M : [
+        [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+        [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+        [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+        [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+        [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+        [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+        [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+        [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+        [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+        [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+        [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false]
+      ],
+
+    run_test : function() {
+      var tests = {
+        1: {
+          pions : [[6,12],[7,11],[7,13],[8,10],[8,14],[9,11],[9,13],[10,12]],
+          cases : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
+          expected : []
+        }
+      };
+      var coord_case = coord_pion = [];
+      for (var i=1;i<=1; i++) {
+        // etoile vide
+        M = Tests.get_jump.M;
+        // positionne un pion
+        M[8][12] = 1;
+        // positionne les pivots potentiels
+        for (var j=0; j < tests[i].pions.length; j++){
+          coord_pion = tests[i].pions[j];
+          M[coord_pion[0]][coord_pion[1]] = 2;
+        }
+        for (var k=0; k < tests[i].cases.length; k++) {
+          coord_case = tests[i].cases[k];
+          console.log(get_jump([8,12],coord_case[0],coord_case[1]));
+        }
+      }
+    }
+
+  },
+
   check_winner : {
       /*// ***** ENVIRONNEMENT *****
       var testVars = {};
@@ -24,7 +95,7 @@ var Tests = {
       ]
       create_board(M) ;
       isOver = initArray(n_player, n_color, false);
-      
+
       for (var player=1; player<=1; player++) {
         Player=player-1;
         for (color of Colors[player-1]) {
