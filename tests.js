@@ -22,26 +22,19 @@ var Tests = {
       [false,false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false,false],
       [false,false,false,false,false,false,false,false,false,false,false,false,  1  ,false,false,false,false,false,false,false,false,false,false,false,false]
       ]
-      create_board() ;
-
-      // ***** TESTS *****
-  //      for (var player=1; player<=6; player++) {
-  //        testVars.result = check_winner(player);
-  //        if (testVars.result) continue;
-  //        else console.log('ERROR: check_winner(' + player + ') is ' + testVars.result + ', should be true.');
-  //      }
-  //      break;
-
-  // la version suivante est adaptée au code actuel multijoueur inclus
-      for (var player=1; player<=n_player; player++) {
+      create_board(M) ;
+      isOver = initArray(n_player, n_color, false);
+      
+      for (var player=1; player<=1; player++) {
         Player=player-1;
         for (color of Colors[player-1]) {
-          check_winner(color);
+          testVars.result = check_winner(color);
         }
-        testVars.result = (! (isOver[player-1].includes(false)))
         if (testVars.result) continue;
         else console.log('ERROR: check_winner(' + player + ') is ' + testVars.result + ', should be true.');
-      }*/
+      }
+      break;
+    } */
   },
 
   make_move : {
