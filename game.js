@@ -36,6 +36,7 @@ var Color; // couleur jouée
 var isOver; // matrice pour les couleurs finies
 var M; // matrice pour le plateau
 var ID; // matrice pour les images
+var History; // liste qui sauvgarde pour chaque joueur le dernier chemin empreinté
 
 var coordTriangles = [
   [[0,12],[1,11],[1,13],[2,10],[2,12],[2,14],[3,9],[3,11],[3,13],[3,15]],
@@ -130,6 +131,7 @@ function restart() {
   IsOver = false;
   Start_Cell =  (0,0) ;
   isOver = initArray(n_player, n_color, false);
+  History = initArray(n_player, 1, false);
   for (var i=0, max=players.length; i<max; i++) {
     players[i].createFrame();
   }
@@ -161,7 +163,8 @@ function validate_movement(cell) {
     }
 
     if (go_outside(Color,Start_Cell, [R, C])) {                  // mouvement illégal vers l'extérieur du triangle opposé  
-      send_msg("You can't moove this pieces outside!", Sounds.fail); return;
+      send_msg("You can't moove this piece outside!", Sounds.fail);
+      return;
     }
 
     if (go_back(Color, Start_Cell[0], Start_Cell[1], R, C)) {    // mouvement illégal en réculant
@@ -173,6 +176,11 @@ function validate_movement(cell) {
       send_msg("Invalide Move!", Sounds.fail);
       return ;
     }
+    if (sameTraject(traject)) {
+      send_msg("You can't replay the last moove", Sounds.fail);
+      return ;
+    }
+    History[Player] = traject;
     make_move(traject);
   }
 }
@@ -190,6 +198,20 @@ function go_outside(color, start, cell) {
   var n =  (color%2 ? color : color-2);
   return (contains(coordTriangles[n], start) &&
          (! contains(coordTriangles[n],cell)))
+}
+
+function sameTraject(traject) {
+  var i, j;
+  i =traject.length;
+  j= i-1
+  last = History[Player];
+  if (i !== last.length) return false;
+  while (i--) {
+    if (traject[j-i][0] !== last[i][0] || 
+       traject[j-i][1] !== last[i][1])
+       return false;
+   }
+   return true;
 }
 
 function get_traject(start, R1, C1) {
