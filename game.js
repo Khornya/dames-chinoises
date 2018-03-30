@@ -213,43 +213,23 @@ function get_jump(liste , R1, C1, traject=[]) {
   var n, index;
   var access_cell = []
   var R = liste[0][0]; var C = liste[0][1];
-  // chercher saut sur ligne dans 2 directions:
-  for (j of [-2, 2]) { // avancer de deux pas sur la ligne
-    pivot_c = C+j;
-    while (in_board(R, pivot_c) && M[R][pivot_c] === -1) {  //avancer jusqu'a case occupée
-        pivot_c += j;
-    }
-    n=0;
-    for (k=2; k< (j/2)*(pivot_c-C); k+=2) {
-      if (!in_board(R, pivot_c+j*k)) break ;
-      if (M[R][pivot_c+j*k] != -1) n+=1 ; //si un autre pion sur le chemin
-    }
-    if (n==0) { // seulement s'il ya un seul pion sur le chemin servant de pivot
-      index = 2*pivot_c-C;
-      if (contains(traject, [R, index])) continue ; // éviter de tourner rond
-      if (in_board(R, index) && M[R][index]=== -1) { // si la case en symétrie est vide valide:
-       if (R==R1 && index==C1) return traject.concat([[R, C], [R, index]]) ;
-       else access_cell.push([R, index]);
-      }
-    }
-  }
 
-  // chercher saut sur diagonal 4 directions :
-  for (i of [-1, 1]) { // avancer d'un seul pas sur le diagonal
-    for (j of [-1, 1]) {
+  // chercher saut sur ligne + diagonal 6 directions :
+  for (i=-1; i<2; i++) {     // i in [-1, 0, 1]
+    for (j=-1; j<2; j+=2) {  // j in [-1, 1]
       pivot_r = R+i;
       pivot_c = C+j;
-      while (in_board(pivot_r, pivot_c) && M[pivot_r][pivot_c] === -1) { // avancer jusqu'a case occupée
+      while (in_board(pivot_r, pivot_c) && M[pivot_r][pivot_c] < 1) { // avancer jusqu'a case occupée
         pivot_r += i;
         pivot_c += j;
       }
       n=0;
       for (k=1; k< j*(pivot_c-C); k+=1) {
         if (!in_board(pivot_r+i*k, pivot_c+j*k)) break;
-        if (M[pivot_r+i*k][pivot_c+j*k] !== -1) n+=1; // si un autre pion sur le chemin break
+        if (M[pivot_r+i*k][pivot_c+j*k] > 0) n+=1; // si un autre pion sur le chemin break
       }
       if (n===0) {
-        index_r = 2*pivot_r-R;
+        index_r = 2*pivot_r-R;   //(quand i=0; , pivot_r=R ; 2*R-R=R (on reste sur la même la ligne)
         index_c = 2*pivot_c-C;
         if (contains(traject,[index_r, index_c])) continue ; // éviter de tourner rond
         if (in_board(index_r, index_c) && M[index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
@@ -396,9 +376,6 @@ function sound(src) {
   document.body.appendChild(this.sound);
   this.play = function(){
     this.sound.play();
-  }
-  this.stop = function(){
-    this.sound.pause();
   }
 }
 
