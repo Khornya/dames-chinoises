@@ -301,7 +301,7 @@ function check_winner(color) {
     if (M[R][C] != color) return false ;
   }
   for (n=0; n< Colors[Player].length; n++) {
-    if (Colors[Player] === color)
+    if (Colors[Player][n] === color)
       isOver[Player][n]=true;
   }
   return (! (isOver[Player].includes(false)))
