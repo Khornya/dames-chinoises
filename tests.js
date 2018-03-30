@@ -48,11 +48,12 @@ var Tests = {
         1: {
           pions : [[6,12],[7,11],[7,13],[8,10],[8,14],[9,11],[9,13],[10,12]],
           cases : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
-          expected : []
+          expected : [false, [[8,12],[6,14]], [[8,12],[8,16]], [[8,12],[10,14]], false, [[8,12],[10,10]], [[8,12],[8,8]], [[8,12],[6,10]]]
         }
       };
-      var coord_case = coord_pion = [];
+      var coord_case = coord_pion = result = [];
       for (var i=1;i<=1; i++) {
+        result = [];
         // etoile vide
         M = Tests.get_jump.M;
         // positionne un pion
@@ -64,7 +65,14 @@ var Tests = {
         }
         for (var k=0; k < tests[i].cases.length; k++) {
           coord_case = tests[i].cases[k];
-          console.log(get_jump([8,12],coord_case[0],coord_case[1]));
+          result.push(get_jump([[8,12]],coord_case[0],coord_case[1]));
+        }
+        if (Tests.Assert.arraysEqual(result,tests[i].expected)) {
+          console.log('test ' + i + ' : SUCCESS');
+        }
+        else {
+          console.log('test ' + i + ' : FAIL');
+          console.log('result is ', result, ', should be ', tests[i].expected);
         }
       }
     }
@@ -72,40 +80,78 @@ var Tests = {
   },
 
   check_winner : {
-      /*// ***** ENVIRONNEMENT *****
-      var testVars = {};
-      M = [ // tous les joueurs ont gagné
-      [false,false,false,false,false,false,false,false,false,false,false,false,  2  ,false,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,  2  ,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,  2  ,false,  2  ,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false],
-      [  4  ,false,  4  ,false,  4  ,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,  6  ,false,  6  ],
-      [false,  4  ,false,  4  ,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,  6  ,false],
-      [false,false,  4  ,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,false],
-      [false,false,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,false,false],
-      [false,false,false,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,false,false,false],
-      [false,false,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,false,false],
-      [false,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,false],
-      [false,  5  ,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,  3  ,false],
-      [  5  ,false,  5  ,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,  3  ,false,  3  ],
-      [false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false,false],
-      [false,false,false,false,false,false,false,false,false,false,false,false,  1  ,false,false,false,false,false,false,false,false,false,false,false,false]
-      ]
-      create_board(M) ;
-      isOver = initArray(n_player, n_color, false);
 
-      for (var player=1; player<=1; player++) {
-        Player=player-1;
-        for (color of Colors[player-1]) {
-          testVars.result = check_winner(color);
+    M : [ // tous les joueurs ont gagné
+    [false,false,false,false,false,false,false,false,false,false,false,false,  2  ,false,false,false,false,false,false,false,false,false,false,false,false],
+    [false,false,false,false,false,false,false,false,false,false,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false,false,false],
+    [false,false,false,false,false,false,false,false,false,false,  2  ,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false,false],
+    [false,false,false,false,false,false,false,false,false,  2  ,false,  2  ,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false],
+    [  4  ,false,  4  ,false,  4  ,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,  6  ,false,  6  ],
+    [false,  4  ,false,  4  ,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,  6  ,false],
+    [false,false,  4  ,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,false],
+    [false,false,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,false,false],
+    [false,false,false,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,false,false,false],
+    [false,false,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,false,false],
+    [false,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,false],
+    [false,  5  ,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,  3  ,false],
+    [  5  ,false,  5  ,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,  3  ,false,  3  ],
+    [false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false],
+    [false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false],
+    [false,false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false,false],
+    [false,false,false,false,false,false,false,false,false,false,false,false,  1  ,false,false,false,false,false,false,false,false,false,false,false,false]
+  ],
+
+    run_test : function() {
+      var tests = {
+        1 : {
+          n_player : 6,
+          n_color : 1,
+          expected : [true,true,true,true,true,true]
+        },
+        2 : {
+          n_player : 4,
+          n_color : 1,
+          expected : [true,true,true,true]
+        },
+        3 : {
+          n_player : 3,
+          n_color : 2,
+          expected : [false,true,false,true,false,true]
         }
-        if (testVars.result) continue;
-        else console.log('ERROR: check_winner(' + player + ') is ' + testVars.result + ', should be true.');
+      };
+      var result;
+      for (var i=1; i<=3; i++) {
+        result = [];
+        M = Tests.check_winner.M;
+        n_player = tests[i].n_player;
+        n_color = tests[i].n_color;
+        Colors = { // attribution des couleurs à chaque joueur
+          2: {
+            1: [[1],[2]],
+            2: [[1,3],[2,4]],
+            3: [[1,3,5],[2,4,6]]
+          },
+          3: { 2: [[1,3],[4,5],[2,6]] },
+          4: { 1: [[1],[2],[3],[4]] },
+          6: { 1: [[1],[3],[6],[2],[4],[5]] }
+        }[n_player][n_color];
+        isOver = initArray(n_player, n_color, false);
+        for (var player=0; player<n_player; player++) {
+          Player = player;
+          for (var j=0; j<Colors[Player].length; j++) {
+            result.push(check_winner(Colors[Player][j]));
+          }
+        }
+        if (Tests.Assert.arraysEqual(result,tests[i].expected)) {
+          console.log('test ' + i + ': SUCCESS');
+        }
+        else {
+          console.log('test ' + i + ': FAIL');
+          console.log('result is ', result, ', should be ', tests[i].expected);
+        }
       }
-      break;
-    } */
+    }
+
   },
 
   make_move : {
@@ -350,6 +396,74 @@ var Tests = {
         else {
           console.log('test ' + tests[i].name + ': FAIL');
           console.log('result is ', tests[i].result, ', should be ', tests[i].expected);
+        }
+      }
+    }
+
+  },
+
+  in_board : {
+    run_test : function() {
+      var tests = {
+        1 : {
+          x : 2,
+          y : 12,
+          expected : true
+        },
+        2 : {
+          x : 10,
+          y : -1,
+          expected : false
+        }
+      }
+      var result;
+      for (var i=1; i<=2; i++) {
+        result = in_board(tests[i].x, tests[i].y);
+        if (result === tests[i].expected) {
+          console.log('test ' + i + ': SUCCESS');
+        }
+        else {
+          console.log('test ' + i + ': FAIL');
+          console.log('contains(',tests[i].x, ',', tests[i].x, ') is ', result, ', should be ', tests[i].expected);
+        }
+      }
+    }
+  },
+
+  contains : {
+
+    run_test : function() {
+      var tests = {
+        1 : {
+          liste : [1,2,3],
+          objet : 2,
+          expected : true
+        },
+        2 : {
+          liste : ['1','2','3'],
+          objet : 2,
+          expected : false
+        },
+        3 : {
+          liste : [[2,3],[1,5],[1,2]],
+          objet : [1,2],
+          expected : true
+        },
+        4 : {
+          liste :  [[2,3],[3,5],[4,2]],
+          objet : [1,2],
+          expected : false
+        }
+      }
+      var result;
+      for (var i=1; i<=4; i++) {
+        result = contains(tests[i].liste, tests[i].objet);
+        if ( result === tests[i].expected) {
+          console.log('test ' + i + ': SUCCESS');
+        }
+        else {
+          console.log('test ' + i + ': FAIL');
+          console.log('contains(',tests[i].liste, ',', tests[i].objet, ') is ', result, ', should be ', tests[i].expected);
         }
       }
     }
