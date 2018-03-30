@@ -380,7 +380,7 @@ function send_msg(msg, sound) {
 function contains(liste, obj) {
   var i = liste.length;
   while (i--) {
-    if (liste[i].x ==obj.x && liste[i].y == obj.y) {
+    if (liste[i][0]==obj[0] && liste[i][1] == obj[1]) {
       return true;
     }
   }
