@@ -1,3 +1,8 @@
+<!-- pour la gestion des sessions plus tard -->
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,63 +12,93 @@
   </head>
   <body>
     <header>
-      <a href="home.html"><img alt="logo" src="images/logo128.png"/></a>
-      <h1>HOP HOP HOP</h1>
-      <h2>dames chinoises</h2>
-      <img alt="sauts" src="images/sauts.png"/>
+      <?php include 'header.html';?>
     </header>
-    <section>
-      <h1>Bienvenue sur HOP HOP HOP !</h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in risus urna. Fusce a urna ac diam dictum suscipit vel ac erat. In finibus purus eget sem cursus, sed aliquet urna eleifend. Etiam id tempor nisl. Aenean efficitur mollis odio, at congue ex lobortis luctus. Curabitur interdum enim eu urna tincidunt, vitae viverra felis iaculis. In hac habitasse platea dictumst. Suspendisse ex purus, aliquet quis elit sed, commodo viverra lorem. Praesent purus eros, commodo et quam gravida, volutpat commodo eros. Donec ultrices maximus nulla ut semper. Integer non nulla mi. Cras viverra lobortis rutrum.</p>
-    </section>
-    <section>
-      <h1>Les dames chinoises</h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in risus urna. Fusce a urna ac diam dictum suscipit vel ac erat. In finibus purus eget sem cursus, sed aliquet urna eleifend. Etiam id tempor nisl. Aenean efficitur mollis odio, at congue ex lobortis luctus. Curabitur interdum enim eu urna tincidunt, vitae viverra felis iaculis. In hac habitasse platea dictumst. Suspendisse ex purus, aliquet quis elit sed, commodo viverra lorem. Praesent purus eros, commodo et quam gravida, volutpat commodo eros. Donec ultrices maximus nulla ut semper. Integer non nulla mi. Cras viverra lobortis rutrum.</p>
-    </section>
-    <section>
-      <h1>Jouer une partie</h1>
-      <script>
-        if (typeof(Storage) !== "undefined") {
-          sessionStorage.color_number=0 ;
-          sessionStorage.ordi_player=0 ;
-        }
-
-        function choose_player(n) {
-          sessionStorage.ordi_player=n;
-        }
-        function choose_color(n) {
-          sessionStorage.color_number=n;
-        }
-      </script>
-      
-      <form>
-        <input type="radio" name="mode" value="1vs1" id="1vs1" onclick="choose_player(0);" />
-        <label for="1vs1">2 joueurs</label>
-        <input type="radio" name="mode" value="1vsAI" id="1vsAI" onclick="choose-player(1);" />
-        <label for="1vs1">1 joueur contre l'IA</label>
-        <br />
-        Nombre de couleurs :
-        <input type="radio" name="colors" value="1" id="1" onclick="choose_color(1);"/>
-        <label for="1">1</label>
-        <input type="radio" name="colors" value="2" id="2" onclick="choose_color(2);"/>
-        <label for="2">2</label>
-        <input type="radio" name="colors" value="3" id="3" onclick="choose_color(3);"/>
-        <label for="3">3</label>
-        <br />
-        <label for="player1">Nom joueur 1 :</label>
-        <input type="text" name="player1" id="player1" />
-        <br />
-        <label for="player2">Nom joueur 2 :</label>
-        <input type="text" name="player2" id="player2" />
-        <br />
-        <input type="button" value="Jouer !" onclick="location.href='game.html';"/>
-      </form>
-    </section>
-    <aside>
-      <h1>Meilleurs scores</h1>
-    </aside>
-    <footer>
+    <div id="main_wrapper">
+      <section>
+        <h1>Bienvenue sur HOP HOP HOP !</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in.</p>
+      </section>
+      <section>
+        <h1>Les dames chinoises</h1>
+          <p>
+          Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
+          </p>
+          <div id="seemore">
+            This is my DIV element.
+          </div>
+          <button id="voirPlus" onclick="seemore()">Voir plus</button>
+      </section>
+      <div id="test">
+          <section id="game">
+            <h1>Jouer une partie</h1>
+            <form action="/game.php" target="_self" method="POST">
+              <select id="mode" name="nombre_joueurs">
+                <option value="1">1 player vs CPU</option>
+                <option value="2">2 players</option>
+                <option value="3">3 players </option>
+                <option value="4">4 players </option>
+              </select>
+              <br />
+              <label for="player1">Nom joueur 1</label>
+              <input type="text" name="player1" id="player1" placeholder="PLAYER 1"/>
+              <br />
+              <label for="player2">Nom joueur 2</label>
+              <input type="text" name="player2" id="player2" placeholder="PLAYER 2"/>
+              <br />
+              <label for="player2">Nom joueur 3</label>
+              <input type="text" name="player3" id="player3" placeholder="PLAYER 3"/>
+              <br />
+              <label for="player2">Nom joueur 4</label>
+              <input type="text" name="player4" id="player4" placeholder="PLAYER 4"/>
+              <br />
+              Nombre de couleurs :
+              <input type="radio" name="colors" value="1" id="1" checked/>
+              <label for="1">1</label>
+              <input type="radio" name="colors" value="2" id="2" />
+              <label for="2">2</label>
+              <input type="radio" name="colors" value="3" id="3" />
+              <label for="3">3</label>
+              <br/>
+              <input type="submit" name="PLAY" value="PLAY"/>
+            </form>
+          </section>
+          <table id="score">
+          <caption><h1>Meilleurs scores</h1></caption>
+            <tr>
+              <th>Pseudo</th>
+              <th>Score</th> 
+            </tr>
+            <tr>
+              <td>Jill</td>
+              <td>50</td>
+            </tr>
+            <tr>
+              <td>Eve</td>
+              <td>94</td>
+            </tr>
+            <tr>
+              <td>John</td>
+              <td>80</td>
+            </tr>
+          </table>
+      </div>
+    </div>
+    <footer clear:both>
       <a href="mailto:contact@hophophop.fr">Nous contacter</a>
     </footer>
+  <script>
+    function seemore() {
+    var x = document.getElementById("seemore");
+    var y = document.getElementById("voirPlus");
+    if (x.style.display === "none") {  /* get computedStyle */
+        x.style.display = "block";
+        y.innerHTML = "Voir moins";
+    } else {
+        x.style.display = "none";
+        y.innerHTML = "Voir plus";
+    }
+  }
+  </script>
   </body>
 </html>
