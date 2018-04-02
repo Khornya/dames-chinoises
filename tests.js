@@ -1,63 +1,108 @@
 var Tests = {
 
-  validate_movement : { // pas fonctionnel
-
-    init : function() {
-      M = initArray(17,25) ;
-      ID = create_board(M) ;
-      Player=0;
-      IsOver = false;
-      isOver = initArray(n_player, n_color, false);
-      for (var i=0, max=players.length; i<max; i++) {
-        players[i].createFrame();
-      }
-      update_player_frames();
-    },
+  validate_movement : {
 
     run_test : function() {
-      Tests.validate_movement.init();
-      Start_Cell = [0,12];
-      validate_movement(ID[1][11].parentNode);
+      restart();
+      restart();
+      console.log('There should be an alert \'Please click on your own pieces\'');
+      validate_movement(ID[16][12].parentNode);
+      console.log('Cell 3,11 should be selected');
+      validate_movement(ID[3][11].parentNode);
+      if (M[3][11] !== -1) console.log('M[3][11] is ',M[3][11], ', should be -1');
+      console.log('There should be an alert \'Cell not empty\'');
+      validate_movement(ID[2][12].parentNode);
+      validate_movement(ID[3][11].parentNode);
+      validate_movement(ID[2][12].parentNode);
+      validate_movement(ID[4][14].parentNode);
+      validate_movement(ID[14][14].parentNode);
+      validate_movement(ID[12][12].parentNode);
+      validate_movement(ID[3][13].parentNode);
+      console.log('There should be an alert \'You can\'t go back\'');
+      validate_movement(ID[2][12].parentNode);
+      validate_movement(ID[3][13].parentNode);
+      validate_movement(ID[4][14].parentNode);
+      console.log('There should be an alert \'You can\'t replay the last move\'');
+      validate_movement(ID[2][12].parentNode);
+      console.log('There should be an alert \'Invalid move !\'');
+      validate_movement(ID[6][14].parentNode);
     }
   },
 
-  get_jump : {
-
-      M : [
-        [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false],
-        [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
-        [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
-        [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
-        [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
-        [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
-        [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
-        [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
-        [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
-        [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
-        [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
-        [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
-        [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
-        [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
-        [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
-        [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
-        [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false]
-      ],
+  sameTraject : {
 
     run_test : function() {
       var tests = {
         1: {
-          pions : [[6,12],[7,11],[7,13],[8,10],[8,14],[9,11],[9,13],[10,12]],
-          cases : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
-          expected : [false, [[8,12],[6,14]], [[8,12],[8,16]], [[8,12],[10,14]], false, [[8,12],[10,10]], [[8,12],[8,8]], [[8,12],[6,10]]]
+          history : [[8,12],[4,16],[4,8],[6,10],[8,8],[14,14],[16,12]],
+          traject : [[8,12],[4,16],[4,8],[6,10],[8,8],[14,14],[16,12]].reverse(),
+          expected : true
+        },
+        2: {
+          history : [[8,12],[4,16],[4,8],[6,10],[8,8],[14,14],[16,12]],
+          traject : [[16,12],[14,14]],
+          expected : true
+        },
+        3: {
+          history : [[8,12],[4,16]],
+          traject : [[16,12],[14,14]],
+          expected : false
+        }
+      };
+      var result;
+      for (var i=1, max=Object.keys(tests).length;i<=max; i++) {
+        Player = 0;
+        History[Player] = tests[i].history;
+        result = sameTraject(tests[i].traject);
+        if (result === tests[i].expected) {
+          console.log('test ' + i + ' : SUCCESS');
+        }
+        else {
+          console.log('test ' + i + ' : FAIL');
+          console.log('result is ', result, ', should be ', tests[i].expected);
+        }
+
+      }
+    }
+
+  },
+
+  get_traject : {
+
+    run_test : function() {
+      var tests = {
+        1: {
+          start : [8,12],
+          pions : [[4,12],[5,9],[6,14],[7,9],[11,11],[15,13]],
+          cases : [[16,12],[9,13],[13,9]],
+          expected : [[[8,12],[4,16],[4,8],[6,10],[8,8],[14,14],[16,12]],[[8,12],[9,13]],false]
         }
       };
       var coord_case = coord_pion = result = [];
-      for (var i=1;i<=1; i++) {
+      for (var i=1, max=Object.keys(tests).length;i<=max; i++) {
         result = [];
         // etoile vide
-        M = Tests.get_jump.M;
+        M = [
+          [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+          [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+          [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+          [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+          [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+          [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+          [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+          [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+          [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+          [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+          [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false]
+        ];
         // positionne un pion
-        M[8][12] = 1;
+        M[tests[i].start[0]][tests[i].start[1]] = 1;
         // positionne les pivots potentiels
         for (var j=0; j < tests[i].pions.length; j++){
           coord_pion = tests[i].pions[j];
@@ -65,9 +110,154 @@ var Tests = {
         }
         for (var k=0; k < tests[i].cases.length; k++) {
           coord_case = tests[i].cases[k];
-          result.push(get_jump([[8,12]],coord_case[0],coord_case[1]));
+          result.push(get_traject(tests[i].start,coord_case[0],coord_case[1]));
         }
-        if (Tests.Assert.arraysEqual(result,tests[i].expected)) {
+        if (JSON.stringify(result) == JSON.stringify(tests[i].expected)) {
+          console.log('test ' + i + ' : SUCCESS');
+        }
+        else {
+          console.log('test ' + i + ' : FAIL');
+          console.log('result is ', result, ', should be ', tests[i].expected);
+        }
+      }
+    }
+
+  },
+
+  go_back : {
+
+    run_test : function() {
+      var tests = {
+        1: {
+          expected : [true,true,false,false,false,false]
+        },
+        2: {
+          expected : [false,false,false,true,true,false]
+        },
+        3: {
+          expected : [true,false,false,false,false,true]
+        },
+        4: {
+          expected : [false,false,true,true,false,false]
+        },
+        5: {
+          expected : [false,true,true,false,false,false]
+        },
+        6: {
+          expected : [false,false,false,false,true,true]
+        }
+      };
+      var result = [];
+      for (var i=1, max=Object.keys(tests).length;i<=max; i++) {
+        result = [];
+        // etoile vide
+        M = [
+          [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+          [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+          [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+          [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+          [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+          [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+          [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+          [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+          [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+          [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+          [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false]
+        ];
+        // positionne un pion
+        M[8][12] = i;
+        var cases = [[7,11],[7,13],[8,14],[9,13],[9,11],[8,10]];
+        for (var j=0; j < cases.length; j++) {
+          result.push(go_back(i,8,12,cases[j][0],cases[j][1]));
+        }
+        if (JSON.stringify(result) == JSON.stringify(tests[i].expected)) {
+          console.log('test ' + i + ' : SUCCESS');
+        }
+        else {
+          console.log('test ' + i + ' : FAIL');
+          console.log('result is ', result, ', should be ', tests[i].expected);
+        }
+      }
+    }
+
+  },
+
+  get_jump : {
+
+    run_test : function() {
+      var tests = {
+        1: {
+          start : [8,12],
+          pions : [[6,12],[7,11],[7,13],[8,10],[8,14],[9,11],[9,13],[10,12]],
+          cases : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
+          expected : [false, [[8,12],[6,14]], [[8,12],[8,16]], [[8,12],[10,14]], false, [[8,12],[10,10]], [[8,12],[8,8]], [[8,12],[6,10]]]
+        },
+        2: {
+          start : [8,12],
+          pions : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
+          cases : [[0,12],[4,16],[8,20],[12,16],[16,12],[12,8],[8,4],[4,8]],
+          expected : [false, [[8,12],[4,16]], [[8,12],[8,20]], [[8,12],[12,16]], false, [[8,12],[12,8]], [[8,12],[8,4]], [[8,12],[4,8]]]
+        },
+        3: {
+          start : [12,16],
+          pions : [[8,12],[8,20],[12,8]],
+          cases : [[4,8],[4,24],[12,0]],
+          expected : [[[12,16],[4,8]], [[12,16],[4,24]], [[12,16],[12,0]]]
+        },
+        4: {
+          start : [12,16],
+          pions : [[8,12],[8,20],[12,8],[5,9],[12,2],[5,23]],
+          cases : [[4,8],[4,24],[12,0]],
+          expected : [false,false,false]
+        },
+        5: {
+          start : [8,20],
+          pions : [[9,17],[12,16],[10,12],[13,9]],
+          cases : [[8,16]],
+          expected : [[[8, 20],[16, 12],[10, 6],[10, 18],[8, 16]]]
+        },
+      };
+      var coord_case = coord_pion = result = [];
+      for (var i=1, max=Object.keys(tests).length;i<=max; i++) {
+        result = [];
+        // etoile vide
+        M = [
+          [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+          [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+          [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+          [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+          [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+          [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+          [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+          [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+          [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+          [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+          [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false]
+        ];
+        // positionne un pion
+        M[tests[i].start[0]][tests[i].start[1]] = 1;
+        // positionne les pivots potentiels
+        for (var j=0; j < tests[i].pions.length; j++){
+          coord_pion = tests[i].pions[j];
+          M[coord_pion[0]][coord_pion[1]] = 2;
+        }
+        for (var k=0; k < tests[i].cases.length; k++) {
+          coord_case = tests[i].cases[k];
+          result.push(get_jump([tests[i].start],coord_case[0],coord_case[1]));
+        }
+        if (JSON.stringify(result) == JSON.stringify(tests[i].expected)) {
           console.log('test ' + i + ' : SUCCESS');
         }
         else {
@@ -120,7 +310,7 @@ var Tests = {
         }
       };
       var result;
-      for (var i=1; i<=3; i++) {
+      for (var i=1, max=Object.keys(tests).length; i<=max; i++) {
         result = [];
         M = Tests.check_winner.M;
         n_player = tests[i].n_player;
@@ -142,7 +332,7 @@ var Tests = {
             result.push(check_winner(Colors[Player][j]));
           }
         }
-        if (Tests.Assert.arraysEqual(result,tests[i].expected)) {
+        if (JSON.stringify(result) == JSON.stringify(tests[i].expected)) {
           console.log('test ' + i + ': SUCCESS');
         }
         else {
@@ -212,7 +402,7 @@ var Tests = {
       M = ID = Player = IsOver = Start_Cell = isOver = null;
       restart();
       var errors = false;
-      if (!Tests.Assert.arraysEqual(M, test.M)) {
+      if (JSON.stringify(M) !== JSON.stringify(test.M)) {
         console.log('M is ', M, ', should be ', test.M);
         errors = true;
       }
@@ -224,11 +414,11 @@ var Tests = {
         console.log('IsOver is ', IsOver, ', should be ', test.IsOver);
         errors = true;
       }
-      if (!Tests.Assert.arraysEqual(Start_Cell, test.Start_Cell)) {
+      if (JSON.stringify(Start_Cell) !== JSON.stringify(test.Start_Cell)) {
         console.log('Start_Cell is ', Start_Cell, ', should be ', test.Start_Cell);
         errors = true;
       }
-      if (!Tests.Assert.arraysEqual(isOver, test.isOver)) {
+      if (JSON.stringify(isOver) !== JSON.stringify(test.isOver)) {
         console.log('isOver is ', isOver, ', should be ', test.isOver);
         errors = true;
       }
@@ -248,7 +438,7 @@ var Tests = {
     //       expected : ?
     //     }
     //   }
-    //   for (var i=1; i<=1; i++) {
+    //   for (var i=1, max=Object.keys(tests).length; i<=max; i++) {
     //     if (tests[i].result === tests[i].expected) console.log('test ' + tests[i].name + ': SUCCESS');
     //     else {
     //       console.log('test ' + tests[i].name + ': FAIL');
@@ -299,7 +489,7 @@ var Tests = {
         }
       };
 
-      for (var i=1; i<=3; i++) {
+      for (var i=1, max=Object.keys(tests).length; i<=max; i++) {
         if (i == 1) {
           console.log("test '" + tests[i].name + "' en cours." );
           console.log("Prochain test dans 5s.");
@@ -351,7 +541,7 @@ var Tests = {
         ]
       };
 
-      if (Tests.Assert.arraysEqual(test.result,test.expected)) console.log('test ' + test.name + ': SUCCESS');
+      if (JSON.stringify(test.result) == JSON.stringify(test.expected)) console.log('test ' + test.name + ': SUCCESS');
       else {
         console.log('test ' + test.name + ': FAIL');
         console.log('result is ', test.result, ', should be ', test.expected);
@@ -391,8 +581,8 @@ var Tests = {
         }
       };
 
-      for (var i=1; i<=5; i++) {
-        if (Tests.Assert.arraysEqual(tests[i].result,tests[i].expected)) console.log('test ' + tests[i].name + ': SUCCESS');
+      for (var i=1, max=Object.keys(tests).length; i<=max; i++) {
+        if (JSON.stringify(tests[i].result) === JSON.stringify(tests[i].expected)) console.log('test ' + tests[i].name + ': SUCCESS');
         else {
           console.log('test ' + tests[i].name + ': FAIL');
           console.log('result is ', tests[i].result, ', should be ', tests[i].expected);
@@ -417,7 +607,7 @@ var Tests = {
         }
       }
       var result;
-      for (var i=1; i<=2; i++) {
+      for (var i=1, max=Object.keys(tests).length; i<=max; i++) {
         result = in_board(tests[i].x, tests[i].y);
         if (result === tests[i].expected) {
           console.log('test ' + i + ': SUCCESS');
@@ -456,7 +646,7 @@ var Tests = {
         }
       }
       var result;
-      for (var i=1; i<=4; i++) {
+      for (var i=1, max=Object.keys(tests).length; i<=max; i++) {
         result = contains(tests[i].liste, tests[i].objet);
         if ( result === tests[i].expected) {
           console.log('test ' + i + ': SUCCESS');
@@ -476,7 +666,7 @@ var Tests = {
       2: { // nombre de joueurs
         1: // nombre de couleurs
           [[3,13],[4,14],[14,12],[12,14],[3,15],[5,13],[13,15],[11,13],[2,10],[6,14],[14,10],[10,14],[1,11],[7,13],[13,13],[11,11],[7,13],[8,14],[16,12],[10,10],[5,13],[5,11],[11,13],[1,11],[3,9],[9,11],[15,13],[3,9],[0,12],[6,10],[13,9],[3,15],[6,10],[7,11],[10,10],[0,12],[2,12],[14,12],[14,14],[2,10],[2,14],[12,12],[12,14],[2,12],[3,11],[4,10],[13,11],[3,13],[1,13],[9,13],[10,14],[2,14],[9,13],[10,12],[11,11],[1,13],[9,11],[15,13],[15,11],[3,11]],
-        2: [[3,13],[4,14],[14,12],[12,14],[3,15],[5,13],[13,15],[11,13],[2,10],[6,14],[14,10],[10,14],[1,11],[7,13],[13,13],[11,11],[7,13],[8,14],[16,12],[10,10],[5,13],[5,11],[11,13],[1,11],[3,9],[9,11],[15,13],[3,9],[0,12],[6,10],[13,9],[3,15],[6,10],[7,11],[10,10],[0,12],[2,12],[14,12],[14,14],[2,10],[2,14],[12,12],[12,14],[2,12],[3,11],[4,10],[13,11],[3,13],[1,13],[9,13],[10,14],[2,14],[9,13],[10,12],[11,11],[1,13],[9,11],[15,13],[15,11],[3,11],[4,4],[6,6],[10,22],[10,18],[4,0],[8,16],[12,24],[12,8],[6,4],[6,8],[11,19],[7,7],[4,2],[6,4],[11,23],[9,13],[5,3],[9,15],[11,21],[11,17],[6,6],[12,24],[12,18],[10,8],[6,2],[10,14],[9,21],[5,9],[6,4],[6,16],[9,13],[9,9],[5,1],[9,21],[10,8],[6,4],[9,15],[11,21],[12,8],[6,2],[4,6],[12,18],[10,20],[4,6],[10,14],[10,22],[5,9],[5,1],[6,16],[10,20],[12,20],[12,16],[7,3],[7,5],[10,18],[10,6]]
+        2: [[3,13],[4,14],[14,12],[12,14],[3,15],[5,13],[13,15],[11,13],[2,10],[6,14],[14,10],[10,14],[1,11],[7,13],[13,13],[11,11],[7,13],[8,14],[16,12],[10,10],[5,13],[5,11],[11,13],[1,11],[3,9],[9,11],[15,13],[3,9],[0,12],[6,10],[13,9],[3,15],[6,10],[7,11],[10,10],[0,12],[2,12],[14,12],[14,14],[2,10],[2,14],[12,12],[12,14],[2,12],[3,11],[4,10],[13,11],[3,13],[1,13],[9,13],[10,14],[2,14],[9,13],[10,12],[11,11],[1,13],[9,11],[15,13],[15,11],[3,11],[4,4],[6,6],[10,22],[10,18],[4,0],[8,16],[12,24],[12,8],[6,4],[6,8],[11,19],[7,7],[4,2],[6,4],[11,23],[9,13],[5,3],[9,15],[11,21],[11,17],[6,6],[12,24],[12,18],[10,8],[6,2],[10,14],[9,21],[5,9],[6,4],[6,16],[9,13],[9,9],[5,1],[9,21],[10,8],[6,4],[9,15],[11,21],[12,8],[6,2],[4,6],[12,18],[10,20],[4,6],[10,14],[10,22],[5,9],[5,1],[6,16],[10,20],[12,20],[12,16],[7,3],[7,5],[10,18],[10,6],[7,5],[9,15],[12,16],[8,4],[4,10],[12,10],[12,22],[4,2],[8,16],[8,20],[5,1],[4,0],[5,5],[9,17],[7,7],[5,1],[6,14],[6,16],[10,6],[6,6],[4,14],[10,8],[9,9],[5,5],[9,15],[9,19],[11,17],[11,15],[9,21],[11,23],[11,15],[7,3],[9,17],[11,19],[6,6],[4,4],[6,8],[7,9],[6,2],[5,3],[7,9],[13,15],[8,4],[6,2],[5,11],[13,11]]
       }
     },
 
@@ -570,11 +760,9 @@ var Tests = {
       if (a === b) return true;
       if (a == null || b == null) return false;
       if (a.length != b.length) return false;
-      for (var i = 0; i < a.length; ++i) {
-        try {
-          if ((a[i].length || b[i].length) && (!Tests.Assert.arraysEqual(a[i],b[i]))) return false;
-        }
-        catch (e) {if (a[i] !== b[i]) return false;}
+      for (var i = 0; i < a.length; i++) {
+          if (((typeof(a[i]) == "object" && a[i].length > 0) || (typeof(b[i]) == "object" && b[i].length > 0)) && (!Tests.Assert.arraysEqual(a[i],b[i]))) return false;
+          else if (a[i] !== b[i]) return false;
       }
       return true;
     }
