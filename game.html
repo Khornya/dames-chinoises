@@ -6,19 +6,10 @@
     <title>Hop hop hop</title>
   </head>
   <body>
+    <header>
+      <?php include 'header.html';?>
+    </header>
     <div id="main_wrapper">
-      <header>
-        <div id='logo'>
-          <a href="home.html"><img alt="logo" src="images/logo128.png"/></a>
-        </div>
-        <div id='main_title'>
-          <h1>HOP HOP HOP</h1>
-          <h2>dames chinoises</h2>
-        </div>
-        <div id='banner'>
-          <img alt="sauts" src="images/sauts.png"/>
-        </div>
-      </header>
       <div id='game_zone'>
         <section id='left_panel'>
         </section>
@@ -30,6 +21,9 @@
           </p>
           <p>
             <a href="">Quitter</a>
+            </br>NOM JOUEUR: <?php echo $_POST["player1"]; ?>
+            </br>NOMBRE JOUEURS: <?php echo $_POST["nombre_joueurs"]; ?>
+            </br>NOMBRE COULEURS: <?php echo $_POST["colors"]; ?>
           </p>
         </section>
       </div>
