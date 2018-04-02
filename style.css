@@ -1,3 +1,29 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline;
+	}
+
+body {
+		background: #f0f0f0;
+		font-family: 'Source Sans Pro';
+		font-weight: 300;
+		color: #777;
+		line-height: 1.65em;
+		font-size: 13pt;
+		transform: scale(0.9);
+	}
+	
+h1{
+		font-weight: 600;
+		text-transform: uppercase;
+		color: #888;
+		padding: 10px 0px;
+	}
+
 @font-face
 {
   font-family: 'MusicWarrior';
@@ -10,16 +36,64 @@
   font-style: normal;
 }
 
-#main_wrapper
+caption
 {
-  width: 900px;
-  margin: auto;
+	text-align: right;	
 }
 
 header
 {
   display: flex;
   flex-wrap: wrap;
+}
+
+header h1
+{
+  font-family: 'MusicWarrior';
+}
+
+select {
+    width: 30%;
+    border-radius: 4px;
+    padding: 5px 0px;
+    margin: 5px 0px;
+}
+
+input[type=submit] {
+    background-color: #888;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=text] {
+	color: #777;
+    border-radius: 4px;
+    padding: 5px 0px;
+    margin: 5px 0px;
+}
+
+section
+{
+	padding: 10px 0px;
+}
+
+#seemore
+{
+	display: none;
+}
+
+#main_wrapper
+{
+  width: 900px;
+  margin: auto;
+  background-color: white;
+  min-height: 550px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin-top: 50px;
 }
 
 #main_title
@@ -34,14 +108,23 @@ header
   display: none; /* penser à remettre */
 }
 
-header h1
+#game
 {
-  font-family: 'MusicWarrior';
+	width:50%;
+/*	border: 5px solid green;*/
 }
 
-body
+#score
 {
-  font-family: sans-serif;
+	width:50%;
+	text-align: right;
+/*	border: 5px solid red;*/
+}
+
+#test
+{
+	display: flex;
+	align-content: space-between;
 }
 
 #game_zone
