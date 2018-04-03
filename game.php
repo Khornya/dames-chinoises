@@ -10,6 +10,16 @@
       <?php include 'header.html';?>
     </header>
     <div id="main_wrapper">
+      <form style="display:none">
+        <input name="nombre_joueurs" id="nombre_joueurs" value="<?php echo htmlspecialchars($_POST["nombre_joueurs"]); ?>" />
+        <input name="player1" id="player1" value="<?php echo htmlspecialchars($_POST["player1"]); ?>" />
+        <input name="player2" id="player2" value="<?php echo htmlspecialchars($_POST["player2"]); ?>" />
+        <input name="player3" id="player3" value="<?php echo htmlspecialchars($_POST["player3"]); ?>" />
+        <input name="player4" id="player4" value="<?php echo htmlspecialchars($_POST["player4"]); ?>" />
+        <input name="player5" id="player5" value="<?php echo htmlspecialchars($_POST["player5"]); ?>" />
+        <input name="player6" id="player6" value="<?php echo htmlspecialchars($_POST["player6"]); ?>" />
+        <input name="colors" id="colors" value="<?php echo htmlspecialchars($_POST["colors"]); ?>" />
+      </form>
       <div id='game_zone'>
         <section id='left_panel'>
         </section>
@@ -21,9 +31,6 @@
           </p>
           <p>
             <a href="">Quitter</a>
-            </br>NOM JOUEUR: <?php echo $_POST["player1"]; ?>
-            </br>NOMBRE JOUEURS: <?php echo $_POST["nombre_joueurs"]; ?>
-            </br>NOMBRE COULEURS: <?php echo $_POST["colors"]; ?>
           </p>
         </section>
       </div>

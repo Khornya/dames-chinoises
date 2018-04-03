@@ -32,24 +32,24 @@ session_start();
       <div id="test">
           <section id="game">
             <h1>Jouer une partie</h1>
-            <form action="/game.php" target="_self" method="POST">
-              <select id="mode" name="nombre_joueurs">
-                <option value="1" onclick="playermanes()">1 player vs CPU</option>
-                <option value="2" onclick="playermanes()">2 players</option>
-                <option value="3" onclick="playermanes()">3 players </option>
-                <option value="4" onclick="playermanes()">4 players </option>
-                <option value="5" onclick="playermanes()">5 players </option>
-                <option value="6" onclick="playermanes()">6 players </option>
+            <form action="game.php" target="_self" method="POST">
+              <select id="mode" name="nombre_joueurs" onclick="updateChoices()">
+                <option value="1">1 player vs CPU</option>
+                <option value="2">2 players</option>
+                <option value="3">3 players</option>
+                <option value="4">4 players</option>
+                <option value="6">6 players</option>
               </select>
               <br />
-                <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/>
-                <input type="hidden" name="player2" id="player2" placeholder="NAME PLAYER 2"/>
-                <input type="hidden" name="player3" id="player3" placeholder="NAME PLAYER 3"/>
-                <br />
-                <input type="hidden" name="player4" id="player4" placeholder="NAME PLAYER 4"/>
-                <input type="hidden" name="player5" id="player5" placeholder="NAME PLAYER 5"/>
-                <input type="hidden" name="player6" id="player6" placeholder="NAME PLAYER 6"/>
-                <br />
+              <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/>
+              <input type="hidden" name="player2" id="player2" placeholder="NAME PLAYER 2"/>
+              <input type="hidden" name="player3" id="player3" placeholder="NAME PLAYER 3"/>
+              <br />
+              <input type="hidden" name="player4" id="player4" placeholder="NAME PLAYER 4"/>
+              <input type="hidden" name="player5" id="player5" placeholder="NAME PLAYER 5"/>
+              <input type="hidden" name="player6" id="player6" placeholder="NAME PLAYER 6"/>
+              <br />
+              <span id="color_choice">
                 Nombre de couleurs :
                 <input type="radio" name="colors" value="1" id="1" checked/>
                 <label for="1">1</label>
@@ -57,7 +57,8 @@ session_start();
                 <label for="2">2</label>
                 <input type="radio" name="colors" value="3" id="3" />
                 <label for="3">3</label>
-              <br/>
+                <br/>
+              </span>
               <input type="submit" name="PLAY" value="PLAY"/>
             </form>
           </section>
@@ -66,7 +67,7 @@ session_start();
           <?php
             try
             {
-              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
+              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
             }
               catch(Exception $e)
             {
@@ -76,8 +77,8 @@ session_start();
             while ($donnees = $reponse->fetch())
             {
               echo "<tr>";
-              echo "<td>",$donnees['nom'],"</td>"; 
-              echo "<td>",$donnees['score'],"</td>"; 
+              echo "<td>",$donnees['nom'],"</td>";
+              echo "<td>",$donnees['score'],"</td>";
               echo "</tr>";
             }
             $reponse->closeCursor();
@@ -96,22 +97,33 @@ session_start();
       if (x.style.display === "none") {  /* get computedStyle */
           x.style.display = "block";
           y.innerHTML = "Voir moins";
-      } 
+      }
       else {
           x.style.display = "none";
           y.innerHTML = "Voir plus";
       }
     }
 
-    function playermanes() {
-      for (i = 1; i <= 6; i++) {
+    function updateChoices() {
+      var colorChoices = {
+        1: { display: '', default: 1 },
+        2: { display: '', default: 1 },
+        3: { display: 'none', default: 2 },
+        4: { display: 'none', default: 1 },
+        6: { display: 'none', default: 1 }
+      };
+      for (var i = 1; i <= 6; i++) {
         document.getElementById("player"+i).type = 'hidden';
-      } 
+      }
       var e = document.getElementById("mode");
-      var strUser = e.options[e.selectedIndex].value;
-      for (i = 1; i <= strUser; i++) {
+      var mode = e.options[e.selectedIndex].value;
+      for (var i = 1; i <= mode; i++) {
         document.getElementById("player"+i).type = 'text';
-      } 
+      }
+      document.getElementById("color_choice").style = "display:" + colorChoices[mode]['display'];
+      for (var i=1; i<=3; i++) {
+        document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false;
+      }
     }
   </script>
   </body>
