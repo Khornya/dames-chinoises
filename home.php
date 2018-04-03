@@ -41,22 +41,22 @@ session_start();
                 <option value="6">6 players</option>
               </select>
               <br />
-              <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/>
-              <input type="hidden" name="player2" id="player2" placeholder="NAME PLAYER 2"/>
-              <input type="hidden" name="player3" id="player3" placeholder="NAME PLAYER 3"/>
+              <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/><span id="player1colors"></span>
+              <input type="hidden" name="player2" id="player2" placeholder="NAME PLAYER 2"/><span id="player2colors"></span>
+              <input type="hidden" name="player3" id="player3" placeholder="NAME PLAYER 3"/><span id="player3colors"></span>
               <br />
-              <input type="hidden" name="player4" id="player4" placeholder="NAME PLAYER 4"/>
-              <input type="hidden" name="player5" id="player5" placeholder="NAME PLAYER 5"/>
-              <input type="hidden" name="player6" id="player6" placeholder="NAME PLAYER 6"/>
+              <input type="hidden" name="player4" id="player4" placeholder="NAME PLAYER 4"/><span id="player4colors"></span>
+              <input type="hidden" name="player5" id="player5" placeholder="NAME PLAYER 5"/><span id="player5colors"></span>
+              <input type="hidden" name="player6" id="player6" placeholder="NAME PLAYER 6"/><span id="player6colors"></span>
               <br />
               <span id="color_choice">
                 Nombre de couleurs :
-                <input type="radio" name="colors" value="1" id="1" checked/>
-                <label for="1">1</label>
-                <input type="radio" name="colors" value="2" id="2" />
-                <label for="2">2</label>
-                <input type="radio" name="colors" value="3" id="3" />
-                <label for="3">3</label>
+                <input type="radio" name="colors" value="1" id="1" onclick="updateColors()" checked />
+                <label for="1" onclick="updateColors()">1</label>
+                <input type="radio" name="colors" value="2" id="2" onclick="updateColors()" />
+                <label for="2" onclick="updateColors()">2</label>
+                <input type="radio" name="colors" value="3" id="3" onclick="updateColors()" />
+                <label for="3" onclick="updateColors()">3</label>
                 <br/>
               </span>
               <input type="submit" name="PLAY" value="PLAY"/>
@@ -91,6 +91,8 @@ session_start();
       </footer>
     </div>
   <script>
+    updateColors();
+
     function seemore() {
       var x = document.getElementById("seemore");
       var y = document.getElementById("voirPlus");
@@ -117,12 +119,46 @@ session_start();
       }
       var e = document.getElementById("mode");
       var mode = e.options[e.selectedIndex].value;
-      for (var i = 1; i <= mode; i++) {
-        document.getElementById("player"+i).type = 'text';
-      }
       document.getElementById("color_choice").style = "display:" + colorChoices[mode]['display'];
       for (var i=1; i<=3; i++) {
         document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false;
+      }
+      for (var i = 1; i <= mode; i++) {
+        document.getElementById("player"+i).type = 'text';
+      }
+      updateColors();
+    }
+
+    function updateColors() {
+      var e = document.getElementById("mode");
+      var mode = parseInt(e.options[e.selectedIndex].value);
+      for (var n_color = 1; n_color <= 3; n_color++) {
+        if (document.getElementById(n_color).checked) break;
+      }
+      var colors = { // attribution des couleurs à chaque joueur
+        1: {
+          1: [[1],[2]],
+          2: [[1,3],[2,4]],
+          3: [[1,3,5],[2,4,6]]
+        },
+        2: {
+          1: [[1],[2]],
+          2: [[1,3],[2,4]],
+          3: [[1,3,5],[2,4,6]]
+        },
+        3: { 2: [[1,3],[4,5],[2,6]] },
+        4: { 1: [[1],[2],[3],[4]] },
+        6: { 1: [[1],[3],[6],[2],[4],[5]] }
+      }[mode][n_color];
+      for (var n=1; n<=mode; n++) {
+        var code = '';
+        for (var i=0, max = colors[n-1].length; i < max; i++) {
+          code += "<img src='images/pion" + colors[n-1][i] + ".png' />";
+        }
+        document.getElementById('player'+n+'colors').innerHTML = code;
+      }
+      for (var n=mode+1; n<=6; n++) {
+        document.getElementById('player'+n+'colors').innerHTML = '';
       }
     }
   </script>

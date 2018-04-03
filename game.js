@@ -17,13 +17,12 @@ var Colors = { // attribution des couleurs à chaque joueur
   6: { 1: [[1],[3],[6],[2],[4],[5]] }
 }[n_player][n_color];
 
-// ************************************* infos des joueurs (juste pour l'exemple, à récupérer via PHP)************
+// ************************************* infos des joueurs ******************************************************
 
 
 var players = [];
 for (var n=1; n<=n_player; n++) {
-  var player = new Player(document.getElementById("player"+n).value,0,Colors[n-1], n);
-  players.push(player);
+  players.push(new Player(document.getElementById("player"+n).value,0,Colors[n-1], n));
 }
 
 
