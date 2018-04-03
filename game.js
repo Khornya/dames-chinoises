@@ -3,8 +3,8 @@ var testType = 'create_board';
 
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
-var n_player = 2;   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
-var n_color = 1;
+var n_player = parseInt(document.getElementById("nombre_joueurs").value,10);   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
+var n_color = parseInt(document.getElementById("colors").value,10);
 
 var Colors = { // attribution des couleurs à chaque joueur
   2: {
@@ -20,9 +20,9 @@ var Colors = { // attribution des couleurs à chaque joueur
 // ************************************* infos des joueurs (juste pour l'exemple, à récupérer via PHP)************
 
 
-var players = []
+var players = [];
 for (var n=1; n<=n_player; n++) {
-  var player = new Player('Joueur'+n,220,Colors[n-1], n);
+  var player = new Player(document.getElementById("player"+n).value,0,Colors[n-1], n);
   players.push(player);
 }
 
@@ -162,7 +162,7 @@ function validate_movement(cell) {
       send_msg("Cell not empty!", Sounds.fail); return;
     }
 
-    if (go_outside(Color,Start_Cell, [R, C])) {                  // mouvement illégal vers l'extérieur du triangle opposé  
+    if (go_outside(Color,Start_Cell, [R, C])) {                  // mouvement illégal vers l'extérieur du triangle opposé
       send_msg("You can't moove this piece outside!", Sounds.fail);
       return;
     }
@@ -207,7 +207,7 @@ function sameTraject(traject) {
   last = History[Player];
   if (i !== last.length) return false;
   while (i--) {
-    if (traject[j-i][0] !== last[i][0] || 
+    if (traject[j-i][0] !== last[i][0] ||
        traject[j-i][1] !== last[i][1])
        return false;
    }
@@ -299,7 +299,7 @@ function check_winner(color) {
   var n =  (color%2 ? color : color-2);
   for (var i=0; i<10; i++) {
     R = coordTriangles[n][i][0];
-    C = coordTriangles[n][i][1] 
+    C = coordTriangles[n][i][1]
     if (M[R][C] != color) return false ;
   }
   for (n=0; n< Colors[Player].length; n++) {
