@@ -1,3 +1,11 @@
+<?php 
+session_start();
+  if (!isset($_POST["colors"]) || !isset($_POST["nombre_joueurs"]) )
+   {
+      header("location: home.php");
+   }
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
