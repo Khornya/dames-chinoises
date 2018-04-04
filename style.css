@@ -133,12 +133,17 @@ section
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-image: url(images/board.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 #board
 {
   display: flex;
   flex-direction: column;
+  padding-left: 10px;
 }
 
 .line
@@ -146,18 +151,30 @@ section
   display: flex;
   flex-direction: row;
   justify-content: center;
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 
+#line0
+{
+  margin-top: 37px;
+}
+
+#line16
+{
+  margin-bottom: 37px;
+}
 .cell
 {
-  margin-left: 5px;
-  margin-right: 5px;
-  height: 32px;
+  margin-left: 3px;
+  margin-right: 3px;
+  height: 25px;
   /*cursor: move;*/
 }
 
 .cell > img
 {
+  height: 25px;
   align-items: center;
 }
 
