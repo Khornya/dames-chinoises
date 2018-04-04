@@ -23,7 +23,7 @@ session_start(); /* pour la gestion des sessions plus tard */
           <p>
           Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
           </p>
-          <div id="seemore">
+          <div id="seemore" style='display:none'>
             orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in. orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in.
           </div>
           <button id="voirPlus" onclick="seemore()">Voir plus</button>
@@ -76,13 +76,13 @@ session_start(); /* pour la gestion des sessions plus tard */
           <?php
             try
             {
-              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
+              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
             }
               catch(Exception $e)
             {
               die('Erreur : '.$e->getMessage());
             }
-            $reponse = $bdd->query('SELECT nom, score FROM scores ORDER BY score DESC LIMIT 0, 3');
+            $reponse = $bdd->query('SELECT nom, score FROM scores ORDER BY score ASC LIMIT 0, 3');
             while ($donnees = $reponse->fetch())
             {
               echo "<tr>";
