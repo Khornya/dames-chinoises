@@ -341,7 +341,7 @@ function Player(name, score, colors, number, frame) {
         var code = '';
         for (var i=0, max=this.colors.length, color; i<max; i++) {
           color = this.colors[i];
-           code += "<img alt='color' src='images/pion" + color + ".png' />"
+           code += "<img class='imagetag' alt='color' src='images/pion" + color + ".png' />"
         }
         colors.innerHTML = code;
         frame.appendChild(name);
@@ -367,12 +367,10 @@ function update_player_frames() {
   var player_frames = document.querySelectorAll('.player_info');
   for (var i=0, max=player_frames.length; i<max; i++) {
     if (player_frames[i].id === 'player' + (Player+1)) {
-      player_frames[i].style.border = 'none';
-      player_frames[i].style.textDecoration = 'underline';
+      player_frames[i].firstChild.style.textDecoration = 'underline';
     }
     else {
-      player_frames[i].style.border = 'none';
-
+      player_frames[i].firstChild.style.textDecoration = 'none';
     }
   }
 }
