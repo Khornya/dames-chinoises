@@ -24,7 +24,7 @@ session_start();
           <p>
           Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
           </p>
-          <div id="seemore" style="display:none">
+          <div id="seemore">
             orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in. orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in.
           </div>
           <button id="voirPlus" onclick="seemore()">Voir plus</button>
@@ -106,7 +106,7 @@ session_start();
     function seemore() {
       var x = document.getElementById("seemore");
       var y = document.getElementById("voirPlus");
-      if (x.style.display === "none") {
+      if (x.style.display === "none") {  /* get computedStyle */
           x.style.display = "block";
           y.innerHTML = "Voir moins";
       }
@@ -163,7 +163,7 @@ session_start();
       for (var n=1; n<=mode; n++) {
         var code = '';
         for (var i=0, max = colors[n-1].length; i < max; i++) {
-          code += "<img src='images/pion" + colors[n-1][i] + ".png' height='10'/>";
+          code += "<img class='imagetag' src='images/pion" + colors[n-1][i] + ".png'/>";
         }
         document.getElementById('player'+n+'colors').innerHTML = code;
       }
