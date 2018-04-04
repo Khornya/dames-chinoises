@@ -1,6 +1,5 @@
-<!-- pour la gestion des sessions plus tard -->
 <?php
-session_start();
+session_start(); /* pour la gestion des sessions plus tard */
 ?>
 
 <!DOCTYPE html>
