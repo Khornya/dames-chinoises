@@ -80,11 +80,6 @@ section
   padding: 10px 0px;
 }
 
-#seemore
-{
-  display: none;
-}
-
 #main_wrapper
 {
   width: 900px;
@@ -96,30 +91,9 @@ section
   margin-top: 50px;
 }
 
-#main_title
-{
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-#banner
-{
-  margin: auto;
-  display: none; /* penser à remettre */
-}
-
 #game
 {
   width:60%;
-/*  border: 5px solid green;*/
-}
-
-#score
-{
-  width:30%;
-  text-align: left;
-/*  border: 5px solid red;*/
-  margin-left: 60px;
 }
 
 #test
@@ -133,17 +107,17 @@ section
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-image: url(images/board.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
 }
 
 #board
 {
   display: flex;
   flex-direction: column;
-  padding-left: 10px;
+  background-image: url(images/board.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  min-width: 650px;
 }
 
 .line
@@ -169,7 +143,6 @@ section
   margin-left: 3px;
   margin-right: 3px;
   height: 25px;
-  /*cursor: move;*/
 }
 
 .cell > img
@@ -189,11 +162,6 @@ section
 .player_name
 {
   margin: 5px 0 0 0;
-}
-
-.player_score
-{
-  margin: 0 0 2px 0;
 }
 
 .imagetag
