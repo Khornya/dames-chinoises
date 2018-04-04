@@ -24,7 +24,7 @@ session_start();
           <p>
           Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
           </p>
-          <div id="seemore">
+          <div id="seemore" style="display:none">
             orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in. orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in.
           </div>
           <button id="voirPlus" onclick="seemore()">Voir plus</button>
@@ -41,24 +41,14 @@ session_start();
                 <option value="6">6 players</option>
               </select>
               <br />
-              <div>
-                <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/><span id="player1colors"></span>
-              </div>
-              <div>
-                <input type="hidden" name="player2" id="player2" placeholder="NAME PLAYER 2"/><span id="player2colors"></span>
-              </div>
-              <div>
-                <input type="hidden" name="player3" id="player3" placeholder="NAME PLAYER 3"/><span id="player3colors"></span>
-              </div>
-              <div>
-                <input type="hidden" name="player4" id="player4" placeholder="NAME PLAYER 4"/><span id="player4colors"></span>
-              </div>
-              <div>
-                <input type="hidden" name="player5" id="player5" placeholder="NAME PLAYER 5"/><span id="player5colors"></span>
-              </div>
-              <div>
-                <input type="hidden" name="player6" id="player6" placeholder="NAME PLAYER 6"/><span id="player6colors"></span>
-              </div>
+              <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/><span id="player1colors"></span>
+              <input type="hidden" name="player2" id="player2" placeholder="NAME PLAYER 2"/><span id="player2colors"></span>
+              <input type="hidden" name="player3" id="player3" placeholder="NAME PLAYER 3"/><span id="player3colors"></span>
+              <br />
+              <input type="hidden" name="player4" id="player4" placeholder="NAME PLAYER 4"/><span id="player4colors"></span>
+              <input type="hidden" name="player5" id="player5" placeholder="NAME PLAYER 5"/><span id="player5colors"></span>
+              <input type="hidden" name="player6" id="player6" placeholder="NAME PLAYER 6"/><span id="player6colors"></span>
+              <br />
               <span id="color_choice">
                 Nombre de couleurs :
                 <input type="radio" name="colors" value="1" id="1" onclick="updateColors()" checked />
@@ -77,7 +67,7 @@ session_start();
           <?php
             try
             {
-              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
+              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
             }
               catch(Exception $e)
             {
@@ -106,7 +96,7 @@ session_start();
     function seemore() {
       var x = document.getElementById("seemore");
       var y = document.getElementById("voirPlus");
-      if (x.style.display === "none") {  /* get computedStyle */
+      if (x.style.display === "none") {
           x.style.display = "block";
           y.innerHTML = "Voir moins";
       }
@@ -163,7 +153,7 @@ session_start();
       for (var n=1; n<=mode; n++) {
         var code = '';
         for (var i=0, max = colors[n-1].length; i < max; i++) {
-          code += "<img src='images/pion" + colors[n-1][i] + ".png' height='10'/>";
+          code += "<img src='images/pion" + colors[n-1][i] + ".png' />";
         }
         document.getElementById('player'+n+'colors').innerHTML = code;
       }
