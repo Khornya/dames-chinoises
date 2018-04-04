@@ -322,7 +322,7 @@ function Player(name, score, colors, number, frame) {
 
     this.updateScore = function() {
       this.score += 1;
-      this.frame.lastChild.innerHTML = ('score : ' + this.score);
+//      this.frame.children[1].innerHTML = ('score : ' + this.score);
     };
 
     this.createFrame = function() {  // crée un cadre pour les infos d'un joueur
@@ -344,8 +344,8 @@ function Player(name, score, colors, number, frame) {
         }
         colors.innerHTML = code;
         frame.appendChild(name);
+//        frame.appendChild(score);
         frame.appendChild(colors);
-        frame.appendChild(score);
         document.getElementById('left_panel').appendChild(frame);
         this.frame = frame;
       };
@@ -366,10 +366,12 @@ function update_player_frames() {
   var player_frames = document.querySelectorAll('.player_info');
   for (var i=0, max=player_frames.length; i<max; i++) {
     if (player_frames[i].id === 'player' + (Player+1)) {
-      player_frames[i].style.border = '2px solid black';
+      player_frames[i].style.border = 'none';
+      player_frames[i].style.textDecoration = 'underline';
     }
     else {
-      player_frames[i].style.border = '2px dotted grey';
+      player_frames[i].style.border = 'none';
+
     }
   }
 }
