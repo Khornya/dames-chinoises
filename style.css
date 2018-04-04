@@ -16,7 +16,7 @@ body {
     font-size: 13pt;
     transform: scale(0.9);
   }
-  
+
 h1{
     font-weight: 600;
     text-transform: uppercase;
@@ -38,7 +38,7 @@ h1{
 
 caption
 {
-  text-align: center;  
+  text-align: center;
 }
 
 header
@@ -164,7 +164,7 @@ section
 .player_info
 {
   /*display: flex;*/
-  border: 1px solid black;
+  /*border: 1px solid black;*/
   padding: 0 10px 0 10px;
   margin: 10px;
 }
