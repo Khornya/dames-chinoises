@@ -427,4 +427,5 @@ function push_score(player) {
   adversaires = encodeURIComponent(JSON.stringify(adversaires));
   var date = encodeURIComponent((new Date()).getTime());
   xhr.open('GET', 'score.php?name=' + name + '&score' + score + '&adversaires=' + adversaires + '&date' + date);
+  xhr.send(null);
 }
