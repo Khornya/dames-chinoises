@@ -1,5 +1,5 @@
-var test = false; // true pour lancer un test
-var testType = 'create_board';
+var test = true; // true pour lancer un test
+var testType = 'game';
 
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
@@ -162,7 +162,7 @@ function validate_movement(cell) {
     }
 
     if (go_outside(Color,Start_Cell, [R, C])) {                  // mouvement illégal vers l'extérieur du triangle opposé
-      send_msg("You can't moove this piece outside!", Sounds.fail);
+      send_msg("You can't move this piece outside!", Sounds.fail);
       return;
     }
 
@@ -176,7 +176,7 @@ function validate_movement(cell) {
       return ;
     }
     if (sameTraject(traject)) {
-      send_msg("You can't replay the last moove", Sounds.fail);
+      send_msg("You can't replay the last move", Sounds.fail);
       return ;
     }
     History[Player] = traject;
@@ -285,13 +285,14 @@ function make_move(mov_list) {
   else {
     if (check_winner(Color)) {
       IsOver = true;
-      send_msg("le jouer"+ (Player+1) + " a gangé", Sounds.win)
+      players[Player].updateScore();
+      send_msg("le joueur"+ (Player+1) + " a gagné", Sounds.win);
+      push_score(players[Player]);
     }
     players[Player].updateScore();
     Player = (Player+1) % n_player;
     Start_Cell = (0,0);
     update_player_frames();
-
   }
 }
 function check_winner(color) {
@@ -415,4 +416,17 @@ function initArray(lignes, colonnes, valeur) {
     else array[i] = valeur;
   }
   return array;
+}
+
+function push_score(player) {
+  var xhr = new XMLHttpRequest();
+  var name = encodeURIComponent(player.name);
+  var score = encodeURIComponent(player.score);
+  var adversaires = players.filter(item => item !== player);
+  adversaires.forEach(function(value, index, array) {
+    array[index] = value.name;
+  })
+  adversaires = encodeURIComponent(JSON.stringify(adversaires));
+  var date = encodeURIComponent((new Date()).getTime());
+  xhr.open('GET', 'score.php?name=' + name + '&score' + score + '&adversaires=' + adversaires + '&date' + date);
 }
