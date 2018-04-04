@@ -229,7 +229,7 @@ function get_traject(start, R1, C1) {
 
 
 function get_jump(liste , R1, C1, traject=[]) {
-  if (liste.length<1) return;
+  if (liste.length<1) return false;
   var i, j, k;
   var pivot_r , pivot_c;
   var n, index;
