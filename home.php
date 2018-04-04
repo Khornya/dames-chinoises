@@ -41,14 +41,24 @@ session_start();
                 <option value="6">6 players</option>
               </select>
               <br />
-              <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/><span id="player1colors"></span>
-              <input type="hidden" name="player2" id="player2" placeholder="NAME PLAYER 2"/><span id="player2colors"></span>
-              <input type="hidden" name="player3" id="player3" placeholder="NAME PLAYER 3"/><span id="player3colors"></span>
-              <br />
-              <input type="hidden" name="player4" id="player4" placeholder="NAME PLAYER 4"/><span id="player4colors"></span>
-              <input type="hidden" name="player5" id="player5" placeholder="NAME PLAYER 5"/><span id="player5colors"></span>
-              <input type="hidden" name="player6" id="player6" placeholder="NAME PLAYER 6"/><span id="player6colors"></span>
-              <br />
+              <div>
+                <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/><span id="player1colors"></span>
+              </div>
+              <div>
+                <input type="hidden" name="player2" id="player2" placeholder="NAME PLAYER 2"/><span id="player2colors"></span>
+              </div>
+              <div>
+                <input type="hidden" name="player3" id="player3" placeholder="NAME PLAYER 3"/><span id="player3colors"></span>
+              </div>
+              <div>
+                <input type="hidden" name="player4" id="player4" placeholder="NAME PLAYER 4"/><span id="player4colors"></span>
+              </div>
+              <div>
+                <input type="hidden" name="player5" id="player5" placeholder="NAME PLAYER 5"/><span id="player5colors"></span>
+              </div>
+              <div>
+                <input type="hidden" name="player6" id="player6" placeholder="NAME PLAYER 6"/><span id="player6colors"></span>
+              </div>
               <span id="color_choice">
                 Nombre de couleurs :
                 <input type="radio" name="colors" value="1" id="1" onclick="updateColors()" checked />
@@ -67,7 +77,7 @@ session_start();
           <?php
             try
             {
-              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
+              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
             }
               catch(Exception $e)
             {
@@ -153,7 +163,7 @@ session_start();
       for (var n=1; n<=mode; n++) {
         var code = '';
         for (var i=0, max = colors[n-1].length; i < max; i++) {
-          code += "<img src='images/pion" + colors[n-1][i] + ".png' />";
+          code += "<img src='images/pion" + colors[n-1][i] + ".png' height='10'/>";
         }
         document.getElementById('player'+n+'colors').innerHTML = code;
       }
