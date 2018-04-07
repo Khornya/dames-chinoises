@@ -1,4 +1,4 @@
-var test = true; // true pour lancer un test
+var test = false; // true pour lancer un test
 var testType = 'game';
 
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
@@ -7,6 +7,11 @@ var n_player = parseInt(document.getElementById("nombre_joueurs").value,10);   /
 var n_color = parseInt(document.getElementById("colors").value,10);
 
 var Colors = { // attribution des couleurs à chaque joueur
+  1: {
+    1: [[1],[2]],
+    2: [[1,3],[2,4]],
+    3: [[1,3,5],[2,4,6]]
+  },
   2: {
     1: [[1],[2]],
     2: [[1,3],[2,4]],
@@ -24,6 +29,7 @@ var players = [];
 for (var n=1; n<=n_player; n++) {
   players.push(new Player(document.getElementById("player"+n).value,0,Colors[n-1], n));
 }
+if (n_player==1)   players.push(new Player("Computer",0,Colors[1], 2));
 
 
 // ******************************************* création du plateau de jeu ****************************************
@@ -36,14 +42,16 @@ var isOver; // matrice pour les couleurs finies
 var M; // matrice pour le plateau
 var ID; // matrice pour les images
 var History; // liste qui sauvgarde pour chaque joueur le dernier chemin empreinté
+var Liste = [] ; //liste utilisé par l'IA
+var Time=500;
 
 var coordTriangles = [
-  [[0,12],[1,11],[1,13],[2,10],[2,12],[2,14],[3,9],[3,11],[3,13],[3,15]],
-  [[16,12],[15,11],[15,13],[14,10],[14,12],[14,14],[13,9],[13,11],[13,13],[13,15]],
-  [[4,0],[4,2],[4,4],[4,6],[5,1],[5,3],[5,5],[6,2],[6,4],[7,3]],
-  [[9,21],[10,20],[10,22],[11,19],[11,21],[11,23],[12,18],[12,20],[12,22],[12,24]],
-  [[4,18],[4,20],[4,22],[4,24],[5,19],[5,21],[5,23],[6,20],[6,22],[7,21]],
-  [[9,3],[10,2],[10,4],[11,1],[11,3],[11,5],[12,0],[12,2],[12,4],[12,6]],
+ [[0,12],[1,11],[1,13],[2,10],[2,12],[2,14],[3,9],[3,11],[3,13],[3,15]],
+ [[16,12],[15,11],[15,13],[14,10],[14,12],[14,14],[13,9],[13,11],[13,13],[13,15]],
+ [[4,0],[4,2],[4,4],[4,6],[5,1],[5,3],[5,5],[6,2],[6,4],[7,3]],
+ [[12,24],[12,22],[12,20],[12,18],[11,23],[11,21],[11,19],[10,22],[10,20],[9,21]],
+ [[4,24],[4,22],[4,20],[4,18],[5,23],[5,21],[5,19],[6,22],[6,20],[7,21]],
+ [[12,0],[12,2],[12,4],[12,6],[11,1],[11,3],[11,5],[10,2],[10,4],[9,3]]
 ];
 
 var Sounds = {
@@ -61,7 +69,6 @@ else {
   restart();
 }
 
-
 // *********************************************** fonctions de jeu ************************************************
 
 // initialise la matrice pour le plateau de jeu
@@ -69,7 +76,7 @@ function init_matrice() {
   var matrice = initArray(17,25,false);
   for (var R=0; R<4; R++) { // R pour row, C pour column
     for (var C=12-R; C<=12+R; C+=2) {
-      matrice[R][C] = 1;
+      matrice[R][C] = 1; 
       matrice[16-R][C] = 2;
     }
   }
@@ -81,7 +88,7 @@ function init_matrice() {
     for (var C=R-4; C<=10-R; C+=2) {
       matrice[R][C] = 3;
       matrice[16-R][24-C] = 4;
-      matrice[R][24-C] = 5;
+      matrice[R][24-C] = 5;;
       matrice[16-R][C] = 6;
     }
   }
@@ -128,13 +135,31 @@ function restart() {
   ID = create_board(M) ;
   Player=0;
   IsOver = false;
-  Start_Cell =  (0,0) ;
+  Start_Cell =  (0,0) ;  
+  if (n_player==1){
+    n_player=2;
+    var button = document.getElementById("pass")
+    button.style.display ='block';
+    button.addEventListener('click',pass,false);
+    window.onclick = function(event) {
+      if (event.target !== button) {
+        button.style.display = 'none';
+      }
+    }
+  }
   isOver = initArray(n_player, n_color, false);
   History = initArray(n_player, 1, false);
   for (var i=0, max=players.length; i<max; i++) {
     players[i].createFrame();
   }
   update_player_frames();
+}
+
+function pass() {
+  Player= 1;
+  document.getElementById("pass").style.display = 'none'; 
+  update_player_frames();
+  ordi_player();
 }
 
 function validate_movement(cell) {
@@ -180,6 +205,7 @@ function validate_movement(cell) {
       return ;
     }
     History[Player] = traject;
+    Time = 500*(traject.length-1)
     make_move(traject);
   }
 }
@@ -215,11 +241,13 @@ function sameTraject(traject) {
 }
 
 function get_traject(start, R1, C1) {
+  Liste = [];                                  // init Liste
   var R = start[0]; var C = start[1];
   var i, j;
   for (i =R-1; i <= R+1; i++)  {               // add mouvement adjaçant
     for (j=C-2; j<= C+2; j++) {
        if ((i!=R || j!=C) && in_board(i,j) && M[i][j]== -1)
+         Liste.push([i,j]);                    // used by IA
          if (i==R1 && j==C1) return [start,[i,j]];
     }
   }
@@ -255,6 +283,7 @@ function get_jump(liste , R1, C1, traject=[]) {
         index_c = 2*pivot_c-C;
         if (contains(traject,[index_r, index_c])) continue ; // éviter de tourner rond
         if (in_board(index_r, index_c) && M[index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
+          Liste.push([index_r, index_c])
           if (index_r==R1 && index_c==C1) return traject.concat([[R,C], [index_r, index_c]]);
           else access_cell.push([index_r, index_c]);
         }
@@ -266,6 +295,41 @@ function get_jump(liste , R1, C1, traject=[]) {
 }
 
 
+function ordi_player() {
+  if (Player !== 1) return;
+  var i , j, k;
+  var weight=-99, selected;
+  var x, y, x0, y0, w, n;
+  for( i = 0; i<17; i++) {
+    for (j=0 ; j<25; j++) {
+      if(Colors[1].includes(M[i][j])) {       // si pion de l'IA
+        Color=M[i][j];
+        M[i][j]=-1; 
+        get_traject([i,j], -1, -1);           // set in Liste all reachable cell
+        M[i][j]=Color; 
+        for(k=0; k< Liste.length; k++){       // set weight // compare
+          x = Liste[k][0];  y = Liste[k][1];
+          n =  (Color%2 ? Color : Color-2);
+          x0= coordTriangles[n][0][0] ;y0= coordTriangles[n][0][1]  // pointe du triangle
+          w = 20*Math.pow((i-x0), 2) + Math.pow((j-y0), 2);            // max distance from depart
+          w -= 20*Math.pow((x-x0), 2) + Math.pow((y-y0), 2);          // min distance to opp
+          w += 10*Math.pow((x-i), 2) + Math.pow((y-j), 2);            // max distance
+          // le code suivant pour rester sur la ligne droite entre le home et l'opposé 
+		  n = (Color-2 ? 3*(Color-5) : 0);
+          y0= -n*8-12;
+          w -=20 * Math.pow(n*x+y+y0, 2)/(Math.pow(n, 2)+Math.pow(y0, 2));
+          if (w > weight) {
+            weight =w;
+            selected = [[i, j], x, y];
+          }
+        }
+      }
+    }
+  }
+  traject = get_traject(selected[0], selected[1], selected[2]);
+  setTimeout(function(){ make_move(traject);}, 500);      
+          
+}
 
 function make_move(mov_list) {
   var previous = mov_list[0];
@@ -283,18 +347,22 @@ function make_move(mov_list) {
     })(mov_list.slice(1));
   }
   else {
+    players[Player].updateScore();
     if (check_winner(Color)) {
       IsOver = true;
-      players[Player].updateScore();
-      send_msg("le joueur"+ (Player+1) + " a gagné", Sounds.win);
+      if (players[Player].name==="Computer")
+        send_msg("I am the winner!", Sounds.win);
+      else send_msg("Congratulations "+ players[Player].name + " you are the winner!", Sounds.win);
       push_score(players[Player]);
     }
-    players[Player].updateScore();
     Player = (Player+1) % n_player;
     Start_Cell = (0,0);
     update_player_frames();
+    Time =500;
   }
 }
+
+
 function check_winner(color) {
   var R, C;
   var n =  (color%2 ? color : color-2);
@@ -357,6 +425,7 @@ function Player(name, score, colors, number, frame) {
 function play(event) {
   if (IsOver) return;
   validate_movement(event.currentTarget);
+  setTimeout(function(){ ordi_player();}, Time); 
 }
 
 function in_board(x,y) {
