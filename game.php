@@ -43,6 +43,7 @@ session_start();
         </section>
       </div>
       <footer>
+        <button id="pass" style="position:absolute;transition: .5s ease;left: 202px;top: 198px;display:none">pass</button>
         <a href="mailto:contact@hophophop.fr">Nous contacter</a>
       </footer>
     </div>
