@@ -296,36 +296,43 @@ function get_jump(liste , R1, C1, traject=[]) {
 
 
 function ordi_player() {
-  if (Player !== 1) return;
+  if (IsOver) return;
+  if (Player !=1) return;
   var i , j, k;
-  var weight=-99, selected;
-  var x, y, x0, y0, w, n;
+  var weight=-999, selected;
+  var x, y, x0, y0, w, n, c;
+  var s=0;
   for( i = 0; i<17; i++) {
     for (j=0 ; j<25; j++) {
       if(Colors[1].includes(M[i][j])) {       // si pion de l'IA
-        Color=M[i][j];
+        s+=1;
+        c=M[i][j];
         M[i][j]=-1; 
         get_traject([i,j], -1, -1);           // set in Liste all reachable cell
-        M[i][j]=Color; 
+        M[i][j]=c; 
         for(k=0; k< Liste.length; k++){       // set weight // compare
+          s+=1
           x = Liste[k][0];  y = Liste[k][1];
-          n =  (Color%2 ? Color : Color-2);
+          n =  (c%2 ? c : c-2);
           x0= coordTriangles[n][0][0] ;y0= coordTriangles[n][0][1]  // pointe du triangle
-          w = 20*Math.pow((i-x0), 2) + Math.pow((j-y0), 2);            // max distance from depart
-          w -= 20*Math.pow((x-x0), 2) + Math.pow((y-y0), 2);          // min distance to opp
-          w += 10*Math.pow((x-i), 2) + Math.pow((y-j), 2);            // max distance
+          w = 25*(Math.pow((i-x0), 2) + Math.pow((j-y0), 2));            // max distance from depart
+          w -= 30*(Math.pow((x-x0), 2) + Math.pow((y-y0), 2));          // min distance to opp
+          w += 10*(Math.pow((x-i), 2) + Math.pow((y-j), 2));            // max distance
           // le code suivant pour rester sur la ligne droite entre le home et l'opposé 
-		  n = (Color-2 ? 3*(Color-5) : 0);
+		  n = (c-2 ? 3*(c-5) : 0);
           y0= -n*8-12;
-          w -=20 * Math.pow(n*x+y+y0, 2)/(Math.pow(n, 2)+Math.pow(y0, 2));
+          w -= 25*(Math.pow(n*x+y+y0, 2)/(Math.pow(n, 2)+Math.pow(y0, 2)));
           if (w > weight) {
             weight =w;
+            console.log(weight);
             selected = [[i, j], x, y];
+            Color = c;
           }
         }
       }
     }
   }
+  console.log(s + " scénario evaluated");
   traject = get_traject(selected[0], selected[1], selected[2]);
   setTimeout(function(){ make_move(traject);}, 500);      
           
