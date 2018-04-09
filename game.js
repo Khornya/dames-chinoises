@@ -1,6 +1,9 @@
 var test = false; // true pour lancer un test
 var testType = 'game';
 
+
+
+
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
 var n_player = parseInt(document.getElementById("nombre_joueurs").value,10);   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
@@ -44,6 +47,7 @@ var ID; // matrice pour les images
 var History; // liste qui sauvgarde pour chaque joueur le dernier chemin empreinté
 var Liste = [] ; //liste utilisé par l'IA
 var Time=500;
+var IA;
 
 var coordTriangles = [
  [[0,12],[1,11],[1,13],[2,10],[2,12],[2,14],[3,9],[3,11],[3,13],[3,15]],
@@ -135,8 +139,10 @@ function restart() {
   ID = create_board(M) ;
   Player=0;
   IsOver = false;
+  IA = false;
   Start_Cell =  (0,0) ;  
-  if (n_player==1){
+  if (n_player===1){
+    IA = true;
     n_player=2;
     var button = document.getElementById("pass")
     button.style.display ='block';
@@ -205,7 +211,7 @@ function validate_movement(cell) {
       return ;
     }
     History[Player] = traject;
-    Time = 500*(traject.length-1)
+    Time = 500*(traject.length-1)   // Time selon le nombre de déplacement
     make_move(traject);
   }
 }
@@ -246,9 +252,12 @@ function get_traject(start, R1, C1) {
   var i, j;
   for (i =R-1; i <= R+1; i++)  {               // add mouvement adjaçant
     for (j=C-2; j<= C+2; j++) {
-       if ((i!=R || j!=C) && in_board(i,j) && M[i][j]== -1)
-         Liste.push([i,j]);                    // used by IA
+       if ((i!=R || j!=C) && in_board(i,j) && M[i][j]== -1){ 
+         if(! go_back(Color, R, C, i, j) &&
+               ! sameTraject([start, [i,j]]))
+            Liste.push([i,j]);                    // used by IA
          if (i==R1 && j==C1) return [start,[i,j]];
+       }
     }
   }
   return get_jump([start], R1,C1) ;
@@ -282,8 +291,10 @@ function get_jump(liste , R1, C1, traject=[]) {
         index_r = 2*pivot_r-R;   //(quand i=0; , pivot_r=R ; 2*R-R=R (on reste sur la même la ligne)
         index_c = 2*pivot_c-C;
         if (contains(traject,[index_r, index_c])) continue ; // éviter de tourner rond
-        if (in_board(index_r, index_c) && M[index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
-          Liste.push([index_r, index_c])
+        if (in_board(index_r, index_c) && M[index_r][index_c] === -1) { // si la case en asymétrie est vide valide: 
+          if(! go_back(Color, R, C, index_r, index_c) && 
+               ! sameTraject(traject.concat([[R,C], [index_r, index_c]])))
+            Liste.push([index_r, index_c])
           if (index_r==R1 && index_c==C1) return traject.concat([[R,C], [index_r, index_c]]);
           else access_cell.push([index_r, index_c]);
         }
@@ -296,44 +307,50 @@ function get_jump(liste , R1, C1, traject=[]) {
 
 
 function ordi_player() {
-  if (IsOver) return;
-  if (Player !=1) return;
-  var i , j, k;
-  var weight=-999, selected;
-  var x, y, x0, y0, w, n, c;
-  var s=0;
-  for( i = 0; i<17; i++) {
-    for (j=0 ; j<25; j++) {
+  if (!IA) return;          // boolean pour l'IA
+  if (Player != 1) return;  // l'IA est toujour player2
+  if (IsOver) return;       // Isover
+  var i , j, k;             // var pour itération
+  var weight=-99, selected; // meilleur poid et chemin depart arrivé correspondant
+  var x, y, x0, y0, w=0, n;
+  var a , b, p, p0;         // géomitrie
+  var s=0;                  // pour avoir une idée sur le nombre d'itération
+  for( i = 0; i<17; i++) {  // parcourt du plateau
+    for (j=0 ; j<25; j++) { 
       if(Colors[1].includes(M[i][j])) {       // si pion de l'IA
-        s+=1;
-        c=M[i][j];
-        M[i][j]=-1; 
+        Color=M[i][j];                        // fait semblant qu'on va le déplacer
+        M[i][j]=-1;                           //  (i, j) cellule depart
         get_traject([i,j], -1, -1);           // set in Liste all reachable cell
-        M[i][j]=c; 
-        for(k=0; k< Liste.length; k++){       // set weight // compare
+        M[i][j]=Color;                        // rétablir la valeur initiale
+        a = (Color%2 ? 1: -1) ;               // dans quelle direction vont les x? selon les couleur (1, 3, 5 direction +1, 2, 4, 6 direction -1 
+        b = (Color%3 ? (Color<3 ? 0 : -1) : 1); // dans quelle direction vont les y? selon les couleur (1, 2:aucun effet 3,6: +1 4, 5:-1
+        p = -3*a*b;                            // ce code trouve l'equation de la droite allant de la pointe du home a la pointe de l'opposé  
+        p0 = -p*8-12;
+        for(k=0; k< Liste.length; k++){       // set weight // compare  (pour toute cellule accesible accorde un poid
           s+=1
-          x = Liste[k][0];  y = Liste[k][1];
-          n =  (c%2 ? c : c-2);
-          x0= coordTriangles[n][0][0] ;y0= coordTriangles[n][0][1]  // pointe du triangle
-          w = 25*(Math.pow((i-x0), 2) + Math.pow((j-y0), 2));            // max distance from depart
-          w -= 30*(Math.pow((x-x0), 2) + Math.pow((y-y0), 2));          // min distance to opp
-          w += 10*(Math.pow((x-i), 2) + Math.pow((y-j), 2));            // max distance
-          // le code suivant pour rester sur la ligne droite entre le home et l'opposé 
-		  n = (c-2 ? 3*(c-5) : 0);
-          y0= -n*8-12;
-          w -= 25*(Math.pow(n*x+y+y0, 2)/(Math.pow(n, 2)+Math.pow(y0, 2)));
-          if (w > weight) {
+          x = Liste[k][0];  y = Liste[k][1];  // (x, y) cellule accesible a partir de (i, j)
+          n =  (Color%2 ? Color : Color-2);
+          x0= coordTriangles[n][0][0] ;y0= coordTriangles[n][0][1]  // (x0, y0) pointe du triangle opposé // on souhaite diminuer au max la distance
+          w =  10*(a*(x-i)+b*(y-j));                                // main direction, selon les option a, et b
+          w += 10*Math.sqrt(Math.pow((i-x0), 2) + Math.pow((j-y0), 2)); // max distance from depart
+          w -= 10*Math.sqrt(Math.pow((x-x0), 2) + Math.pow((y-y0), 2)); // min distance de la case accesible à la pointe (ds les meilleur cas val=0
+          // le code suivant pour rester sur la ligne droite entre le home et l'oppossé
+          w -= 20 * (Math.pow(p*x+y+p0, 2)/(Math.pow(p, 2)+Math.pow(p0, 2)));    // distance entre point et droite// o
+          //if (w < 50) w+= Math.random()*50;                                      // un peu de rand si choix pas trop optimal// ne fonctionne pas comme prévu
+          //else w+=50;                                                             // serait-il mieux avec le score?
+          if (w > weight) {                                                      // compare 
             weight =w;
-            console.log(weight);
             selected = [[i, j], x, y];
-            Color = c;
           }
         }
-      }
+      }                
     }
   }
+  Color = M[selected[0][0]][selected[0][1]];                                    // ici on valide le meilleur choix
   console.log(s + " scénario evaluated");
+  M[selected[0][0]][selected[0][1]]=-1; 
   traject = get_traject(selected[0], selected[1], selected[2]);
+  History[Player] = traject;
   setTimeout(function(){ make_move(traject);}, 500);      
           
 }
@@ -432,7 +449,7 @@ function Player(name, score, colors, number, frame) {
 function play(event) {
   if (IsOver) return;
   validate_movement(event.currentTarget);
-  setTimeout(function(){ ordi_player();}, Time); 
+  setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre que validate_movement finit sont travail
 }
 
 function in_board(x,y) {
