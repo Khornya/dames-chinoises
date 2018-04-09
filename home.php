@@ -71,23 +71,24 @@ session_start(); /* pour la gestion des sessions plus tard */
               <input type="submit" name="PLAY" value="PLAY"/>
             </form>
           </section>
-          <table id="score">
-          <th colspan="2" align="center"><h1>Meilleurs scores</h1></th>
+          <table>
+          <th colspan="3" align="center"><h1>Meilleurs scores</h1></th>
           <?php
             try
             {
-              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
+              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
             }
               catch(Exception $e)
             {
               die('Erreur : '.$e->getMessage());
             }
-            $reponse = $bdd->query('SELECT nom, score FROM scores ORDER BY score ASC LIMIT 0, 3');
+            $reponse = $bdd->query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 5');
             while ($donnees = $reponse->fetch())
             {
               echo "<tr>";
-              echo "<td>",$donnees['nom'],"</td>";
-              echo "<td>",$donnees['score'],"</td>";
+              echo "<td class=\"score\">",$donnees['nom'],"</td>";
+              echo "<td class=\"score\">",$donnees['score'],"</td>";
+              echo "<td class=\"score\">",$donnees['dategame'],"</td>";
               echo "</tr>";
             }
             $reponse->closeCursor();
