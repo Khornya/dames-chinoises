@@ -21,9 +21,13 @@ function updateChoices() {
     4: { display: 'none', default: 1 },
     6: { display: 'none', default: 1 }
   };
+  var checkbox;
   deactivateTooltips();
   for (var i = 1; i <= 6; i++) {
     document.getElementById("player"+i).style.display = 'none';
+    checkbox = document.getElementById("IA"+i);
+    checkbox.style.display = 'none';
+    checkbox.nextSibling.style.display = 'none';
   }
   var e = document.getElementById("mode");
   var mode = e.options[e.selectedIndex].value;
@@ -33,6 +37,9 @@ function updateChoices() {
   }
   for (var i = 1; i <= mode; i++) {
     document.getElementById("player"+i).style.display = 'inline';
+    checkbox = document.getElementById("IA"+i);
+    checkbox.style.display = 'inline';
+    checkbox.nextSibling.style.display = 'inline';
   }
   updateColors();
   for (var i in check) {
@@ -75,6 +82,11 @@ function updateColors() {
   }
 }
 
+function disablePlayer(n) {
+  var input = document.getElementById("player"+n);
+  input.disabled = (input.disabled)? false : true;
+}
+
 // Fonction de désactivation de l'affichage des "tooltips"
 function deactivateTooltips() {
     var tooltips = document.querySelectorAll('.tooltip'),
@@ -108,12 +120,13 @@ check['player1'] = function(id) {
         player6 = document.getElementById('player6'),
         tooltip = getTooltip(player);
     if (player.value === '' || player.value.length >= 2 && player1.value.length <= 10) {
-        if ((player === player1 || player.value != player1.value) &&
+        if (player.value === '' ||
+           ((player === player1 || player.value != player1.value) &&
             (player === player2 || player.value != player2.value || player2.style.display == 'none') &&
             (player === player3 || player.value != player3.value || player3.style.display == 'none') &&
             (player === player4 || player.value != player4.value || player4.style.display == 'none') &&
             (player === player5 || player.value != player5.value || player5.style.display == 'none') &&
-            (player === player6 || player.value != player6.value || player6.style.display == 'none') ) {
+            (player === player6 || player.value != player6.value || player6.style.display == 'none')) ) {
           player.className = 'correct';
           tooltip.style.display = 'none';
           return true;
@@ -155,9 +168,10 @@ check['player2'] = check['player3'] = check['player4'] = check['player5'] = chec
         for (var i in check) {
             result = (parseInt(i[6]) > mode || check[i](i)) && result;
         }
-        if (result) {
+        if (result === true) {
           document.form.submit();
         }
+        e.preventDefault();
     });
 
 })();
