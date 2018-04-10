@@ -32,7 +32,7 @@ var players = [];
 for (var n=1; n<=n_player; n++) {
   players.push(new Player(document.getElementById("player"+n).value,0,Colors[n-1], n));
 }
-if (n_player==1)   players.push(new Player("Computer",0,Colors[1], 2));
+if (n_player===1)   players.push(new Player("Computer",0,Colors[1], 2));
 
 
 // ******************************************* création du plateau de jeu ****************************************
@@ -172,47 +172,50 @@ function validate_movement(cell) {
   var R = parseInt(cell.getAttribute('line'),10);
   var C = parseInt(cell.getAttribute('column'),10);
   if (Start_Cell === (0,0)) {                                     // premier click
-    if (!(Colors[Player].includes(M[R][C]))) {                         // vérifie qu'on click sur le pion du joueur qui a la main
-      send_msg("please click on your own pieces", Sounds.fail);
-      return;
+    if (!(Colors[Player].includes(M[R][C]))) {                    // vérifie qu'on click sur le pion du joueur qui a la main
+      if (!IA) send_msg("please click on your own pieces", Sounds.fail);
+      else send_msg("please wait until computer finish playing ", Sounds.fail);
+      return false;
     }
     Start_Cell = [R,C];
     ID[R][C].src = "images/pion" + M[R][C] + "vide.png";
     Color = M[R][C]
-    M[R][C] = -1;                                                // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_jump()
+    M[R][C] = -1; 
+    return false;                                               // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_jump()
   }
   else {
     if (Start_Cell[0] === R && Start_Cell[1] === C) {            // retour à la case départ annule le mouvement
       M[R][C] = Color;
       Start_Cell = (0,0);
       ID[R][C].src = "images/pion" + Color + ".png";
-      return;
+      return false;
     }
     if (M[R][C] !== -1) {                                        // cell not empty
-      send_msg("Cell not empty!", Sounds.fail); return;
+      send_msg("Cell not empty!", Sounds.fail); return false;
     }
 
     if (go_outside(Color,Start_Cell, [R, C])) {                  // mouvement illégal vers l'extérieur du triangle opposé
       send_msg("You can't move this piece outside!", Sounds.fail);
-      return;
+      return false;
     }
 
     if (go_back(Color, Start_Cell[0], Start_Cell[1], R, C)) {    // mouvement illégal en réculant
-      send_msg("You can't go back!", Sounds.fail); return;
+      send_msg("You can't go back!", Sounds.fail); return false;
     }
 
 
     if (!(traject = get_traject(Start_Cell, R, C))) {            // mouvement invalide
       send_msg("Invalide Move!", Sounds.fail);
-      return ;
+      return false;
     }
     if (sameTraject(traject)) {
       send_msg("You can't replay the last move", Sounds.fail);
-      return ;
+      return false;
     }
     History[Player] = traject;
-    Time = 500*(traject.length-1)   // Time selon le nombre de déplacement
+    Time = 500*(traject.length-1)
     make_move(traject);
+    return true;
   }
 }
 
@@ -307,7 +310,6 @@ function get_jump(liste , R1, C1, traject=[]) {
 
 
 function ordi_player() {
-  if (!IA) return;          // boolean pour l'IA
   if (Player != 1) return;  // l'IA est toujour player2
   if (IsOver) return;       // Isover
   var i , j, k;             // var pour itération
@@ -448,8 +450,8 @@ function Player(name, score, colors, number, frame) {
 // se déclenche à chaque clic sur une case du plateau
 function play(event) {
   if (IsOver) return;
-  validate_movement(event.currentTarget);
-  setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre que validate_movement finit sont travail
+  if (! validate_movement(event.currentTarget)) return
+  if (IA)   setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre que validate_movement finit sont travail
 }
 
 function in_board(x,y) {
