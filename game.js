@@ -2,9 +2,6 @@ var test = false; // true pour lancer un test
 var testType = 'game';
 
 
-
-
-
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
 var n_player = parseInt(document.getElementById("nombre_joueurs").value,10);   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
@@ -37,7 +34,7 @@ var isOver; // matrice pour les couleurs finies
 var M; // matrice pour le plateau
 var ID; // matrice pour les images
 var History; // liste qui sauvgarde pour chaque joueur le dernier chemin empreinté
-var Liste = [] ; //liste utilisée par l'IA
+var Liste = [] ; //liste utilisé par l'IA
 var players = [];
 var Time=500;
 var IA;
@@ -141,7 +138,7 @@ function restart() {
   }
   else IA = initArray(n_player, 0, false);
   for (var i=1; i<=n_player; i++) {
-    if (document.getElementById("IA"+i).value !== "")
+    if (document.getElementById("IA"+i).value!== "")
       IA[i-1] = true;
   }
   for (var n=1; n<=n_player; n++) {
@@ -344,6 +341,7 @@ function ordi_player() {
   M[selected[0][0]][selected[0][1]]=-1; 
   traject = get_traject(selected[0], selected[1], selected[2]);
   History[Player] = traject;
+  Time += 500*(traject.length)
   setTimeout(function(){ make_move(traject);}, 500);      
           
 }
@@ -375,7 +373,6 @@ function make_move(mov_list) {
     Player = (Player+1) % n_player;
     Start_Cell = (0,0);
     update_player_frames();
-    Time =500;
   }
 }
 
@@ -440,10 +437,12 @@ function player(name, score, colors, number, frame) {
 
 // se déclenche à chaque clic sur une case du plateau
 function play(event) {
-  if (IsOver) return false;
-  if (!IA[Player])
-    if (! validate_movement(event.currentTarget)) return ;
-  setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre que validate_movement finit sont travail 
+    if (IsOver) return;
+    if (!IA[Player])
+      if (! validate_movement(event.currentTarget)) return ;
+    setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre
+    setTimeout(function(){ play();}, Time);
+    Time=500;
 }
   
 
