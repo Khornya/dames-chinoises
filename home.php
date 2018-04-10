@@ -41,22 +41,22 @@ session_start(); /* pour la gestion des sessions plus tard */
               </select>
               <br />
               <div>
-                <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/><span id="player1colors"></span><input type="checkbox" name="IA1" id="IA1" onclick="disablePlayer(1)" /><label for="IA1" onclick="disablePlayer(1)">IA</label><span class="tooltip"></span>
+                <input type="text" name="player1" id="player1" placeholder="NAME PLAYER 1"/><span id="player1colors"></span><input type="checkbox" name="IA1" id="IA1" value="Computer" onclick="disablePlayer(1)" /><label for="IA1" onclick="disablePlayer(1)">IA</label><span class="tooltip"></span>
               </div>
               <div>
-                <input type="text" name="player2" id="player2" placeholder="NAME PLAYER 2"/><span id="player2colors"></span><input type="checkbox" name="IA2" id="IA2" onclick="disablePlayer(2)" /><label for="IA2" onclick="disablePlayer(2)">IA</label><span class="tooltip"></span>
+                <input type="text" name="player2" id="player2" placeholder="NAME PLAYER 2"/><span id="player2colors"></span><input type="checkbox" name="IA2" id="IA2" value="Computer" onclick="disablePlayer(2)" /><label for="IA2" onclick="disablePlayer(2)">IA</label><span class="tooltip"></span>
               </div>
               <div>
-                <input type="text" name="player3" id="player3" placeholder="NAME PLAYER 3"/><span id="player3colors"></span><input type="checkbox" name="IA3" id="IA3" onclick="disablePlayer(3)" /><label for="IA3" onclick="disablePlayer(3)">IA</label><span class="tooltip"></span>
+                <input type="text" name="player3" id="player3" placeholder="NAME PLAYER 3"/><span id="player3colors"></span><input type="checkbox" name="IA3" id="IA3" value="Computer" onclick="disablePlayer(3)" /><label for="IA3" onclick="disablePlayer(3)">IA</label><span class="tooltip"></span>
               </div>
               <div>
-                <input type="text" name="player4" id="player4" placeholder="NAME PLAYER 4"/><span id="player4colors"></span><input type="checkbox" name="IA4" id="IA4" onclick="disablePlayer(4)" /><label for="IA4" onclick="disablePlayer(4)">IA</label><span class="tooltip"></span>
+                <input type="text" name="player4" id="player4" placeholder="NAME PLAYER 4"/><span id="player4colors"></span><input type="checkbox" name="IA4" id="IA4" value="Computer" onclick="disablePlayer(4)" /><label for="IA4" onclick="disablePlayer(4)">IA</label><span class="tooltip"></span>
               </div>
               <div>
-                <input type="text" name="player5" id="player5" placeholder="NAME PLAYER 5"/><span id="player5colors"></span><input type="checkbox" name="IA5" id="IA5" onclick="disablePlayer(5)" /><label for="IA5" onclick="disablePlayer(5)">IA</label><span class="tooltip"></span>
+                <input type="text" name="player5" id="player5" placeholder="NAME PLAYER 5"/><span id="player5colors"></span><input type="checkbox" name="IA5" id="IA5" value="Computer" onclick="disablePlayer(5)" /><label for="IA5" onclick="disablePlayer(5)">IA</label><span class="tooltip"></span>
               </div>
               <div>
-                <input type="text" name="player6" id="player6" placeholder="NAME PLAYER 6"/><span id="player6colors"></span><input type="checkbox" name="IA6" id="IA6" onclick="disablePlayer(6)" /><label for="IA6" onclick="disablePlayer(6)">IA</label><span class="tooltip"></span>
+                <input type="text" name="player6" id="player6" placeholder="NAME PLAYER 6"/><span id="player6colors"></span><input type="checkbox" name="IA6" id="IA6" value="Computer" onclick="disablePlayer(6)" /><label for="IA6" onclick="disablePlayer(6)">IA</label><span class="tooltip"></span>
               </div>
               <span id="color_choice">
                 Nombre de couleurs :
