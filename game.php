@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
   if (!isset($_POST["colors"]) || !isset($_POST["nombre_joueurs"]) )
    {
@@ -26,6 +26,12 @@ session_start();
         <input name="player4" id="player4" value="<?php if (empty($_POST["player4"])) echo "PLAYER 4"; else echo htmlspecialchars($_POST["player4"]); ?>" />
         <input name="player5" id="player5" value="<?php if (empty($_POST["player5"])) echo "PLAYER 5"; else echo htmlspecialchars($_POST["player5"]); ?>" />
         <input name="player6" id="player6" value="<?php if (empty($_POST["player6"])) echo "PLAYER 6"; else echo htmlspecialchars($_POST["player6"]); ?>" />
+        <input name="IA1" id="IA1" value="<?php if (isset($_POST["IA1"])) echo htmlspecialchars($_POST["IA1"]); ?>" />
+        <input name="IA2" id="IA2" value="<?php if (isset($_POST["IA2"])) echo htmlspecialchars($_POST["IA2"]); ?>" />
+        <input name="IA3" id="IA3" value="<?php if (isset($_POST["IA3"])) echo htmlspecialchars($_POST["IA3"]); ?>" />
+        <input name="IA4" id="IA4" value="<?php if (isset($_POST["IA4"])) echo htmlspecialchars($_POST["IA4"]); ?>" />
+        <input name="IA5" id="IA5" value="<?php if (isset($_POST["IA5"])) echo htmlspecialchars($_POST["IA5"]); ?>" />
+        <input name="IA6" id="IA6" value="<?php if (isset($_POST["IA6"])) echo htmlspecialchars($_POST["IA6"]); ?>" />
         <input name="colors" id="colors" value="<?php echo htmlspecialchars($_POST["colors"]); ?>" />
       </form>
       <div id='game_zone'>
