@@ -4,6 +4,7 @@ var testType = 'game';
 
 
 
+
 // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
 var n_player = parseInt(document.getElementById("nombre_joueurs").value,10);   // si n_player=2, il faut définir n_color (1, 2 ou 3) sinon n_color= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
@@ -25,15 +26,6 @@ var Colors = { // attribution des couleurs à chaque joueur
   6: { 1: [[1],[3],[6],[2],[4],[5]] }
 }[n_player][n_color];
 
-// ************************************* infos des joueurs ******************************************************
-
-
-var players = [];
-for (var n=1; n<=n_player; n++) {
-  players.push(new Player(document.getElementById("player"+n).value,0,Colors[n-1], n));
-}
-if (n_player===1)   players.push(new Player("Computer",0,Colors[1], 2));
-
 
 // ******************************************* création du plateau de jeu ****************************************
 
@@ -45,9 +37,11 @@ var isOver; // matrice pour les couleurs finies
 var M; // matrice pour le plateau
 var ID; // matrice pour les images
 var History; // liste qui sauvgarde pour chaque joueur le dernier chemin empreinté
-var Liste = [] ; //liste utilisé par l'IA
+var Liste = [] ; //liste utilisée par l'IA
+var players = [];
 var Time=500;
 var IA;
+
 
 var coordTriangles = [
  [[0,12],[1,11],[1,13],[2,10],[2,12],[2,14],[3,9],[3,11],[3,13],[3,15]],
@@ -138,34 +132,31 @@ function restart() {
   M = init_matrice() ;
   ID = create_board(M) ;
   Player=0;
+  Start_Cell =  (0,0) ;
   IsOver = false;
-  IA = false;
-  Start_Cell =  (0,0) ;  
-  if (n_player===1){
-    IA = true;
+  if (n_player==1) {
     n_player=2;
-    var button = document.getElementById("pass")
-    button.style.display ='block';
-    button.addEventListener('click',pass,false);
-    window.onclick = function(event) {
-      if (event.target !== button) {
-        button.style.display = 'none';
-      }
-    }
+    IA = initArray(n_player, 0, false);
+    IA[1] = true;
   }
-  isOver = initArray(n_player, n_color, false);
-  History = initArray(n_player, 1, false);
+  else IA = initArray(n_player, 0, false);
+  for (var i=1; i<=n_player; i++) {
+    if (document.getElementById("IA"+i).value !== "")
+      IA[i-1] = true;
+  }
+  for (var n=1; n<=n_player; n++) {
+    if ( IA[n-1]) 
+      players.push(new player("Computer",0,Colors[n-1], n));
+    else players.push(new player(document.getElementById("player"+n).value,0,Colors[n-1], n));
+  }
+  for(var i=0; i<IA.length; i++) console.log(Colors[i]);
   for (var i=0, max=players.length; i<max; i++) {
     players[i].createFrame();
   }
+  isOver = initArray(n_player, n_color, false);
+  History = initArray(n_player, 0, false);
   update_player_frames();
-}
-
-function pass() {
-  Player= 1;
-  document.getElementById("pass").style.display = 'none'; 
-  update_player_frames();
-  ordi_player();
+  play();
 }
 
 function validate_movement(cell) {
@@ -310,7 +301,7 @@ function get_jump(liste , R1, C1, traject=[]) {
 
 
 function ordi_player() {
-  if (Player != 1) return;  // l'IA est toujour player2
+  if (!IA[Player]) return;
   if (IsOver) return;       // Isover
   var i , j, k;             // var pour itération
   var weight=-99, selected; // meilleur poid et chemin depart arrivé correspondant
@@ -319,7 +310,7 @@ function ordi_player() {
   var s=0;                  // pour avoir une idée sur le nombre d'itération
   for( i = 0; i<17; i++) {  // parcourt du plateau
     for (j=0 ; j<25; j++) { 
-      if(Colors[1].includes(M[i][j])) {       // si pion de l'IA
+      if(Colors[Player].includes(M[i][j])) {       // si pion de l'IA
         Color=M[i][j];                        // fait semblant qu'on va le déplacer
         M[i][j]=-1;                           //  (i, j) cellule depart
         get_traject([i,j], -1, -1);           // set in Liste all reachable cell
@@ -408,7 +399,7 @@ function check_winner(color) {
 
 
 // constructeur pour la classe Player
-function Player(name, score, colors, number, frame) {
+function player(name, score, colors, number, frame) {
     this.name = name;
     this.score = score;
     this.colors = colors;
@@ -449,10 +440,12 @@ function Player(name, score, colors, number, frame) {
 
 // se déclenche à chaque clic sur une case du plateau
 function play(event) {
-  if (IsOver) return;
-  if (! validate_movement(event.currentTarget)) return
-  if (IA)   setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre que validate_movement finit sont travail
+  if (IsOver) return false;
+  if (!IA[Player])
+    if (! validate_movement(event.currentTarget)) return ;
+  setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre que validate_movement finit sont travail 
 }
+  
 
 function in_board(x,y) {
   return (x > -1 && x < 17 && y > -1 && y<25);
