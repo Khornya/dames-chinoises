@@ -82,7 +82,7 @@ session_start(); /* pour la gestion des sessions plus tard */
             {
               die('Erreur : '.$e->getMessage());
             }
-            $reponse = $bdd->query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 5');
+            $reponse = $bdd->query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 10');
             while ($donnees = $reponse->fetch())
             {
               echo "<tr>";
