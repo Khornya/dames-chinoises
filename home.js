@@ -1,3 +1,9 @@
+function () {
+  for (var i=1;i<=6;i++) {
+    disablePlayer(i);
+  }
+}();
+
 updateChoices();
 
 function seemore() {
@@ -84,7 +90,15 @@ function updateColors() {
 
 function disablePlayer(n) {
   var input = document.getElementById("player"+n);
-  input.disabled = (input.disabled)? false : true;
+  var checkbox = document.getElementById("IA"+n);
+  if (checkbox.checked) {
+    input.disabled = true;
+    input.value = "Computer";
+  }
+  else {
+    input.disabled = false;
+    input.value = "";
+  }
 }
 
 // Fonction de désactivation de l'affichage des "tooltips"

@@ -71,7 +71,7 @@ function init_matrice() {
   var matrice = initArray(17,25,false);
   for (var R=0; R<4; R++) { // R pour row, C pour column
     for (var C=12-R; C<=12+R; C+=2) {
-      matrice[R][C] = 1; 
+      matrice[R][C] = 1;
       matrice[16-R][C] = 2;
     }
   }
@@ -142,7 +142,7 @@ function restart() {
       IA[i-1] = true;
   }
   for (var n=1; n<=n_player; n++) {
-    if ( IA[n-1]) 
+    if ( IA[n-1])
       players.push(new player("Computer",0,Colors[n-1], n));
     else players.push(new player(document.getElementById("player"+n).value,0,Colors[n-1], n));
   }
@@ -168,7 +168,7 @@ function validate_movement(cell) {
     Start_Cell = [R,C];
     ID[R][C].src = "images/pion" + M[R][C] + "vide.png";
     Color = M[R][C]
-    M[R][C] = -1; 
+    M[R][C] = -1;
     return false;                                               // marquer la case depart vide pour ne pas l'utiliser comme pivot dans get_jump()
   }
   else {
@@ -243,7 +243,7 @@ function get_traject(start, R1, C1) {
   var i, j;
   for (i =R-1; i <= R+1; i++)  {               // add mouvement adjaçant
     for (j=C-2; j<= C+2; j++) {
-       if ((i!=R || j!=C) && in_board(i,j) && M[i][j]== -1){ 
+       if ((i!=R || j!=C) && in_board(i,j) && M[i][j]== -1){
          if(! go_back(Color, R, C, i, j) &&
                ! sameTraject([start, [i,j]]))
             Liste.push([i,j]);                    // used by IA
@@ -282,8 +282,8 @@ function get_jump(liste , R1, C1, traject=[]) {
         index_r = 2*pivot_r-R;   //(quand i=0; , pivot_r=R ; 2*R-R=R (on reste sur la même la ligne)
         index_c = 2*pivot_c-C;
         if (contains(traject,[index_r, index_c])) continue ; // éviter de tourner rond
-        if (in_board(index_r, index_c) && M[index_r][index_c] === -1) { // si la case en asymétrie est vide valide: 
-          if(! go_back(Color, R, C, index_r, index_c) && 
+        if (in_board(index_r, index_c) && M[index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
+          if(! go_back(Color, R, C, index_r, index_c) &&
                ! sameTraject(traject.concat([[R,C], [index_r, index_c]])))
             Liste.push([index_r, index_c])
           if (index_r==R1 && index_c==C1) return traject.concat([[R,C], [index_r, index_c]]);
@@ -306,15 +306,15 @@ function ordi_player() {
   var a , b, p, p0;         // géomitrie
   var s=0;                  // pour avoir une idée sur le nombre d'itération
   for( i = 0; i<17; i++) {  // parcourt du plateau
-    for (j=0 ; j<25; j++) { 
+    for (j=0 ; j<25; j++) {
       if(Colors[Player].includes(M[i][j])) {       // si pion de l'IA
         Color=M[i][j];                        // fait semblant qu'on va le déplacer
         M[i][j]=-1;                           //  (i, j) cellule depart
         get_traject([i,j], -1, -1);           // set in Liste all reachable cell
         M[i][j]=Color;                        // rétablir la valeur initiale
-        a = (Color%2 ? 1: -1) ;               // dans quelle direction vont les x? selon les couleur (1, 3, 5 direction +1, 2, 4, 6 direction -1 
+        a = (Color%2 ? 1: -1) ;               // dans quelle direction vont les x? selon les couleur (1, 3, 5 direction +1, 2, 4, 6 direction -1
         b = (Color%3 ? (Color<3 ? 0 : -1) : 1); // dans quelle direction vont les y? selon les couleur (1, 2:aucun effet 3,6: +1 4, 5:-1
-        p = -3*a*b;                            // ce code trouve l'equation de la droite allant de la pointe du home a la pointe de l'opposé  
+        p = -3*a*b;                            // ce code trouve l'equation de la droite allant de la pointe du home a la pointe de l'opposé
         p0 = -p*8-12;
         for(k=0; k< Liste.length; k++){       // set weight // compare  (pour toute cellule accesible accorde un poid
           s+=1
@@ -328,22 +328,22 @@ function ordi_player() {
           w -= 20 * (Math.pow(p*x+y+p0, 2)/(Math.pow(p, 2)+Math.pow(p0, 2)));    // distance entre point et droite// o
           //if (w < 50) w+= Math.random()*50;                                      // un peu de rand si choix pas trop optimal// ne fonctionne pas comme prévu
           //else w+=50;                                                             // serait-il mieux avec le score?
-          if (w > weight) {                                                      // compare 
+          if (w > weight) {                                                      // compare
             weight =w;
             selected = [[i, j], x, y];
           }
         }
-      }                
+      }
     }
   }
   Color = M[selected[0][0]][selected[0][1]];                                    // ici on valide le meilleur choix
   console.log(s + " scénario evaluated");
-  M[selected[0][0]][selected[0][1]]=-1; 
+  M[selected[0][0]][selected[0][1]]=-1;
   traject = get_traject(selected[0], selected[1], selected[2]);
   History[Player] = traject;
   Time += 500*(traject.length)
-  setTimeout(function(){ make_move(traject);}, 500);      
-          
+  setTimeout(function(){ make_move(traject);}, 500);
+
 }
 
 function make_move(mov_list) {
@@ -444,7 +444,7 @@ function play(event) {
     setTimeout(function(){ play();}, Time);
     Time=500;
 }
-  
+
 
 function in_board(x,y) {
   return (x > -1 && x < 17 && y > -1 && y<25);
