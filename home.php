@@ -67,7 +67,7 @@ session_start(); /* pour la gestion des sessions plus tard */
                 <label for="3" onclick="updateColors()">3</label>
                 <br/>
               </span>
-              <input type="submit" name="PLAY" value="PLAY"/>
+              <input type="submit" name="PLAY" value="PLAY" id="PLAY"/>
             </form>
           </section>
           <table>
@@ -75,7 +75,7 @@ session_start(); /* pour la gestion des sessions plus tard */
           <?php
             try
             {
-              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
+              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
             }
               catch(Exception $e)
             {
