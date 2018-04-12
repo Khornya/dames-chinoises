@@ -134,7 +134,7 @@ check['player1'] = function(id) {
         player6 = document.getElementById('player6'),
         tooltip = getTooltip(player);
     var re = new RegExp("^[a-zA-Z0-9_-]{2,10}$", "g"); // variable contenant la regex pour valider le nom
-    if (re.test(player.value)) {
+    if ((re.test(player.value)) || player.value == '') {
         if (player.value === '' ||
             getElementById("IA"+id[6]).checked ||
            ((player === player1 || player.value != player1.value) &&
