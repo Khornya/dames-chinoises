@@ -429,7 +429,7 @@ function play(event) {
     if (!IA[Player])
       if (! validate_movement(event.currentTarget)) return ;
     setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre
-    if (IA[Player+1]) setTimeout(function(){ play();}, Time);
+    if (IA[Player]) setTimeout(function(){ play();}, Time);
     Time=500;
 }
   function in_board(x,y) {
