@@ -133,7 +133,8 @@ check['player1'] = function(id) {
         player5 = document.getElementById('player5'),
         player6 = document.getElementById('player6'),
         tooltip = getTooltip(player);
-    if (player.value === '' || player.value.length >= 2 && player1.value.length <= 10) {
+    var re = new RegExp("^[a-zA-Z0-9_-]{2,10}$", "g"); // variable contenant la regex pour valider le nom
+    if (re.test(player.value)) {
         if (player.value === '' ||
             getElementById("IA"+id[6]).checked ||
            ((player === player1 || player.value != player1.value) &&
@@ -152,10 +153,13 @@ check['player1'] = function(id) {
           tooltip.style.display = 'inline-block';
           return false;
         }
-    } else {
+    } 
+    else {
         player.className = 'incorrect';
-        tooltip.innerHTML = 'Le nom doit faire entre 2 et 10 caractères';
-        tooltip.style.display = 'inline-block';
+        tooltip.innerHTML = '[a-zA-Z0-9_-]{2,10}';
+        tooltip.style.display = 'inline-block'; 
+        var x = document.getElementById("PLAY");
+        x.style.display = "none";
         return false;
     }
 
