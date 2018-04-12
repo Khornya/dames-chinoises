@@ -161,7 +161,7 @@ function validate_movement(cell) {
   var C = parseInt(cell.getAttribute('column'),10);
   if (Start_Cell === (0,0)) {                                     // premier click
     if (!(Colors[Player].includes(M[R][C]))) {                    // vérifie qu'on click sur le pion du joueur qui a la main
-      if (!IA) send_msg("please click on your own pieces", Sounds.fail);
+      if (!IA[Player]) send_msg("please click on your own pieces", Sounds.fail);
       else send_msg("please wait until computer finish playing ", Sounds.fail);
       return false;
     }
