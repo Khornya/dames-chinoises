@@ -141,7 +141,7 @@
     isOver = initArray(n_player, n_color, false);
     History = initArray(n_player, 0, false);
     update_player_frames();
-    play();
+  if (IA[Player]) play();
   }
 
   function validate_movement(cell) {
@@ -423,17 +423,15 @@
     }
 
 
-  // se déclenche à chaque clic sur une case du plateau
-  function play(event) {
-      if (IsOver) return;
-      if (!IA[Player])
-        if (! validate_movement(event.currentTarget)) return ;
-      setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre
-      setTimeout(function(){ play();}, Time);
-      Time=500;
-  }
-
-
+ // se déclenche à chaque clic sur une case du plateau // ou automatiquement si IA
+function play(event) {
+    if (IsOver) return;
+    if (!IA[Player])
+      if (! validate_movement(event.currentTarget)) return ;
+    setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre
+    if (IA[Player+1]) setTimeout(function(){ play();}, Time);
+    Time=500;
+}
   function in_board(x,y) {
     return (x > -1 && x < 17 && y > -1 && y<25);
   }
