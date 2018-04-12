@@ -1,8 +1,8 @@
-function () {
+(function () {
   for (var i=1;i<=6;i++) {
     disablePlayer(i);
   }
-}();
+})();
 
 updateChoices();
 
@@ -135,6 +135,7 @@ check['player1'] = function(id) {
         tooltip = getTooltip(player);
     if (player.value === '' || player.value.length >= 2 && player1.value.length <= 10) {
         if (player.value === '' ||
+            getElementById("IA"+id[6]).checked ||
            ((player === player1 || player.value != player1.value) &&
             (player === player2 || player.value != player2.value || player2.style.display == 'none') &&
             (player === player3 || player.value != player3.value || player3.style.display == 'none') &&
