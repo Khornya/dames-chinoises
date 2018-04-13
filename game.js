@@ -321,7 +321,7 @@
             w += 10*Math.sqrt(Math.pow((i-x0), 2) + Math.pow((j-y0), 2)); // max distance from depart
             w -= 10*Math.sqrt(Math.pow((x-x0), 2) + Math.pow((y-y0), 2)); // min distance de la case accesible à la pointe (ds les meilleur cas val=0
             // le code suivant pour rester sur la ligne droite entre le home et l'oppossé
-            w -= 20 * (Math.pow(p*x+y+p0, 2)/(Math.pow(p, 2)+Math.pow(p0, 2)));    // distance entre point et droite// o
+            w -= 15 * (Math.pow(p*x+y+p0, 2)/(Math.pow(p, 2)+Math.pow(p0, 2)));    // distance entre point et droite// o
             //if (w < 50) w+= Math.random()*50;                                      // un peu de rand si choix pas trop optimal// ne fonctionne pas comme prévu
             //else w+=50;                                                             // serait-il mieux avec le score?
             if (w > weight) {                                                      // compare
