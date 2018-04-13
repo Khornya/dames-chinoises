@@ -46,9 +46,9 @@
   ];
 
   var Sounds = {
-    jump : new sound("Sounds/click.mp3"),
-    fail : new sound("Sounds/fail.mp3"),
-    win : new sound("Sounds/win.mp3")
+    jump : new sound("sounds/click.mp3"),
+    fail : new sound("sounds/fail.mp3"),
+    win : new sound("sounds/win.mp3")
   }
 
   var Muted = false; // etat du son
