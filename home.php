@@ -75,7 +75,9 @@ session_start(); /* pour la gestion des sessions plus tard */
           <?php
             try
             {
-              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
+              $bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
+		        //$bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
+		        //$bdd = new PDO('mysql:host=localhost;dbname=id5364504_dames_chinoises;charset=utf8', 'id5364504_marine', 'iedparis8');
             }
               catch(Exception $e)
             {
