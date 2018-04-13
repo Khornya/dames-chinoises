@@ -40,7 +40,7 @@ session_start();
         <section id="board">
         </section>
         <section id='right_panel'>
-          <img id="muteButton" src="images/mute.png">
+          <img id="muteButton" src="images/unmute.png">
           <p>
             <a href="">Voir les règles</a>
           </p>
