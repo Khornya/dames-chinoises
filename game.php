@@ -40,6 +40,7 @@ session_start();
         <section id="board">
         </section>
         <section id='right_panel'>
+          <img id="muteButton" src="images/mute.png">
           <p>
             <a href="">Voir les règles</a>
           </p>
@@ -54,6 +55,6 @@ session_start();
       </footer>
     </div>
     <script src='tests.js'></script>
-    <script src='game.js?v=1'></script>
+    <script src='game.js'></script>
   </body>
 </html>

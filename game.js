@@ -51,6 +51,13 @@
     win : new sound("Sounds/win.mp3")
   }
 
+  var Muted = false; // etat du son
+
+  document.getElementById("muteButton").addEventListener('click', function(e) {
+    Muted = !Muted;
+    e.currentTarget.src = Muted? "images/unmute.png" : "images/mute.png";
+  });
+
   // ************************************************** tests automatisés *************************************************
 
   if (test) {
@@ -471,7 +478,7 @@ function play(event) {
     this.sound.style.display = "none";
     document.body.appendChild(this.sound);
     this.play = function(){
-      this.sound.play();
+      if (!Muted) this.sound.play();
     }
   }
 
