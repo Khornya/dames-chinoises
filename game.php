@@ -48,6 +48,16 @@ session_start();
             <a href="">Quitter</a>
           </p>
         </section>
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modal_text"></p>
+        <a href="#" class="button" onclick="restart()">PLAY AGAIN</a>
+        <a href="#" class="button" onclick=" window.open('home.php', '_self')">QUIT GAME</a>
+      </div>
+    </div> 
       </div>
       <footer>
         <button id="pass" style="position:absolute;transition: .5s ease;left: 202px;top: 198px;display:none">pass</button>
