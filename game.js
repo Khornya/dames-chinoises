@@ -1,5 +1,5 @@
-// (function() { // IIFE pour éviter les variables globales
-  var test = true; // true pour lancer un test
+//(function() { // IIFE pour éviter les variables globales
+  var test = false; // true pour lancer un test
   var testType = 'game';
 
 
@@ -59,7 +59,7 @@
   });
 
   // ************************************************** tests automatisés *************************************************
-  init();
+
   if (test) {
     Tests[testType].run_test();
   }
@@ -86,7 +86,7 @@
       for (var C=R-4; C<=10-R; C+=2) {
         matrice[R][C] = 3;
         matrice[16-R][24-C] = 4;
-        matrice[R][24-C] = 5;
+        matrice[R][24-C] = 5;;
         matrice[16-R][C] = 6;
       }
     }
@@ -127,9 +127,13 @@
     return cell;
   }
 
-  // fonction pour initialiser le plateau
-  function init() {
-    ID = create_board(init_matrice());
+  // fonction pour recommencer le jeu
+  function restart() {
+    M = init_matrice() ;
+    ID = create_board(M) ;
+    Player=0;
+    Start_Cell =  (0,0) ;
+    IsOver = false;
     IA = initArray(n_player, 0, false);
     for (var i=1; i<=n_player; i++) {
       if (document.getElementById("IA"+i).value!== "")
@@ -142,30 +146,10 @@
     for (var i=0, max=players.length; i<max; i++) {
       players[i].createFrame();
     }
-  }
-
-  // fonction pour vérifier que toutes les images sont bien placées
-  function refresh_board(M) { // a optimiser pour ne pas tester les cases en dehros de l'étoile
-    for (var R=0; R<17; R++) {
-      for (var C=0; C<25; C++) {
-        if (ID[R][C].src !== "images/pion" + M[R][C] + ".png") {
-          ID[R][C].src = "images/pion" + M[R][C] + ".png";
-        }
-      }
-    }
-  }
-
-  // fonction pour recommencer le jeu
-  function restart() {
-    M = init_matrice();
-    refresh_board(M);
-    Player=0;
-    Start_Cell = (0,0);
-    IsOver = false;
     isOver = initArray(n_player, n_color, false);
     History = initArray(n_player, 0, false);
     update_player_frames();
-    if (IA[Player]) play();
+  if (IA[Player]) play();
   }
 
   function validate_movement(cell) {
@@ -377,9 +361,7 @@
       players[Player].updateScore();
       if (check_winner(Color)) {
         IsOver = true;
-        if (players[Player].name==="Computer")
-          send_msg("I am the winner!", Sounds.win);
-        else send_msg("Congratulations "+ players[Player].name + " you are the winner!", Sounds.win);
+        end_game();
         push_score(players[Player]);
       }
       Player = (Player+1) % n_player;
@@ -387,7 +369,6 @@
       update_player_frames();
     }
   }
-
 
   function check_winner(color) {
     var R, C;
@@ -404,7 +385,22 @@
     return (! (isOver[Player].includes(false)))
   }
 
-
+function end_game() {
+        var modal = document.getElementById('myModal');
+        var btn = document.getElementById("myBtn"); // Get the button that opens the modal 
+        var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
+        var content = document.getElementById("modal_text");
+        modal.style.display = "block";
+        content.innerHTML = players[Player].name + " a gagné en " + players[Player].score + "coups." ;
+        span.onclick = function() {                // When the user clicks on <span> (x), close the modal
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {         // When the user clicks anywhere outside of the modal, close it
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }  
+}
 
 
   // constructeur pour la classe Player
@@ -518,8 +514,6 @@ function play(event) {
       xhr.onreadystatechange = function() {
            if (this.readyState == 4) {
              if (this.status == 200) {
-              //console.log(this.responseText);
-              //éventuellement faire une redirection ici
              }
              else {
                alert("Les scores n'ont pas pu être envoyés à la base de données");
@@ -535,4 +529,4 @@ function play(event) {
       xhr.open('GET', 'score.php?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4]);
       xhr.send(null);
     }
-// })();
+//})();
