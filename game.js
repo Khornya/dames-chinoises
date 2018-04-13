@@ -1,4 +1,4 @@
-(function() { // IIFE pour éviter les variables globales
+// (function() { // IIFE pour éviter les variables globales
   var test = false; // true pour lancer un test
   var testType = 'game';
 
@@ -64,7 +64,7 @@
     Tests[testType].run_test();
   }
   else {
-    restart();
+    init();
   }
 
   // *********************************************** fonctions de jeu ************************************************
@@ -86,7 +86,7 @@
       for (var C=R-4; C<=10-R; C+=2) {
         matrice[R][C] = 3;
         matrice[16-R][24-C] = 4;
-        matrice[R][24-C] = 5;;
+        matrice[R][24-C] = 5;
         matrice[16-R][C] = 6;
       }
     }
@@ -127,13 +127,10 @@
     return cell;
   }
 
-  // fonction pour recommencer le jeu
-  function restart() {
-    M = init_matrice() ;
+  // fonction pour initialiser le plateau
+  function init() {
+    M = init_matrice();
     ID = create_board(M) ;
-    Player=0;
-    Start_Cell =  (0,0) ;
-    IsOver = false;
     IA = initArray(n_player, 0, false);
     for (var i=1; i<=n_player; i++) {
       if (document.getElementById("IA"+i).value!== "")
@@ -146,10 +143,31 @@
     for (var i=0, max=players.length; i<max; i++) {
       players[i].createFrame();
     }
+    restart();
+  }
+
+  // fonction pour vérifier que toutes les images sont bien placées
+  function refresh_board(M) { // a optimiser pour ne pas tester les cases en dehros de l'étoile
+    for (var R=0; R<17; R++) {
+      for (var C=0; C<25; C++) {
+        if (ID[R][C].src !== "images/pion" + M[R][C] + ".png") {
+          ID[R][C].src = "images/pion" + M[R][C] + ".png";
+        }
+      }
+    }
+  }
+
+  // fonction pour recommencer le jeu
+  function restart() {
+    M = init_matrice();
+    refresh_board(M);
+    Player=0;
+    Start_Cell = (0,0);
+    IsOver = false;
     isOver = initArray(n_player, n_color, false);
     History = initArray(n_player, 0, false);
     update_player_frames();
-  if (IA[Player]) play();
+    if (IA[Player]) play();
   }
 
   function validate_movement(cell) {
@@ -519,4 +537,4 @@ function play(event) {
       xhr.open('GET', 'score.php?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4]);
       xhr.send(null);
     }
-})();
+// })();
