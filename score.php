@@ -3,7 +3,7 @@ if (isset($_GET['name']) AND isset($_GET['score']) AND ($_GET['score']<500) AND 
 {
 	try
 	{
-		$bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
+		$bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
 	}
 	catch(Exception $e)
 	{
@@ -11,7 +11,12 @@ if (isset($_GET['name']) AND isset($_GET['score']) AND ($_GET['score']<500) AND 
 	}
 	$name= $_GET['name'];
 	$score= (int) $_GET['score'];
-	$reponse = $bdd->query("INSERT INTO parties (ID, nom, score, dategame) VALUES (NULL,'$name','$score',now())");
+	$adversaire1= $_GET['adversaire1'];
+	$adversaire2= $_GET['adversaire2'];
+	$adversaire3= $_GET['adversaire3'];
+	$adversaire4= $_GET['adversaire4'];
+	$adversaire5= $_GET['adversaire5'];
+	$requete = "INSERT INTO parties (nom, score, adversaire1, adversaire2, adversaire3, adversaire4, adversaire5, dategame) VALUES ('" . $name . "', " . $score . ", '" . $adversaire1 . "', '" . $adversaire2 . "', '" . $adversaire3 . "', '" . $adversaire4 . "', '" . $adversaire5 .  "', now())";
+	$bdd->exec($requete);
 }
-echo "<meta http-equiv='refresh' content='0; url=home.php'>";
 ?>

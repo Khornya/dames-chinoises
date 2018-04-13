@@ -497,16 +497,25 @@ function play(event) {
   }
 
   function push_score(player) {
-    var xhr = new XMLHttpRequest();
-    var name = encodeURIComponent(player.name);
-    var score = encodeURIComponent(player.score);
-    var adversaires = players.filter(item => item !== player);
-    adversaires.forEach(function(value, index, array) {
-      array[index] = value.name;
-    })
-    adversaires = encodeURIComponent(JSON.stringify(adversaires));
-    var date = encodeURIComponent((new Date()).getTime());
-    xhr.open('GET', 'score.php?name=' + name + '&score=' + score + '&adversaires=' + adversaires + '&date' + date);
-    xhr.send(null);
-  }
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+           if (this.readyState == 4) {
+             if (this.status == 200) {
+              //console.log(this.responseText);
+              //éventuellement faire une redirection ici
+             }
+             else {
+               alert("Les scores n'ont pas pu être envoyés à la base de données");
+             }
+           }
+        };
+      var name = encodeURIComponent(player.name);
+      var score = encodeURIComponent(player.score);
+      var adversaires = players.filter(item => item !== player);
+      adversaires.forEach(function(value, index, array) {
+        array[index] = encodeURIComponent(value.name);
+      })
+      xhr.open('GET', 'score.php?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4]);
+      xhr.send(null);
+    }
 })();
