@@ -4,6 +4,8 @@ if (isset($_GET['name']) AND isset($_GET['score']) AND ($_GET['score']<500) AND 
 	try
 	{
 		$bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', '');
+		//$bdd = new PDO('mysql:host=localhost;dbname=dames_chinoises;charset=utf8', 'root', 'root');
+		//$bdd = new PDO('mysql:host=localhost;dbname=id5364504_dames_chinoises;charset=utf8', 'id5364504_marine', 'iedparis8');
 	}
 	catch(Exception $e)
 	{
