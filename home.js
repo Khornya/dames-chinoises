@@ -93,7 +93,7 @@ function disablePlayer(n) {
   var checkbox = document.getElementById("IA"+n);
   if (checkbox.checked) {
     input.disabled = true;
-    input.value = "Computer";
+    input.value = "Ordinateur";
   }
   else {
     input.disabled = false;
