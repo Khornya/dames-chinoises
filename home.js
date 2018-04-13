@@ -136,7 +136,7 @@ check['player1'] = function(id) {
     var re = new RegExp("^[a-zA-Z0-9_-]{2,10}$", "g"); // variable contenant la regex pour valider le nom
     if ((re.test(player.value)) || player.value == '') {
         if (player.value === '' ||
-            getElementById("IA"+id[6]).checked ||
+            document.getElementById("IA"+id[6]).checked ||
            ((player === player1 || player.value != player1.value) &&
             (player === player2 || player.value != player2.value || player2.style.display == 'none') &&
             (player === player3 || player.value != player3.value || player3.style.display == 'none') &&
@@ -153,13 +153,13 @@ check['player1'] = function(id) {
           tooltip.style.display = 'inline-block';
           return false;
         }
-    } 
+    }
     else {
         player.className = 'incorrect';
         tooltip.innerHTML = '[a-zA-Z0-9_-]{2,10}';
-        tooltip.style.display = 'inline-block'; 
-        var x = document.getElementById("PLAY");
-        x.style.display = "none";
+        tooltip.style.display = 'inline-block';
+        // var x = document.getElementById("PLAY");
+        // x.style.display = "none";
         return false;
     }
 
