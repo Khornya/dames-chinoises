@@ -55,7 +55,7 @@
 
   document.getElementById("muteButton").addEventListener('click', function(e) {
     Muted = !Muted;
-    e.currentTarget.src = Muted? "images/unmute.png" : "images/mute.png";
+    e.currentTarget.src = Muted? "images/mute.png" : "images/unmute.png";
   });
 
   // ************************************************** tests automatisés *************************************************
