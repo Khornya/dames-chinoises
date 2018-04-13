@@ -1,5 +1,5 @@
 // (function() { // IIFE pour éviter les variables globales
-  var test = false; // true pour lancer un test
+  var test = true; // true pour lancer un test
   var testType = 'game';
 
 
@@ -59,12 +59,12 @@
   });
 
   // ************************************************** tests automatisés *************************************************
-
+  init();
   if (test) {
     Tests[testType].run_test();
   }
   else {
-    init();
+    restart();
   }
 
   // *********************************************** fonctions de jeu ************************************************
@@ -129,8 +129,7 @@
 
   // fonction pour initialiser le plateau
   function init() {
-    M = init_matrice();
-    ID = create_board(M) ;
+    ID = create_board(init_matrice());
     IA = initArray(n_player, 0, false);
     for (var i=1; i<=n_player; i++) {
       if (document.getElementById("IA"+i).value!== "")
@@ -143,7 +142,6 @@
     for (var i=0, max=players.length; i<max; i++) {
       players[i].createFrame();
     }
-    restart();
   }
 
   // fonction pour vérifier que toutes les images sont bien placées
