@@ -140,7 +140,8 @@
         IA[i-1] = true;
     }
     for (var n=1; n<=n_player; n++) {
-      players.push(new player(document.getElementById("player"+n).value,0,Colors[n-1], n));
+      if (IA[n-1]) players.push(new player(document.getElementById("IA"+n).value,0,Colors[n-1], n));
+      else players.push(new player(document.getElementById("player"+n).value,0,Colors[n-1], n));
     }
     for (var i=0, max=players.length; i<max; i++) {
       players[i].createFrame();
