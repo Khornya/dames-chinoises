@@ -349,8 +349,6 @@
             if (w > weight) {                                                      // compare
               weight =w;
               selected = [[i, j], x, y];
-              console.log("selected cell ("+i+", "+j+") to ("+x+", "+y+")  with weight= "+w);
-
             }
           }
         }
