@@ -1,4 +1,4 @@
-//(function() { // IIFE pour éviter les variables globales
+///(function() { // IIFE pour éviter les variables globales
   var test = false; // true pour lancer un test
   var testType = 'game';
 
@@ -64,7 +64,7 @@
     Tests[testType].run_test();
   }
   else {
-    restart();
+    init();
   }
 
   // *********************************************** fonctions de jeu ************************************************
@@ -128,12 +128,9 @@
   }
 
   // fonction pour recommencer le jeu
-  function restart() {
-    M = init_matrice() ;
-    ID = create_board(M) ;
-    Player=0;
-    Start_Cell =  (0,0) ;
-    IsOver = false;
+  function init() {
+    M = init_matrice();
+    ID = create_board(M);
     IA = initArray(n_player, 0, false);
     for (var i=1; i<=n_player; i++) {
       if (document.getElementById("IA"+i).value!== "")
@@ -146,10 +143,35 @@
     for (var i=0, max=players.length; i<max; i++) {
       players[i].createFrame();
     }
+    restart(0);
+
+  }
+  
+
+  function restart(opt=1) { 
+    if (opt) {
+      document.getElementById('myModal').style.display = "none";
+      M = init_matrice();
+      refresh_board(M);
+      for(var n=0; n< n_player; n++) 
+        players[n].score = 0;
+    }
+    Player=0;
+    Start_Cell =  (0,0) ;
+    IsOver = false;
     isOver = initArray(n_player, n_color, false);
     History = initArray(n_player, 0, false);
     update_player_frames();
-  if (IA[Player]) play();
+    if (IA[Player]) play();
+ }
+
+
+  function refresh_board(M) { // a optimiser pour ne pas tester les cases en dehros de l'étoile
+    for (var R=0; R<17; R++) {
+      for (var C=0; C<25; C++) {
+        if (ID[R][C].src !== "images/pion" + M[R][C] + ".png")
+          ID[R][C].src = "images/pion" + M[R][C] + ".png"; }
+    }
   }
 
   function validate_movement(cell) {
@@ -296,7 +318,7 @@
   function ordi_player() {
     if (!IA[Player]) return;
     if (IsOver) return;       // Isover
-    var i , j, k;             // var pour itération
+    var i, j, k;             // var pour itération
     var weight=-99, selected; // meilleur poid et chemin depart arrivé correspondant
     var x, y, x0, y0, w=0, n;
     var a , b, p, p0;         // géomitrie
@@ -308,25 +330,27 @@
           M[i][j]=-1;                           //  (i, j) cellule depart
           get_traject([i,j], -1, -1);           // set in Liste all reachable cell
           M[i][j]=Color;                        // rétablir la valeur initiale
-          a = (Color%2 ? 1: -1) ;               // dans quelle direction vont les x? selon les couleur (1, 3, 5 direction +1, 2, 4, 6 direction -1
-          b = (Color%3 ? (Color<3 ? 0 : -1) : 1); // dans quelle direction vont les y? selon les couleur (1, 2:aucun effet 3,6: +1 4, 5:-1
-          p = -3*a*b;                            // ce code trouve l'equation de la droite allant de la pointe du home a la pointe de l'opposé
-          p0 = -p*8-12;
+
           for(k=0; k< Liste.length; k++){       // set weight // compare  (pour toute cellule accesible accorde un poid
-            s+=1
-            x = Liste[k][0];  y = Liste[k][1];  // (x, y) cellule accesible a partir de (i, j)
             n =  (Color%2 ? Color : Color-2);
             x0= coordTriangles[n][0][0] ;y0= coordTriangles[n][0][1]  // (x0, y0) pointe du triangle opposé // on souhaite diminuer au max la distance
-            w =  10*(a*(x-i)+b*(y-j));                                // main direction, selon les option a, et b
-            w += 10*Math.sqrt(Math.pow((i-x0), 2) + Math.pow((j-y0), 2)); // max distance from depart
-            w -= 10*Math.sqrt(Math.pow((x-x0), 2) + Math.pow((y-y0), 2)); // min distance de la case accesible à la pointe (ds les meilleur cas val=0
+            a = (Color%2 ? 1: -1) ;               // dans quelle direction vont les x? selon les couleur (1, 3, 5 direction +1, 2, 4, 6 direction -1
+            b = (Color%3 ? (Color<3 ? 0 : -1) : 1); // dans quelle direction vont les y? selon les couleur (1, 2:aucun effet 3,6: +1 4, 5:-1
+            p = -3*a*b;                            // ce code trouve l'equation de la droite allant de la pointe du home a la pointe de l'opposé
+            p0 = -p*8-12;
+            s+=1
+            x = Liste[k][0];  y = Liste[k][1];  // (x, y) cellule accesible a partir de (i, j)
+            w  = 10* (a*(x-i)+b*(y-j));                                // main direction, selon les option a, et b
+            w += 10* (Math.pow((i-x0), 2) + Math.pow((j-y0), 2)/3);    // max distance from depart
+            w -= 10* (Math.pow((x-x0), 2) + Math.pow((y-y0), 2)/3);    // min distance de la case accesible à la pointe (ds le meilleur cas val=0
             // le code suivant pour rester sur la ligne droite entre le home et l'oppossé
-            w -= 15 * (Math.pow(p*x+y+p0, 2)/(Math.pow(p, 2)+Math.pow(p0, 2)));    // distance entre point et droite// o
-            //if (w < 50) w+= Math.random()*50;                                      // un peu de rand si choix pas trop optimal// ne fonctionne pas comme prévu
-            //else w+=50;                                                             // serait-il mieux avec le score?
+            w += 15* (Math.pow(p*i+j+p0, 2)/(Math.pow(p, 2)+3));    // privilégier le spions les plus éloignés
+            w -= 15* (Math.pow(p*x+y+p0, 2)/(Math.pow(p, 2)+3));    // privilégier les positions les plus proches
             if (w > weight) {                                                      // compare
               weight =w;
               selected = [[i, j], x, y];
+              console.log("selected cell ("+i+", "+j+") to ("+x+", "+y+")  with weight= "+w);
+
             }
           }
         }
@@ -391,7 +415,8 @@ function end_game() {
         var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
         var content = document.getElementById("modal_text");
         modal.style.display = "block";
-        content.innerHTML = players[Player].name + " a gagné en " + players[Player].score + "coups." ;
+        Sounds.win.play();
+        content.innerHTML = players[Player].name + " a gagné en " + players[Player].score + " coups." ;
         span.onclick = function() {                // When the user clicks on <span> (x), close the modal
             modal.style.display = "none";
         }
@@ -449,7 +474,7 @@ function play(event) {
     if (!IA[Player])
       if (! validate_movement(event.currentTarget)) return ;
     setTimeout(function(){ ordi_player();}, Time);   //Time pour attendre
-    if (IA[Player]) setTimeout(function(){ play();}, Time);
+    if (IA[(Player+1)%2]) setTimeout(function(){ play();}, Time);
     Time=500;
 }
   function in_board(x,y) {
