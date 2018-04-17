@@ -1,6 +1,7 @@
 # Dames chinoises
-voir package.json pour les noms des modules à installer ($ npm install nom_du_module)
+Depuis le répertoire contenant les fichiers du projet :
+`$ npm install`
 
-$ node server.js pour lancer le serveur
+Pour lancer le serveur : `$ node server.js`
 
 http://localhost:8000 pour accéder à la page d'accueil
