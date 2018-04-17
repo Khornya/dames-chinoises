@@ -146,14 +146,14 @@
     restart(0);
 
   }
-  
 
-  function restart(opt=1) { 
+
+  function restart(opt=1) {
     if (opt) {
       document.getElementById('myModal').style.display = "none";
       M = init_matrice();
       refresh_board(M);
-      for(var n=0; n< n_player; n++) 
+      for(var n=0; n< n_player; n++)
         players[n].score = 0;
     }
     Player=0;
@@ -409,7 +409,7 @@
 
 function end_game() {
         var modal = document.getElementById('myModal');
-        var btn = document.getElementById("myBtn"); // Get the button that opens the modal 
+        var btn = document.getElementById("myBtn"); // Get the button that opens the modal
         var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
         var content = document.getElementById("modal_text");
         modal.style.display = "block";
@@ -422,7 +422,7 @@ function end_game() {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
-        }  
+        }
 }
 
 
@@ -549,7 +549,7 @@ function play(event) {
       adversaires.forEach(function(value, index, array) {
         array[index] = encodeURIComponent(value.name);
       })
-      xhr.open('GET', 'score.php?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4]);
+      xhr.open('GET', '/score?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4]);
       xhr.send(null);
     }
 //})();
