@@ -12,7 +12,7 @@ app.set('view engine', 'pug');
 
 app.post('/game',function(request,response){
   if (typeof(request.body.nombre_joueurs) !== 'undefined' && typeof(request.body.colors) !== 'undefined') {
-    response.sendFile(__dirname + '/index.html');
+    response.sendFile(__dirname + '/');
   }
   var colors = request.body.colors;
   var nombre_joueurs = request.body.nombre_joueurs;
@@ -59,6 +59,7 @@ app.get('/score',function(request,response){
     var adversaire4 = request.query.adversaire4;
     var adversaire5 = request.query.adversaire5;
     var date = new Date();
+    console.log(Date.today);
     var datetime = date.getFullYear() + '-' +  (parseInt(date.getMonth()) + 1) + '-' + date.getDay();
     var sql = "INSERT INTO parties (nom, score, adversaire1, adversaire2, adversaire3, adversaire4, adversaire5, dategame) VALUES ('" + name + "', " + score + ", '" + adversaire1 + "', '" + adversaire2 + "', '" + adversaire3 + "', '" + adversaire4 + "', '" + adversaire5 +  "', '" + datetime + "')";
     connection.query(sql, function(err, rows, fields) {
@@ -69,7 +70,7 @@ app.get('/score',function(request,response){
 });
 
 var mysql = require('mysql');
-var db_config = { // https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
+var db_config = {
   host     : 'us-cdbr-iron-east-05.cleardb.net',
   user     : 'b2478404c9c4d9',
   password : 'ad4befae',
@@ -78,7 +79,7 @@ var db_config = { // https://stackoverflow.com/questions/20210522/nodejs-mysql-e
 
 var connection;
 
-function handleDisconnect() {
+function handleDisconnect() { // https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
   connection = mysql.createConnection(db_config); // Recreate the connection, since
                                                   // the old one cannot be reused.
 
@@ -119,7 +120,6 @@ app.get('/', function(req, res) {
       score8: rows[7],
       score9: rows[8],
       score10: rows[9]
-      // scores: rows
     });
   });
 });
