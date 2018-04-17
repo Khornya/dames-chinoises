@@ -1,0 +1,38 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    link(rel="stylesheet" href="style.css")
+    title Hop hop hop
+  body
+    include includes/header.pug
+    #main_wrapper
+      form(style="display:none")
+        input#nombre_joueurs(name="nombre_joueurs" value=nombre_joueurs)
+        input#player1(name="player1" value=player1)
+        input#player2(name="player2" value=player2)
+        input#player3(name="player3" value=player3)
+        input#player4(name="player4" value=player4)
+        input#player5(name="player5" value=player5)
+        input#player6(name="player6" value=player6)
+        input#IA1(name="IA1" value=ordi1)
+        input#IA2(name="IA2" value=ordi2)
+        input#IA3(name="IA3" value=ordi3)
+        input#IA4(name="IA4" value=ordi4)
+        input#IA5(name="IA5" value=ordi5)
+        input#IA6(name="IA6" value=ordi6)
+        input#colors(name="colors" value=colors)
+      #game_zone
+        section#left_panel
+        section#board
+        section#right_panel
+          img#muteButton(src="images/unmute.png")
+          p
+            a(href="") Voir les règles
+          p
+            a(href="") Quitter
+      footer
+        button#pass(style="position:absolute;transition: .5s ease;left: 202px;top: 198px;display:none") pass
+        a(href="mailto:contact@hophophop.fr") Nous contacter
+    script(src="tests.js")
+    script(src="game.js")

@@ -1,11 +1,3 @@
-(function () {
-  for (var i=1;i<=6;i++) {
-    disablePlayer(i);
-  }
-})();
-
-updateChoices();
-
 function seemore() {
   var x = document.getElementById("seemore");
   var y = document.getElementById("voirPlus");
@@ -31,7 +23,7 @@ function updateChoices() {
   deactivateTooltips();
   for (var i = 1; i <= 6; i++) {
     document.getElementById("player"+i).style.display = 'none';
-    checkbox = document.getElementById("IA"+i);
+    checkbox = document.getElementById("ordi"+i);
     checkbox.style.display = 'none';
     checkbox.nextSibling.style.display = 'none';
   }
@@ -43,7 +35,7 @@ function updateChoices() {
   }
   for (var i = 1; i <= mode; i++) {
     document.getElementById("player"+i).style.display = 'inline';
-    checkbox = document.getElementById("IA"+i);
+    checkbox = document.getElementById("ordi"+i);
     checkbox.style.display = 'inline';
     checkbox.nextSibling.style.display = 'inline';
   }
@@ -88,19 +80,6 @@ function updateColors() {
   }
 }
 
-function disablePlayer(n) {
-  var input = document.getElementById("player"+n);
-  var checkbox = document.getElementById("IA"+n);
-  if (checkbox.checked) {
-    input.disabled = true;
-    input.value = "Ordinateur";
-  }
-  else {
-    input.disabled = false;
-    input.value = "";
-  }
-}
-
 // Fonction de désactivation de l'affichage des "tooltips"
 function deactivateTooltips() {
     var tooltips = document.querySelectorAll('.tooltip'),
@@ -124,7 +103,7 @@ function getTooltip(elements) {
 // Fonctions de vérification du formulaire, elles renvoient "true" si tout est ok
 var check = {}; // On met toutes nos fonctions dans un objet littéral
 
-check['player1'] = function(id) {
+function check_player(id) {
     var player = document.getElementById(id),
         player1 = document.getElementById('player1'),
         player2 = document.getElementById('player2'),
@@ -134,9 +113,9 @@ check['player1'] = function(id) {
         player6 = document.getElementById('player6'),
         tooltip = getTooltip(player);
     var re = new RegExp("^[a-zA-Z0-9_-]{2,10}$", "g"); // variable contenant la regex pour valider le nom
-    if ((re.test(player.value)) || player.value == '') {
+    if ((re.test(player.value)) || player.value === '') {
         if (player.value === '' ||
-            document.getElementById("IA"+id[6]).checked ||
+            document.getElementById("ordi"+id[6]).checked ||
            ((player === player1 || player.value != player1.value) &&
             (player === player2 || player.value != player2.value || player2.style.display == 'none') &&
             (player === player3 || player.value != player3.value || player3.style.display == 'none') &&
@@ -163,39 +142,61 @@ check['player1'] = function(id) {
         return false;
     }
 
-};
+}
+
+check['player1'] = check_player;
 
 check['player2'] = check['player3'] = check['player4'] = check['player5'] = check['player6'] = check['player1'];
 
+function disablePlayer(n) {
+  var input = document.getElementById("player"+n);
+  var checkbox = document.getElementById("ordi"+n);
+  if (checkbox.checked) {
+    input.disabled = true;
+    input.value = "Ordinateur";
+  }
+  else {
+    input.disabled = false;
+    input.value = "";
+  }
+}
+
 // Mise en place des événements
 
-(function() { // Utilisation d'une IIFE pour éviter les variables globales.
+  var form = document.getElementById('form'),
+      inputs = document.querySelectorAll('input[type=text]'),
+      inputsLength = inputs.length;
+  for (var i = 0; i < inputsLength; i++) {
+      inputs[i].addEventListener('keyup', function(e) {
+          check[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
+      });
+  }
 
-    var form = document.getElementById('form'),
-        inputs = document.querySelectorAll('input[type=text]'),
-        inputsLength = inputs.length;
-    for (var i = 0; i < inputsLength; i++) {
-        inputs[i].addEventListener('keyup', function(e) {
-            check[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
-        });
-    }
+  form.addEventListener('submit', function(e) {
+      var result = true;
+      var element = document.getElementById("mode");
+      var mode = element.options[element.selectedIndex].value;
+      for (var i in check) {
+          result = (parseInt(i[6]) > mode || check[i](i)) && result;
+      }
+      if (result === true) {
+        document.form.submit();
+      }
+      e.preventDefault();
+  });
 
-    form.addEventListener('submit', function(e) {
-        var result = true;
-        var element = document.getElementById("mode");
-        var mode = element.options[element.selectedIndex].value;
-        for (var i in check) {
-            result = (parseInt(i[6]) > mode || check[i](i)) && result;
-        }
-        if (result === true) {
-          document.form.submit();
-        }
-        e.preventDefault();
-    });
-
-})();
-
-
-// Maintenant que tout est initialisé, on peut désactiver les "tooltips"
+  var boxes = document.querySelectorAll('input[type=checkbox]'),
+      boxesLength = boxes.length;
+  for (var i = 0; i < boxesLength; i++) {
+      boxes[i].addEventListener('click', function(e) {
+        check["player" + e.target.id[4]]("player" + e.target.id[4]);
+      });
+  }
 
 deactivateTooltips();
+
+for (var i=1;i<=6;i++) {
+  disablePlayer(i);
+}
+
+updateChoices();
