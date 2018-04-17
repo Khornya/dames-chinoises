@@ -1,0 +1,88 @@
+doctype html
+html
+  head
+    meta(charset="utf-8")
+    link(rel="stylesheet" href="style.css")
+    title Hop hop hop
+  body
+    include includes/header.pug
+    #main_wrapper
+      section
+        h1 Bienvenue sur HOP HOP HOP !
+        p
+          | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in.
+      section
+        h1 Les dames chinoises
+        p
+          | Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
+        #seemore(style="display:none")
+          | orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in. orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in.
+        button#voirPlus(onclick="seemore()") Voir plus
+      #test
+        section#game
+          h1 Jouer une partie
+          form#form(name="form" action="game" target="_self" method="POST")
+            select#mode(name="nombre_joueurs" onclick="updateChoices()")
+              option(value="2") 2 players
+              option(value="3") 3 players
+              option(value="4") 4 players
+              option(value="6") 6 players
+            br
+            div
+              input#player1(type="text" name="player1" placeholder="Joueur 1")
+              span#player1colors
+              input#ordi1(type="checkbox" name="ordi1" value="Ordinateur" onclick="disablePlayer(1)")
+              label(for="ordi1" onclick="disablePlayer(1)") IA
+              span.tooltip
+            div
+              input#player2(type="text" name="player2" placeholder="Joueur 2")
+              span#player2colors
+              input#ordi2(type="checkbox" name="ordi2" value="Ordinateur" onclick="disablePlayer(2)")
+              label(for="ordi2" onclick="disablePlayer(2)") IA
+              span.tooltip
+            div
+              input#player3(type="text" name="player3" placeholder="Joueur 3")
+              span#player3colors
+              input#ordi3(type="checkbox" name="ordi3" value="Ordinateur" onclick="disablePlayer(3)")
+              label(for="ordi3" onclick="disablePlayer(3)") IA
+              span.tooltip
+            div
+              input#player4(type="text" name="player4" placeholder="Joueur 4")
+              span#player4colors
+              input#ordi4(type="checkbox" name="ordi4" value="Ordinateur" onclick="disablePlayer(4)")
+              label(for="ordi4" onclick="disablePlayer(4)") IA
+              span.tooltip
+            div
+              input#player5(type="text" name="player5" placeholder="Joueur 5")
+              span#player5colors
+              input#ordi5(type="checkbox" name="ordi5" value="Ordinateur" onclick="disablePlayer(5)")
+              label(for="ordi5" onclick="disablePlayer(5)") IA
+              span.tooltip
+            div
+              input#player6(type="text" name="player6" placeholder="Joueur 6")
+              span#player6colors
+              input#ordi6(type="checkbox" name="ordi6" value="Ordinateur" onclick="disablePlayer(6)")
+              label(for="ordi6" onclick="disablePlayer(6)") IA
+              span.tooltip
+            span#color_choice
+              | Nombre de couleurs :
+              input#1(type="radio" name="colors" value="1" onclick="updateColors()" checked="")
+              label(for="1" onclick="updateColors()") 1
+              input#2(type="radio" name="colors" value="2" onclick="updateColors()")
+              label(for="2" onclick="updateColors()") 2
+              input#3(type="radio" name="colors" value="3" onclick="updateColors()")
+              label(for="3" onclick="updateColors()") 3
+              br
+            input#PLAY(type="submit" name="PLAY" value="PLAY")
+        include includes/high-scores.pug
+      footer(clear:both="")
+        a(href="mailto:contact@hophophop.fr") Nous contacter
+    script(src="/socket.io/socket.io.js")
+    script.
+      var socket = io();
+      socket.on('news', function (data) {
+      console.log(data);
+      socket.emit('my other event', { my: 'data' });
+      });
+    script(src="public/game.js")
+    script(src="home.js")
