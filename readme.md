@@ -1,7 +1,4 @@
-# Node.js Socket.io Example
-
-This example accompanies the
-[Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
-tutorial.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+# Dames chnoises
+voir package.json pour les noms des modules à installer ($ npm install nom_du_module)
+node server.js pour lancer le serveur
+http://localhost:8000 pour accéder à la page d'accueil
