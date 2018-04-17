@@ -58,10 +58,7 @@ app.get('/score',function(request,response){
     var adversaire3 = request.query.adversaire3;
     var adversaire4 = request.query.adversaire4;
     var adversaire5 = request.query.adversaire5;
-    var date = new Date();
-    console.log(Date.today);
-    var datetime = date.getFullYear() + '-' +  (parseInt(date.getMonth()) + 1) + '-' + date.getDay();
-    var sql = "INSERT INTO parties (nom, score, adversaire1, adversaire2, adversaire3, adversaire4, adversaire5, dategame) VALUES ('" + name + "', " + score + ", '" + adversaire1 + "', '" + adversaire2 + "', '" + adversaire3 + "', '" + adversaire4 + "', '" + adversaire5 +  "', '" + datetime + "')";
+    var sql = "INSERT INTO parties (nom, score, adversaire1, adversaire2, adversaire3, adversaire4, adversaire5, dategame) VALUES ('" + name + "', " + score + ", '" + adversaire1 + "', '" + adversaire2 + "', '" + adversaire3 + "', '" + adversaire4 + "', '" + adversaire5 +  "', now())";
     connection.query(sql, function(err, rows, fields) {
       if (err) throw err;
     });
@@ -74,7 +71,8 @@ var db_config = {
   host     : 'us-cdbr-iron-east-05.cleardb.net',
   user     : 'b2478404c9c4d9',
   password : 'ad4befae',
-  database : 'heroku_d6e785e7b37be17'
+  database : 'heroku_d6e785e7b37be17',
+  dateStrings: 'date'
 };
 
 var connection;
