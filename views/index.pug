@@ -21,7 +21,7 @@ html
       #test
         section#game
           h1 Jouer une partie
-          form#form(name="form" action="game" target="_self" method="POST")
+          form#form1(name="form1" action="game" target="_self" method="POST")
             select#mode(name="nombre_joueurs" onclick="updateChoices()")
               option(value="2") 2 players
               option(value="3") 3 players
@@ -31,8 +31,6 @@ html
             div
               input#player1(type="text" name="player1" placeholder="Joueur 1")
               span#player1colors
-              input#ordi1(type="checkbox" name="ordi1" value="Ordinateur" onclick="disablePlayer(1)")
-              label(for="ordi1" onclick="disablePlayer(1)") IA
               span.tooltip
             div
               input#player2(type="text" name="player2" placeholder="Joueur 2")
@@ -73,16 +71,21 @@ html
               input#3(type="radio" name="colors" value="3" onclick="updateColors()")
               label(for="3" onclick="updateColors()") 3
               br
+            input#inputform1(style="display:none" name="inputform1" value="inputform1")
             input#PLAY(type="submit" name="PLAY" value="PLAY")
+          form#form2(name="form2" action="game" target="_self" method="POST")
+            div
+              input#player(type="text" name="player" placeholder="Votre nom")
+              span.tooltip
+              br
+            div
+              input#roomID(type="text" name="roomID" placeholder="room ID")
+              span.tooltip
+              br
+            input#inputform2(style="display:none" name="inputform2" value="inputform2")
+            input#JOIN(type="submit" name="JOIN" value="JOIN")
         include includes/high-scores.pug
       footer(clear:both="")
         a(href="mailto:contact@hophophop.fr") Nous contacter
     script(src="/socket.io/socket.io.js")
-    script.
-      var socket = io();
-      socket.on('news', function (data) {
-      console.log(data);
-      socket.emit('my other event', { my: 'data' });
-      });
-    script(src="public/game.js")
     script(src="home.js")

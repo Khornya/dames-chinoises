@@ -22,13 +22,15 @@ html
         input#IA5(name="IA5" value=ordi5)
         input#IA6(name="IA6" value=ordi6)
         input#colors(name="colors" value=colors)
+        input#role(name="role" value=role)
+        input#gameId(name="gameId" value=gameId)
+      p#joinGame Demandez à vos amis de rejoindre la partie n° #{gameId}
       #game_zone
         section#left_panel
         section#board
         section#right_panel
           img#muteButton(src="images/unmute.png")
-          p
-            a(href="") Voir les règles
+          p#rules Voir les règles
           p
             a(href="") Quitter
       #myModal.modal(style="display:none")
@@ -38,8 +40,14 @@ html
           p#modal_text
           a.button(href="#" onclick="restart()") PLAY AGAIN
           a.button(href="#" onclick=" window.open('/', '_self')") QUIT GAME
+      #rulesModal.modal(style="display:none")
+        // Modal content
+        .modal-content
+          span.close ×
+          p Voici les règles des dames chinoises : br Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
       footer
         button#pass(style="position:absolute;transition: .5s ease;left: 202px;top: 198px;display:none") pass
         a(href="mailto:contact@hophophop.fr") Nous contacter
+    script(src="/socket.io/socket.io.js")
     script(src="tests.js")
     script(src="game.js")

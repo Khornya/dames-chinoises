@@ -1,3 +1,5 @@
+var socket = io();
+
 function seemore() {
   var x = document.getElementById("seemore");
   var y = document.getElementById("voirPlus");
@@ -21,7 +23,7 @@ function updateChoices() {
   };
   var checkbox;
   deactivateTooltips();
-  for (var i = 1; i <= 6; i++) {
+  for (var i = 2; i <= 6; i++) {
     document.getElementById("player"+i).style.display = 'none';
     checkbox = document.getElementById("ordi"+i);
     checkbox.style.display = 'none';
@@ -33,16 +35,16 @@ function updateChoices() {
   for (var i=1; i<=3; i++) {
     document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false;
   }
-  for (var i = 1; i <= mode; i++) {
+  for (var i = 2; i <= mode; i++) {
     document.getElementById("player"+i).style.display = 'inline';
     checkbox = document.getElementById("ordi"+i);
     checkbox.style.display = 'inline';
     checkbox.nextSibling.style.display = 'inline';
   }
   updateColors();
-  for (var i in check) {
+  for (var i in checkForm1) {
     if (document.getElementById(i).value != '' && parseInt(i[6]) <= mode) {
-      check[i](i);
+      checkForm1[i](i);
     }
   }
 }
@@ -101,7 +103,8 @@ function getTooltip(elements) {
 }
 
 // Fonctions de vérification du formulaire, elles renvoient "true" si tout est ok
-var check = {}; // On met toutes nos fonctions dans un objet littéral
+var checkForm1 = {}; // On met toutes nos fonctions dans un objet littéral
+var checkForm2 = {};
 
 function check_player(id) {
     var player = document.getElementById(id),
@@ -114,8 +117,13 @@ function check_player(id) {
         tooltip = getTooltip(player);
     var re = new RegExp("^[a-zA-Z0-9_-]{2,10}$", "g"); // variable contenant la regex pour valider le nom
     if ((re.test(player.value)) || player.value === '') {
-        if (player.value === '' ||
-            document.getElementById("ordi"+id[6]).checked ||
+      if (typeof(id[6]) === 'undefined') {
+        player.className = 'correct';
+        tooltip.style.display = 'none';
+        return true;
+      }
+      else {
+        if (player.value === '' || (id[6] !== '1' && document.getElementById("ordi"+id[6]).checked) ||
            ((player === player1 || player.value != player1.value) &&
             (player === player2 || player.value != player2.value || player2.style.display == 'none') &&
             (player === player3 || player.value != player3.value || player3.style.display == 'none') &&
@@ -130,23 +138,37 @@ function check_player(id) {
           player.className = 'incorrect';
           tooltip.innerHTML = 'Ce nom est déjà pris';
           tooltip.style.display = 'inline-block';
-          return false;
         }
+      }
     }
     else {
         player.className = 'incorrect';
-        tooltip.innerHTML = '[a-zA-Z0-9_-]{2,10}';
+        tooltip.innerHTML = 'Le nom doit comprendre :<br>- 2 à 10 caractères alphanumériques<br>ou des tirets';
         tooltip.style.display = 'inline-block';
-        // var x = document.getElementById("PLAY");
-        // x.style.display = "none";
         return false;
     }
-
 }
 
-check['player1'] = check_player;
+checkForm1['player1'] = check_player;
 
-check['player2'] = check['player3'] = check['player4'] = check['player5'] = check['player6'] = check['player1'];
+checkForm2['player'] = checkForm1['player2'] = checkForm1['player3'] = checkForm1['player4'] = checkForm1['player5'] = checkForm1['player6'] = checkForm1['player1'] ;
+
+checkForm2['roomID'] = function () {
+  var input = document.getElementById('roomID');
+  var tooltip = getTooltip(input);
+  var re = new RegExp("^[0-9]{1,6}$", "g");
+  if (re.test(input.value) && input.value <= 100000) {
+    input.className = 'correct';
+    tooltip.style.display = 'none';
+    return true;
+  }
+  else {
+      input.className = 'incorrect';
+      tooltip.innerHTML = 'Le game ID doit être comrpis netre 0 et 100000';
+      tooltip.style.display = 'inline-block';
+      return false;
+  }
+};
 
 function disablePlayer(n) {
   var input = document.getElementById("player"+n);
@@ -163,24 +185,42 @@ function disablePlayer(n) {
 
 // Mise en place des événements
 
-  var form = document.getElementById('form'),
-      inputs = document.querySelectorAll('input[type=text]'),
-      inputsLength = inputs.length;
-  for (var i = 0; i < inputsLength; i++) {
+  var form1 = document.getElementById('form1'),
+      inputs = document.querySelectorAll('input[type=text]');
+  for (var i = 0; i <= 5; i++) {
       inputs[i].addEventListener('keyup', function(e) {
-          check[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
+          checkForm1[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
       });
   }
 
-  form.addEventListener('submit', function(e) {
+  form1.addEventListener('submit', function(e) {
       var result = true;
       var element = document.getElementById("mode");
       var mode = element.options[element.selectedIndex].value;
-      for (var i in check) {
-          result = (parseInt(i[6]) > mode || check[i](i)) && result;
+      for (var i in checkForm1) {
+          result = (parseInt(i[6]) > mode || checkForm1[i](i)) && result;
       }
       if (result === true) {
-        document.form.submit();
+        document.form1.submit();
+      }
+      e.preventDefault();
+  });
+
+  var form2 = document.getElementById('form2'),
+      inputs = document.querySelectorAll('input[type=text]');
+  for (var i = 6; i <= 7; i++) {
+      inputs[i].addEventListener('keyup', function(e) {
+          checkForm2[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
+      });
+  }
+
+  form2.addEventListener('submit', function(e) {
+      var result = true;
+      for (var i in checkForm2) {
+          result = (checkForm2[i](i) && result);
+      }
+      if (result === true) {
+        document.form2.submit();
       }
       e.preventDefault();
   });
@@ -189,14 +229,18 @@ function disablePlayer(n) {
       boxesLength = boxes.length;
   for (var i = 0; i < boxesLength; i++) {
       boxes[i].addEventListener('click', function(e) {
-        check["player" + e.target.id[4]]("player" + e.target.id[4]);
+        checkForm1["player" + e.target.id[4]]("player" + e.target.id[4]);
       });
   }
 
 deactivateTooltips();
 
-for (var i=1;i<=6;i++) {
+for (var i=2;i<=6;i++) {
   disablePlayer(i);
 }
 
 updateChoices();
+
+socket.on('connect', function () {
+  // console.log("socket id : ", this.id);
+});
