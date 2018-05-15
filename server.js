@@ -174,7 +174,8 @@ io.on('connection', function (socket) {
     socket.join(data["gameId"].toString());
     clients[this.id] = {
       gameId: data["gameId"],
-      number: 0
+      number: 0,
+      name: data["player"]
     };
     if (games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) {
       var PLAYERS = games[data["gameId"]]["PLAYERS"];
@@ -199,7 +200,8 @@ io.on('connection', function (socket) {
     var n = games[data["gameId"]]["PLAYERS"].length;
     clients[this.id] = {
       gameId: data["gameId"],
-      number: n
+      number: n,
+      name: data["player"]
     };
     games[data["gameId"]]["player"+(n+1)] = (data["player"] !== '')? data["player"] : "Joueur" + (n+1);
     if (games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) {
@@ -220,6 +222,19 @@ io.on('connection', function (socket) {
   socket.on('move request', function (data) {
     console.log('move request : ', data);
     play(clients[this.id]["gameId"], this, data["cell"]);
+  });
+  socket.on('disconnecting', function (reason) {
+    if (contains(Object.keys(clients), this.id)) {
+      io.sockets.in(clients[this.id]["gameId"]).emit('player disconnecting', clients[this.id]);
+      games[clients[this.id]["gameId"]]["gameOver"] = true;
+      io.sockets.in(clients[this.id]["gameId"]).emit('end game', { winner: 0 });
+    }
+  });
+  socket.on('disconnect', function (reason) {
+    if (contains(Object.keys(clients), this.id) && !contains(Object.keys(io.sockets.adapter.rooms), clients[this.id]["gameId"].toString())) {
+      console.log('deleting game ', clients[this.id]["gameId"]);
+      delete games[clients[this.id]["gameId"]];
+    }
   });
 });
 
@@ -493,6 +508,7 @@ function makeBestMove(gameId) {
     games[gameId]["gameOver"] = true;
     io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"] });
     sendScore(gameId, games[gameId]["player"]);
+    return true;
   }
   games[gameId]["player"] = (games[gameId]["player"]+1) % games[gameId]["numPlayers"];
   setTimeout(function() { io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] }); }, games[gameId]["Time"]);
@@ -559,6 +575,7 @@ function validateMove(gameId, socket, cell) {
       games[gameId]["gameOver"] = true;
       io.sockets.in(gameId).emit('end game', { winner: player });
       sendScore(gameId, player);
+      return true
     }
     games[gameId]["player"] = (player+1) % games[gameId]["numPlayers"];
     io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] })

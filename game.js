@@ -187,7 +187,8 @@ else if (role === "guest"){
     }
   }
 
-function end_game(winner) {
+function endGame(winner) {
+    if (winner === 0) return;
         var modal = document.getElementById('myModal');
         var btn = document.getElementById("myBtn"); // Get the button that opens the modal
         var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
@@ -341,7 +342,8 @@ function play(event) {
       }
     });
     socket.on('end game', function (data) {
-      end_game(data["winner"]);
+      console.log('end game :', data);
+      endGame(data["winner"]);
     });
     socket.on('game joined', function (data) {
       console.log("game joined : ", data);
@@ -379,5 +381,8 @@ function play(event) {
       history = initArray(numPlayers, 0, false);
       restart(0);
     });
-
+    socket.on('player disconnecting', function (data) {
+      console.log('player disconnecting :', data);
+      alert(data['name'] + '(Joueur ' + (data['number']+1) + ') a été déconnecté.');
+    });
 //})();
