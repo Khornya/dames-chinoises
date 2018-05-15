@@ -51,11 +51,19 @@ app.post('/game',function(request,response){
   else if (typeof(request.body.inputform2) !== 'undefined') {
     var gameId = request.body.roomID;
     var player = request.body.player;
-    response.render('game', {
-      role: "guest",
-      gameId: gameId,
-      player1: player
-    });
+    if (!contains(Object.keys(games), gameId)) {
+      response.send("<p>Cette partie n'existe pas.</p>");
+    }
+    else if (games[gameId]['remaining'] === 0) {
+      response.send("<p>Cette partie est déjà complète.</p>");
+    }
+    else {
+      response.render('game', {
+        role: "guest",
+        gameId: gameId,
+        player1: player
+      });
+    }
   }
 });
 
@@ -159,7 +167,8 @@ io.on('connection', function (socket) {
       player1: data["player"],
       PLAYERS: [],
       isPlayedByIa: data["isPlayedByIa"],
-      numHumanPlayers: numHumanPlayers
+      numHumanPlayers: numHumanPlayers,
+      remaining: numHumanPlayers-1
     };
     // Join the Room and wait for the players
     socket.join(data["gameId"].toString());
@@ -185,6 +194,7 @@ io.on('connection', function (socket) {
   socket.on('join game', function (data) {
     console.log('join game : ', data);
     socket.join(data["gameId"].toString());
+    games[data["gameId"]]['remaining'] -= 1;
     games[data["gameId"]]["PLAYERS"].push(data["player"]);
     var n = games[data["gameId"]]["PLAYERS"].length;
     clients[this.id] = {
@@ -209,8 +219,7 @@ io.on('connection', function (socket) {
   });
   socket.on('move request', function (data) {
     console.log('move request : ', data);
-    var gameId = clients[this.id]["gameId"];
-    play(gameId, this, data["cell"]);
+    play(clients[this.id]["gameId"], this, data["cell"]);
   });
 });
 
