@@ -80,11 +80,11 @@ app.get('/score',function(request,response){
 });
 
 var mysql = require('mysql');
-var db_config = { // mettre à jour avec la nouvelle BDD de hop-hop-hop.herokuapp.com
+var db_config = {
   host     : 'us-cdbr-iron-east-05.cleardb.net',
-  user     : 'b2478404c9c4d9',
-  password : 'ad4befae',
-  database : 'heroku_d6e785e7b37be17',
+  user     : 'bb4e923f5faaa9',
+  password : '382b4542',
+  database : 'heroku_703605cd7a769b9',
   dateStrings: 'date'
 };
 

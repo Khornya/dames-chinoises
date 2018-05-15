@@ -37,14 +37,16 @@ CREATE TABLE `parties` (
 --
 
 INSERT INTO `parties` (`id`, `nom`, `score`, `adversaire1`, `adversaire2`, `adversaire3`, `adversaire4`, `adversaire5`, `dategame`) VALUES
-(48, 'A', 0, '', NULL, NULL, NULL, NULL, '2018-04-08'),
-(49, 'B', 0, '', NULL, NULL, NULL, NULL, '2018-04-08'),
-(50, 'PLAYER 2', 0, '', NULL, NULL, NULL, NULL, '2018-04-08'),
-(51, 'C', 0, '', NULL, NULL, NULL, NULL, '2018-04-08'),
-(52, 'D', 0, '', NULL, NULL, NULL, NULL, '2018-04-08'),
-(53, 'E', 0, '', NULL, NULL, NULL, NULL, '2018-04-08'),
-(54, 'F', 0, '', NULL, NULL, NULL, NULL, '2018-04-08'),
-(55, 'G', 0, '', NULL, NULL, NULL, NULL, '2018-04-08');
+(0, 'Pierre', 19, 'Jules', NULL, NULL, NULL, NULL, '2018-04-13'),
+(1, 'Jean-Paul', 24, 'Sophie', NULL, NULL, NULL, NULL, '2018-04-08'),
+(2, 'Anne', 32, 'Florian', 'Pierre', NULL, NULL, NULL, '2018-05-22'),
+(3, 'Loulou2345', 33, 'Dédé', NULL, NULL, NULL, NULL, '2018-05-10'),
+(4, 'Mateo', 39, 'Justine', NULL, NULL, NULL, NULL, '2018-04-06'),
+(5, 'Justine', 40, 'Mateo', 'Anne', 'Pierre', NULL, NULL, '2018-05-10'),
+(6, 'Dédé', 46, 'Loulou2345', NULL, NULL, NULL, NULL, '2018-05-23'),
+(7, 'Florian', 48, 'Anne', NULL, NULL, NULL, NULL, '2018-04-15'),
+(8, 'Sophie', 50, 'Jean-Paul', 'Pierre', 'Anne', NULL, NULL, '2018-04-30'),
+(9, 'Jules', 51, 'Pierre', NULL, NULL, NULL, NULL, '2018-05-01');
 
 --
 -- Index pour les tables exportées
@@ -64,4 +66,4 @@ ALTER TABLE `parties`
 -- AUTO_INCREMENT pour la table `parties`
 --
 ALTER TABLE `parties`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
