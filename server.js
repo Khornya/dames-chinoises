@@ -13,6 +13,8 @@ app.use(bodyParser.json());
 app.set('views', './views');
 app.set('view engine', 'pug');
 
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
 app.post('/game',function(request,response){
   // ajouter vérification formulaires
   if (typeof(request.body.inputform1) !== 'undefined') {
@@ -194,6 +196,7 @@ io.on('connection', function (socket) {
       delete games[data["gameId"]]["PLAYERS"];
       init(data["gameId"],0);
       io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]);
+      sendScore(data["gameId"],games[data["gameId"]]["PLAYERS"][0]);
     }
   });
   socket.on('join game', function (data) {
@@ -441,20 +444,18 @@ function initArray(lines, columns, value) {
 }
 
 function sendScore(gameId, winner) {
-  console.log('winner is', winner)
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
        if (this.readyState == 4) {
          if (this.status == 200) {
          }
          else {
-          //  alert("Les scores n'ont pas pu être envoyés à la base de données");
+          console.log("Les scores n'ont pas pu être envoyés à la base de données");
          }
        }
     };
-  var name = encodeURIComponent(games[gameId]["PLAYERS"][winner].name);
-  var score = encodeURIComponent(games[gameId]["PLAYERS"][winner].score);
-  console.log('score is', score)
+  var name = encodeURIComponent(winner.name);
+  var score = encodeURIComponent(winner.score);
   var adversaires = games[gameId]["PLAYERS"].filter(item => item !== winner);
   adversaires.forEach(function(value, index, array) {
     array[index] = encodeURIComponent(value.name);
@@ -517,7 +518,7 @@ function makeBestMove(gameId) {
   if (hasWon(gameId, games[gameId]["playedColor"])) {
     games[gameId]["gameOver"] = true;
     io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"], score: games[gameId]["PLAYERS"][games[gameId]["player"]].score });
-    sendScore(gameId, games[gameId]["player"]);
+    sendScore(gameId, games[gameId]["PLAYERS"][games[gameId]["player"]]);
     return true;
   }
   games[gameId]["player"] = (games[gameId]["player"]+1) % games[gameId]["numPlayers"];
@@ -528,8 +529,6 @@ function makeBestMove(gameId) {
 
 function validateMove(gameId, socket, cell) {
   var player = games[gameId]["player"];
-  console.log(player, " wants to play");
-  console.log("IA is already playing :", games[gameId]["isIaPlaying"])
   if (player !== clients[socket.id]["number"] || games[gameId]["isIaPlaying"]) {
     socket.emit('game error', { message: 'wait for your turn', sound: "fail" });
     return;
@@ -586,7 +585,7 @@ function validateMove(gameId, socket, cell) {
     if (hasWon(gameId, playedColor)) {
       games[gameId]["gameOver"] = true;
       io.sockets.in(gameId).emit('end game', { winner: player });
-      sendScore(gameId, player);
+      sendScore(gameId, games[gameId]["PLAYERS"][player]);
       return true
     }
     games[gameId]["player"] = (player+1) % games[gameId]["numPlayers"];
