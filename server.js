@@ -171,7 +171,8 @@ io.on('connection', function (socket) {
       PLAYERS: [],
       isPlayedByIa: data["isPlayedByIa"],
       numHumanPlayers: numHumanPlayers,
-      remaining: numHumanPlayers-1
+      remaining: numHumanPlayers-1,
+      isIaPlaying: false
     };
     // Join the Room and wait for the players
     socket.join(data["gameId"].toString());
@@ -463,6 +464,7 @@ function sendScore(gameId, winner) {
 function makeBestMove(gameId) {
   if (!games[gameId]["isPlayedByIa"][games[gameId]["player"]]) return;
   if (games[gameId]["gameOver"]) return;       // Isover
+  games[gameId]["isIaPlaying"] = true;
   var i, j, k;             // var pour itération
   var weight=-99, selected; // meilleur poid et chemin depart arrivé correspondant
   var x, y, x0, y0, w=0, n;
@@ -505,7 +507,10 @@ function makeBestMove(gameId) {
   games[gameId]["history"][games[gameId]["player"]] = traject;
   games[gameId]["Time"] += 500*(traject.length)
   move(gameId, traject, games[gameId]["playedColor"]);
-  setTimeout(function() { io.sockets.in(gameId).emit('move', { traject : traject, playedColor: games[gameId]["playedColor"] }); }, games[gameId]["Time"]);
+  setTimeout(function() {
+    io.sockets.in(gameId).emit('move', { traject : traject, playedColor: games[gameId]["playedColor"] });
+    games[gameId]["isIaPlaying"] = false;
+  }, games[gameId]["Time"]);
   games[gameId]["PLAYERS"][games[gameId]["player"]].score += 1;
   if (hasWon(gameId, games[gameId]["playedColor"])) {
     games[gameId]["gameOver"] = true;
@@ -521,7 +526,9 @@ function makeBestMove(gameId) {
 
 function validateMove(gameId, socket, cell) {
   var player = games[gameId]["player"];
-  if (player !== clients[socket.id]["number"]) {
+  console.log(player, " wants to play");
+  console.log("IA is already playing :", games[gameId]["isIaPlaying"])
+  if (player !== clients[socket.id]["number"] || games[gameId]["isIaPlaying"]) {
     socket.emit('game error', { message: 'wait for your turn', sound: "fail" });
     return;
   }
@@ -605,5 +612,8 @@ function move(gameId, path, playedColor) {
   games[gameId]["gameBoard"][actuel[0]][actuel[1]] = playedColor;
   if (path.length > 2) {
     move(gameId, path.slice(1), playedColor);
+  }
+  else {
+
   }
 }

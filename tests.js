@@ -121,11 +121,9 @@ var Tests = {
         }
       }
     }
-
   },
 
   go_back : {
-
     run_test : function() {
       var tests = {
         1: {
