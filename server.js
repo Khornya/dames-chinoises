@@ -450,7 +450,7 @@ function sendScore(gameId, winner) {
          if (this.status == 200) {
          }
          else {
-          console.log("Les scores n'ont pas pu être envoyés à la base de données");
+          console.log("Les scores n'ont pas pu être envoyés à la base de données, status:", this.status);
          }
        }
     };
