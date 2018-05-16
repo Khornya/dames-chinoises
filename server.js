@@ -1,3 +1,6 @@
+var share = require('./utils.js');
+share.someSharedMethod();
+
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
@@ -337,7 +340,7 @@ function getPath(gameId, startCell, endCell) {
   for (i =R-1; i <= R+1; i++)  {               // add mouvement adjaçant
     for (j=C-2; j<= C+2; j++) {
        if ((i!=R || j!=C) && isOnGameBoard([i,j]) && games[gameId]["gameBoard"][i][j]== -1){
-         if(! isMovingBackward(games[gameId]["playedColor"], R, C, i, j) &&
+         if(! isMovingBackward(games[gameId]["playedColor"], [R,C], [i,j]) &&
                ! sameTraject(gameId, [startCell, [i,j]]))
             games[gameId]["reachableCells"].push([i,j]);                    // used by IA
          if (i==endCell[0] && j==endCell[1]) return [startCell,[i,j]];
@@ -376,7 +379,7 @@ function getJumps(gameId, cells , endCell, oldPath=[]) {
         index_c = 2*pivot_c-C;
         if (contains(oldPath,[index_r, index_c])) continue ; // éviter de tourner rond
         if (isOnGameBoard([index_r, index_c]) && games[gameId]["gameBoard"][index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
-          if(! isMovingBackward(games[gameId]["playedColor"], R, C, index_r, index_c) &&
+          if(! isMovingBackward(games[gameId]["playedColor"], [R,C], [index_r,index_c]) &&
                ! sameTraject(gameId, oldPath.concat([[R,C], [index_r, index_c]])))
             games[gameId]["reachableCells"].push([index_r, index_c])
           if (index_r==endCell[0] && index_c==endCell[1]) return oldPath.concat([[R,C], [index_r, index_c]]);
@@ -554,7 +557,7 @@ function validateMove(gameId, socket, cell) {
       socket.emit('game error', { message: "Cell not empty!", sound: "fail" });
       return false;
     }
-    if (isMovingBackward(playedColor, startCell[0], startCell[1], R, C)) {    // mouvement illégal en réculant
+    if (isMovingBackward(playedColor, startCell, [R,C])) {    // mouvement illégal en réculant
       socket.emit('game error', { message: "You can't go back!", sound: "fail" });
       return false;
     }

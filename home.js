@@ -1,3 +1,5 @@
+utilities.someSharedMethod();
+
 var socket = io();
 
 function seemore() {

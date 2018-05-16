@@ -147,11 +147,6 @@ else if (role === "guest"){
     return div;
   }
 
-  // fonction pour recommencer le jeu
-  function init() {
-
-  }
-
 
   function restart(opt=1) {
     if (opt) {
