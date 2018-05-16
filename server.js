@@ -441,6 +441,7 @@ function initArray(lines, columns, value) {
 }
 
 function sendScore(gameId, winner) {
+  console.log('winner is', winner)
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
        if (this.readyState == 4) {
@@ -453,6 +454,7 @@ function sendScore(gameId, winner) {
     };
   var name = encodeURIComponent(games[gameId]["PLAYERS"][winner].name);
   var score = encodeURIComponent(games[gameId]["PLAYERS"][winner].score);
+  console.log('score is', score)
   var adversaires = games[gameId]["PLAYERS"].filter(item => item !== winner);
   adversaires.forEach(function(value, index, array) {
     array[index] = encodeURIComponent(value.name);
@@ -514,7 +516,7 @@ function makeBestMove(gameId) {
   games[gameId]["PLAYERS"][games[gameId]["player"]].score += 1;
   if (hasWon(gameId, games[gameId]["playedColor"])) {
     games[gameId]["gameOver"] = true;
-    io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"] });
+    io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"], score: games[gameId]["PLAYERS"][games[gameId]["player"]].score });
     sendScore(gameId, games[gameId]["player"]);
     return true;
   }

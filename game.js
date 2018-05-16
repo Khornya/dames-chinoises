@@ -182,15 +182,15 @@ else if (role === "guest"){
     }
   }
 
-function endGame(winner) {
-    if (winner === 0) return;
+function endGame(winner, score) {
+    // if (winner === 0) return;
         var modal = document.getElementById('myModal');
         var btn = document.getElementById("myBtn"); // Get the button that opens the modal
         var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
         var content = document.getElementById("modal_text");
         modal.style.display = "block";
         Sounds.win.play();
-        content.innerHTML = PLAYERS[winner].name + " a gagné en " + PLAYERS[winner].score + " coups." ;
+        content.innerHTML = PLAYERS[winner].name + " a gagné en " + score + " coups." ;
         span.onclick = function() {                // When the user clicks on <span> (x), close the modal
             modal.style.display = "none";
         }
@@ -203,17 +203,11 @@ function endGame(winner) {
 
 
   // constructeur pour la classe Player
-  function Player(name, score, colors, number, frame) {
+  function Player(name, colors, number, frame) {
       this.name = name;
-      this.score = score;
       this.colors = colors;
       this.number = number;
       this.frame = frame;
-
-      this.updateScore = function() {
-        this.score += 1;
-  //      this.frame.children[1].innerHTML = ('score : ' + this.score);
-      };
 
       this.createFrame = function() {  // crée un cadre pour les infos d'un joueur
           var frame = document.createElement('div');
@@ -234,7 +228,6 @@ function endGame(winner) {
           }
           colors.innerHTML = code;
           frame.appendChild(name);
-  //        frame.appendChild(score);
           frame.appendChild(colors);
           document.getElementById('left_panel').appendChild(frame);
           this.frame = frame;
@@ -338,7 +331,7 @@ function play(event) {
     });
     socket.on('end game', function (data) {
       console.log('end game :', data);
-      endGame(data["winner"]);
+      endGame(data["winner"], data["score"]);
     });
     socket.on('game joined', function (data) {
       console.log("game joined : ", data);
@@ -366,7 +359,7 @@ function play(event) {
       images = createGameBoard(gameBoard);
       PLAYERS = data["PLAYERS"];
       for (var i=0, max=PLAYERS.length; i<max; i++) {
-        PLAYERS[i] = new Player(PLAYERS[i].name, PLAYERS[i].score, PLAYERS[i].colors, PLAYERS[i].number);
+        PLAYERS[i] = new Player(PLAYERS[i].name, PLAYERS[i].colors, PLAYERS[i].number);
         PLAYERS[i].createFrame();
       }
       player=0;
