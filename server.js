@@ -592,7 +592,7 @@ function validateMove(gameId, socket, cell) {
     games[gameId]["PLAYERS"][player].score += 1;
     if (hasWon(gameId, playedColor)) {
       games[gameId]["gameOver"] = true;
-      io.sockets.in(gameId).emit('end game', { winner: player });
+      io.sockets.in(gameId).emit('end game', { winner: player, score: games[gameId]["PLAYERS"][player].score });
       sendScore(gameId, games[gameId]["PLAYERS"][player]);
       return true
     }
