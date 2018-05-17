@@ -3,8 +3,10 @@ share.someSharedMethod();
 
 var express = require('express');
 var app = express();
-var server = require('http').Server(app);
+var http = require('http');
+var server = http.Server(app);
 var io = require('socket.io')(server);
+
 
 var bodyParser = require("body-parser");
 //Here we are configuring express to use body-parser as middle-ware.
@@ -196,7 +198,6 @@ io.on('connection', function (socket) {
       delete games[data["gameId"]]["PLAYERS"];
       init(data["gameId"],0);
       io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]);
-      sendScore(data["gameId"],games[data["gameId"]]["PLAYERS"][0]);
     }
   });
   socket.on('join game', function (data) {
@@ -444,24 +445,21 @@ function initArray(lines, columns, value) {
 }
 
 function sendScore(gameId, winner) {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-       if (this.readyState == 4) {
-         if (this.status == 200) {
-         }
-         else {
-          console.log("Les scores n'ont pas pu être envoyés à la base de données, status:", this.status);
-         }
-       }
-    };
   var name = encodeURIComponent(winner.name);
   var score = encodeURIComponent(winner.score);
   var adversaires = games[gameId]["PLAYERS"].filter(item => item !== winner);
   adversaires.forEach(function(value, index, array) {
     array[index] = encodeURIComponent(value.name);
   })
-  xhr.open('GET', '/score?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4]);
-  xhr.send(null);
+  http.get('http://hop-hop-hop.herokuapp.com/score?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4], function(response) {
+   var data = ''; //This will store the page we're downloading.
+   response.on('data', function(chunk) { //Executed whenever a chunk is received.
+        data += chunk; //Append each chunk to the data variable.
+   });
+  response.on('end', function() {
+      console.log('envoi des scores à la BDD :', data);
+  });
+ }).end();
 }
 
 function makeBestMove(gameId) {
