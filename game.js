@@ -47,16 +47,9 @@ else if (role === "guest"){
   // ******************************************* création du plateau de jeu ****************************************
 
   var player;  // joueur symbolique
-  var gameOver; // partie terminée ?
-  var startCell; // case départ pour un mouvement // pas de couples en JS
-  var playedColor; // couleur jouée
-  var gameState; // matrice pour les couleurs finies
   var gameBoard; // matrice pour le plateau // à virer
   var images; // matrice pour les images
-  var history; // liste qui sauvgarde pour chaque joueur le dernier chemin empreinté
   var PLAYERS = [];
-  var playerNames = [];
-  var Time=500;
   var isPlayedByIa;
 
   var Sounds = {
@@ -151,6 +144,7 @@ else if (role === "guest"){
   function restart(opt=1) {
     if (opt) {
       document.getElementById('myModal').style.display = "none";
+      socket.emit('restart request');
     }
     updatePlayerFrames();
  }
@@ -165,7 +159,7 @@ else if (role === "guest"){
   }
 
 
-  function move(path, playedColor, isAlreadyMoving) {
+  function move(path, playedColor) {
     var previous = path[0];
     var actuel = path[1];
     gameBoard[previous[0]][previous[1]] = -1;
@@ -176,7 +170,7 @@ else if (role === "guest"){
     if (path.length > 2) {
       (function(path) {
         setTimeout(function(){
-          move(path, playedColor, true);
+          move(path, playedColor);
         }, 500*(!isInTestMode)); // temps d'exécution réduit pour les tests
       })(path.slice(1));
     }
@@ -242,7 +236,6 @@ function endGame(winner, score) {
 
  // se déclenche à chaque clic sur une case du plateau
 function play(event) {
-    if (gameOver) return;
     var R = parseInt(event.currentTarget.getAttribute('line'),10);
     var C = parseInt(event.currentTarget.getAttribute('column'),10);
     socket.emit('move request', { cell : [R,C] });
@@ -313,7 +306,7 @@ function play(event) {
     });
     socket.on('move', function (data) {
       console.log("move : ", data);
-      move(data["traject"], data["playedColor"], false);
+      move(data["traject"], data["playedColor"]);
     });
     socket.on('new turn', function (data) {
       console.log("new turn : ", data);
@@ -368,14 +361,17 @@ function play(event) {
         PLAYERS[i].createFrame();
       }
       player=0;
-      startCell =  (0,0) ;
-      gameOver = false;
-      gameState = initArray(numPlayers, n_colors, false);
-      history = initArray(numPlayers, 0, false);
       restart(0);
     });
     socket.on('player disconnecting', function (data) {
       console.log('player disconnecting :', data);
       alert(data['name'] + '(Joueur ' + (data['number']+1) + ') a été déconnecté.');
+    });
+    socket.on('restart game', function () {
+      console.log('restart game');
+      gameBoard = initGameBoard();
+      refresh_board(gameBoard);
+      player = 0;
+      updatePlayerFrames();
     });
 //})();

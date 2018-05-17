@@ -176,7 +176,8 @@ io.on('connection', function (socket) {
       isPlayedByIa: data["isPlayedByIa"],
       numHumanPlayers: numHumanPlayers,
       remaining: numHumanPlayers-1,
-      isIaPlaying: false
+      isIaPlaying: false,
+      restartCount: 0
     };
     // Join the Room and wait for the players
     socket.join(data["gameId"].toString());
@@ -196,7 +197,7 @@ io.on('connection', function (socket) {
         }
       }
       delete games[data["gameId"]]["PLAYERS"];
-      init(data["gameId"],0);
+      init(data["gameId"]);
       io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]);
     }
   });
@@ -223,7 +224,7 @@ io.on('connection', function (socket) {
         }
       }
       delete games[data["gameId"]]["PLAYERS"];
-      init(data["gameId"], 0);
+      init(data["gameId"]);
       io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]);
     }
   });
@@ -244,6 +245,14 @@ io.on('connection', function (socket) {
     if (contains(Object.keys(clients), this.id) && !contains(Object.keys(io.sockets.adapter.rooms), clients[this.id]["gameId"].toString())) {
       console.log('deleting game ', clients[this.id]["gameId"]);
       delete games[clients[this.id]["gameId"]];
+    }
+  });
+  socket.on('restart request', function () {
+    games[clients[this.id]["gameId"]]["restartCount"] += 1;
+    if (games[clients[this.id]["gameId"]]["restartCount"] === games[clients[this.id]["gameId"]]["numHumanPlayers"]) {
+      restart(clients[this.id]["gameId"],1);
+      console.log('restarting : ', clients[this.id]["gameId"]);
+      io.sockets.in(clients[this.id]["gameId"]).emit('restart game', {});
     }
   });
 });
@@ -297,21 +306,21 @@ function init(gameId) {
     });
   }
   games[gameId]["Time"] = 500;
-  restart(gameId,0);
+  restart(gameId);
 }
 
 
-function restart(gameId, opt=1) {
-  if (opt) {
-    games[gameId]["gameBoard"] = initGameBoard();
-    for(var n=0; n < games[gameId]["numPlayers"]; n++)
-      games[gameId]["PLAYERS"][n].score = 0;
+function restart(gameId) {
+  games[gameId]["gameBoard"] = initGameBoard();
+  for (var n=0; n < games[gameId]["numPlayers"]; n++) {
+    games[gameId]["PLAYERS"][n].score = 0;
   }
-  games[gameId]["player"]=0;
-  games[gameId]["startCell"] =  (0,0) ;
+  games[gameId]["player"] = 0;
+  games[gameId]["startCell"] =  (0,0);
   games[gameId]["gameOver"] = false;
   games[gameId]["gameState"] = initArray(games[gameId]["numPlayers"], games[gameId]["numColors"], false);
   games[gameId]["history"] = initArray(games[gameId]["numPlayers"], 0, false);
+  games[gameId]["restartCount"] = 0;
 }
 
 function isMovingBackward(color, startCell, endCell) {
