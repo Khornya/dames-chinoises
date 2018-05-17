@@ -234,8 +234,10 @@ io.on('connection', function (socket) {
   socket.on('disconnecting', function (reason) {
     if (contains(Object.keys(clients), this.id)) {
       io.sockets.in(clients[this.id]["gameId"]).emit('player disconnecting', clients[this.id]);
-      games[clients[this.id]["gameId"]]["gameOver"] = true;
-      io.sockets.in(clients[this.id]["gameId"]).emit('end game', { winner: 0 });
+      if (!games[clients[this.id]["gameId"]]["gameOver"]) {
+        games[clients[this.id]["gameId"]]["gameOver"] = true;
+        io.sockets.in(clients[this.id]["gameId"]).emit('end game', {});
+      }
     }
   });
   socket.on('disconnect', function (reason) {
@@ -521,7 +523,6 @@ function makeBestMove(gameId) {
   }
   games[gameId]["player"] = (games[gameId]["player"]+1) % games[gameId]["numPlayers"];
   setTimeout(function() { io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] }); }, games[gameId]["Time"]);
-
   games[gameId]["startCell"] = (0,0);
 }
 

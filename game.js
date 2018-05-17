@@ -183,22 +183,27 @@ else if (role === "guest"){
   }
 
 function endGame(winner, score) {
-    // if (winner === 0) return;
-        var modal = document.getElementById('myModal');
-        var btn = document.getElementById("myBtn"); // Get the button that opens the modal
-        var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
-        var content = document.getElementById("modal_text");
-        modal.style.display = "block";
-        Sounds.win.play();
-        content.innerHTML = PLAYERS[winner].name + " a gagné en " + score + " coups." ;
-        span.onclick = function() {                // When the user clicks on <span> (x), close the modal
-            modal.style.display = "none";
-        }
-        window.onclick = function(event) {         // When the user clicks anywhere outside of the modal, close it
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
+  var modal = document.getElementById('myModal');
+  var btn = document.getElementById("myBtn"); // Get the button that opens the modal
+  var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
+  var content = document.getElementById("modal_text");
+  modal.style.display = "block";
+  Sounds.win.play();
+  span.onclick = function() {                // When the user clicks on <span> (x), close the modal
+      modal.style.display = "none";
+  }
+  window.onclick = function(event) {         // When the user clicks anywhere outside of the modal, close it
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+  if (typeof(winner) === 'undefined') {
+    content.innerHTML = "Vous avez gagné par forfait.";
+  }
+  else {
+    content.innerHTML = PLAYERS[winner].name + " a gagné en " + score + " coups." ;
+  }
+
 }
 
 
