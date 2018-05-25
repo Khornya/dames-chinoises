@@ -15,62 +15,105 @@ app.use(bodyParser.json());
 app.set('views', './views');
 app.set('view engine', 'pug');
 
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+// const { check, validationResult } = require('express-validator/check');
+// const { matchedData, sanitize } = require('express-validator/filter');
 
-app.post('/game',function(request,response){
-  // ajouter vérification formulaires
-  if (typeof(request.body.inputform1) !== 'undefined') {
-    var numColors = request.body.colors;
-    var numPlayers = request.body.nombre_joueurs;
-    var player1 = (typeof(request.body.player1) !== 'undefined' && request.body.player1 !== '')? request.body.player1 : "Joueur 1";
-    var player2 = (typeof(request.body.player2) !== 'undefined' && request.body.player2 !== '')? request.body.player2 : "Joueur 2";
-    var player3 = (typeof(request.body.player3) !== 'undefined' && request.body.player3 !== '')? request.body.player3 : "Joueur 3";
-    var player4 = (typeof(request.body.player4) !== 'undefined' && request.body.player4 !== '')? request.body.player4 : "Joueur 4";
-    var player5 = (typeof(request.body.player5) !== 'undefined' && request.body.player5 !== '')? request.body.player5 : "Joueur 5";
-    var player6 = (typeof(request.body.player6) !== 'undefined' && request.body.player6 !== '')? request.body.player6 : "Joueur 6";
-    var ordi1 = request.body.ordi1;
-    var ordi2 = request.body.ordi2;
-    var ordi3 = request.body.ordi3;
-    var ordi4 = request.body.ordi4;
-    var ordi5 = request.body.ordi5;
-    var ordi6 = request.body.ordi6;
-    // Create a unique Socket.IO Room
-    var gameId = ( Math.random() * 100000 ) | 0;
-    response.render('game', {
-      nombre_joueurs: numPlayers,
-      colors: numColors,
-      player1: player1,
-      player2: player2,
-      player3: player3,
-      player4: player4,
-      player5: player5,
-      player6: player6,
-      ordi1: ordi1,
-      ordi2: ordi2,
-      ordi3: ordi3,
-      ordi4: ordi4,
-      ordi5: ordi5,
-      ordi6: ordi6,
-      role: "host",
-      gameId: gameId
-    });
+app.post('/game', function(request, response) {
+  if (typeof(request.body.inputform1) !== 'undefined' && typeof(request.body.inputform2) !== 'undefined') {
+    response.redirect('/');
   }
-  else if (typeof(request.body.inputform2) !== 'undefined') {
-    var gameId = request.body.roomID;
-    var player = request.body.player;
-    if (!contains(Object.keys(games), gameId)) {
-      response.send("<p>Cette partie n'existe pas.</p>");
+  else if (typeof(request.body.inputform1) !== 'undefined') {
+    var numColors = escapeHtml(request.body.colors);
+    var numPlayers = escapeHtml(request.body.nombre_joueurs);
+    var player1 = (typeof(request.body.player1) !== 'undefined' && request.body.player1 !== '')? escapeHtml(request.body.player1) : "Joueur 1";
+    var player2 = (typeof(request.body.player2) !== 'undefined' && request.body.player2 !== '')? escapeHtml(request.body.player2) : "Joueur 2";
+    var player3 = (typeof(request.body.player3) !== 'undefined' && request.body.player3 !== '')? escapeHtml(request.body.player3) : "Joueur 3";
+    var player4 = (typeof(request.body.player4) !== 'undefined' && request.body.player4 !== '')? escapeHtml(request.body.player4) : "Joueur 4";
+    var player5 = (typeof(request.body.player5) !== 'undefined' && request.body.player5 !== '')? escapeHtml(request.body.player5) : "Joueur 5";
+    var player6 = (typeof(request.body.player6) !== 'undefined' && request.body.player6 !== '')? escapeHtml(request.body.player6) : "Joueur 6";
+    var ordi1 = escapeHtml(request.body.ordi1);
+    var ordi2 = escapeHtml(request.body.ordi2);
+    var ordi3 = escapeHtml(request.body.ordi3);
+    var ordi4 = escapeHtml(request.body.ordi4);
+    var ordi5 = escapeHtml(request.body.ordi5);
+    var ordi6 = escapeHtml(request.body.ordi6);
+    // Check form
+    var players = [player1,player2,player3,player4,player5,player6];
+    var userRegex = new RegExp("^[a-zA-Z0-9_-]{2,10}$");
+    var defaultRegex = new RegExp("^Joueur [1-6]$");
+    var namesFormatCheck = true;
+    var namesDuplicatesCheck = true;
+    for (var i=0; i<players.length; i++) {
+      if (! userRegex.test(players[i]) || defaultRegex.test(players[i])) amesFormatCheck = false;
+      for (var j=0; j<players.length; j++) {
+        if (i === j) continue;
+        if (players[i] === players[j]) namesDuplicatesCheck = false;
+      }
     }
-    else if (games[gameId]['remaining'] === 0) {
-      response.send("<p>Cette partie est déjà complète.</p>");
+    if (numColors < 1 || numColors > 3) {
+      response.send("<p>Vous devez choisir entre une et trois couleurs</p>");
+    }
+    else if (numPlayers === 3 && numColors !== 2 || numPlayers === 4 && numColors !== 1 || numPlayers === 6 && numColors !== 1 || numPlayers === 5 || numPlayers < 2 || numPlayers > 6) {
+      response.send("<p>Ce mode de jeu n'est pas disponible</p>");
+    }
+    else if (!namesFormatCheck) {
+      response.send("<p>Nom incorrect</p>");
+    }
+    else if (!namesDuplicatesCheck) {
+      response.send("<p>Nom déjà pris</p>");
     }
     else {
+      // Create a unique Socket.IO Room
+      var gameId = ( Math.random() * 100000 ) | 0;
       response.render('game', {
-        role: "guest",
-        gameId: gameId,
-        player1: player
+        nombre_joueurs: numPlayers,
+        colors: numColors,
+        player1: player1,
+        player2: player2,
+        player3: player3,
+        player4: player4,
+        player5: player5,
+        player6: player6,
+        ordi1: ordi1,
+        ordi2: ordi2,
+        ordi3: ordi3,
+        ordi4: ordi4,
+        ordi5: ordi5,
+        ordi6: ordi6,
+        role: "host",
+        gameId: gameId
       });
     }
+  }
+  else if (typeof(request.body.inputform2) !== 'undefined') {
+    var gameId = escapeHtml(request.body.roomID);
+    var player = escapeHtml(request.body.player);
+    var gameIdRegex = new RegExp("[0-9]{1-6}");
+    var nameRegex = new RegExp("^[a-zA-Z0-9_-]{2,10}$");
+    if (gameIdRegex.test(gameId) || gameId < 0 || gameId > 100000) {
+      response.send("<p>N° de partie incorrect</p>");
+    }
+    else if (!nameRegex.test(player) && player !== '') {
+      response.send("<p>Nom incorrect</p>");
+    }
+    else {
+      if (!contains(Object.keys(games), gameId)) {
+        response.send("<p>Cette partie n'existe pas.</p>");
+      }
+      else if (games[gameId]['remaining'] === 0) {
+        response.send("<p>Cette partie est déjà complète.</p>");
+      }
+      else {
+        response.render('game', {
+          role: "guest",
+          gameId: gameId,
+          player1: player
+        });
+      }
+    }
+  }
+  else {
+    response.send("<p>Vous devez remplir au moins un des deux formulaires</p>");
   }
 });
 
@@ -203,6 +246,10 @@ io.on('connection', function (socket) {
   });
   socket.on('join game', function (data) {
     console.log('join game : ', data);
+    if (data["player"] !== '' && contains(games[data["gameId"]]["PLAYERS"], data["player"]) || data["player"] === (games[data["gameId"]]["player1"])) {
+      socket.emit('name error', { name: data["player"] });
+      return;
+    }
     socket.join(data["gameId"].toString());
     games[data["gameId"]]['remaining'] -= 1;
     games[data["gameId"]]["PLAYERS"].push(data["player"]);
@@ -625,4 +672,14 @@ function move(gameId, path, playedColor) {
   else {
 
   }
+}
+
+function escapeHtml(text) {
+  if (typeof(text) === 'undefined') return text
+  return text
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
 }

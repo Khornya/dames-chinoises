@@ -346,6 +346,10 @@ function play(event) {
         // init();
       }
     });
+    socket.on('name error', function (data) {
+      document.getElementById("player1").value = prompt("Ce nom est déjà pris, veuillez en choisir un nouveau :", data['name']);
+      socket.emit('join game', { gameId: gameId, player: document.getElementById("player1").value });
+    });
     socket.on('game full', function (data) {
       console.log("game full : ", data);
       document.getElementById("joinGame").style.display = "none";
