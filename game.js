@@ -13,8 +13,8 @@ var role = document.getElementById("role").value;
   // ********************************** configuration nombre de joueur nombre de couleur (à récupérer via PHP) ***************************
 
 if (role === "host") {
-  numPlayers = parseInt(document.getElementById("nombre_joueurs").value,10);   // si numPlayers=2, il faut définir numColors (1, 2 ou 3) sinon numColors= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
-  numColors = parseInt(document.getElementById("colors").value,10);
+  numPlayers = parseInt(document.getElementById("numPlayers").value,10);   // si numPlayers=2, il faut définir numColors (1, 2 ou 3) sinon numColors= 2 pour 3 joueurs et 1 pour (4,6) joueur (par defaut)
+  numColors = parseInt(document.getElementById("numColors").value,10);
   COLORS = { // attribution des couleurs à chaque joueur
     2: {
       1: [[1],[2]],
@@ -60,12 +60,12 @@ else if (role === "guest"){
 
   var Muted = false; // etat du son
 
-  document.getElementById("muteButton").addEventListener('click', function(e) {
+  document.getElementById("muteButton").addEventListener('click', function(event) {
     Muted = !Muted;
-    e.currentTarget.src = Muted? "images/mute.png" : "images/unmute.png";
+    event.currentTarget.src = Muted? "images/mute.png" : "images/unmute.png";
   });
 
-  document.getElementById("rules").addEventListener('click', function(e) {
+  document.getElementById("rules").addEventListener('click', function(event) {
     var modal = document.getElementById("rulesModal");
     var span = document.getElementsByClassName("close")[1]; // Get the <span> element that closes the modal
     modal.style.display = "block";
@@ -85,25 +85,25 @@ else if (role === "guest"){
   // initialise la matrice pour le plateau de jeu
   function initGameBoard() { // partager avec serveur ?
     var matrice = initArray(17,25,false);
-    for (var R=0; R<4; R++) { // R pour row, C pour column
-      for (var C=12-R; C<=12+R; C+=2) {
-        matrice[R][C] = 1;
-        matrice[16-R][C] = 2;
+    for (var row=0; row<4; row++) {
+      for (var col=12-row; col<=12+row; col+=2) {
+        matrice[row][col] = 1;
+        matrice[16-row][col] = 2;
       }
     }
-    for (var R=4; R<8; R++) {
-      for (var C=12-R; C<=12+R; C+=2) {
-        matrice[R][C] = -1;
-        matrice[16-R][C] = -1;
+    for (var row=4; row<8; row++) {
+      for (var col=12-row; col<=12+row; col+=2) {
+        matrice[row][col] = -1;
+        matrice[16-row][col] = -1;
       }
-      for (var C=R-4; C<=10-R; C+=2) {
-        matrice[R][C] = 3;
-        matrice[16-R][24-C] = 4;
-        matrice[R][24-C] = 5;;
-        matrice[16-R][C] = 6;
+      for (var col=row-4; col<=10-row; col+=2) {
+        matrice[row][col] = 3;
+        matrice[16-row][24-col] = 4;
+        matrice[row][24-col] = 5;;
+        matrice[16-row][col] = 6;
       }
     }
-    for (var C=4; C<21; C+=2) { matrice[8][C] = -1 }
+    for (var col=4; col<21; col+=2) { matrice[8][col] = -1 }
     return matrice;
   }
 
@@ -111,16 +111,16 @@ else if (role === "guest"){
   function createGameBoard(matrice) {
     var board = initArray(17,25,false);
     var line, cell;
-    for (var R=0; R<17; R++) { // crée un div pour chaque ligne
+    for (var row=0; row<17; row++) { // crée un div pour chaque ligne
       line = document.createElement('div');
-      line.id = 'line'+R;
+      line.id = 'line'+row;
       line.className = 'line';
       document.getElementById('board').appendChild(line);
-      for (var C=0; C<25; C++) { // crée un div pour chaque cellule
-        if (matrice[R][C] !== false) {
-          cell = createCell([R,C], matrice[R][C]);
+      for (var col=0; col<25; col++) { // crée un div pour chaque cellule
+        if (matrice[row][col] !== false) {
+          cell = createCell([row,col], matrice[row][col]);
           line.appendChild(cell);
-          board[R][C] = cell.firstChild; // identité de chaque image
+          board[row][col] = cell.firstChild; // identité de chaque image
         }
       }
     }
@@ -141,8 +141,8 @@ else if (role === "guest"){
   }
 
 
-  function restart(opt=1) {
-    if (opt) {
+  function restart(option=1) {
+    if (option) {
       document.getElementById('myModal').style.display = "none";
       socket.emit('restart request');
     }
@@ -150,22 +150,22 @@ else if (role === "guest"){
  }
 
 
-  function refresh_board(gameBoard) { // a optimiser pour ne pas tester les cases en dehors de l'étoile
-    for (var R=0; R<17; R++) {
-      for (var C=0; C<25; C++) {
-        if (images[R][C].src !== "images/pion" + gameBoard[R][C] + ".png")
-          images[R][C].src = "images/pion" + gameBoard[R][C] + ".png"; }
+  function refreshBoard(gameBoard) { // a optimiser pour ne pas tester les cases en dehors de l'étoile
+    for (var row=0; row<17; row++) {
+      for (var col=0; col<25; col++) {
+        if (images[row][col].src !== "images/pion" + gameBoard[row][col] + ".png")
+          images[row][col].src = "images/pion" + gameBoard[row][col] + ".png"; }
     }
   }
 
 
   function move(path, playedColor) {
     var previous = path[0];
-    var actuel = path[1];
+    var actual = path[1];
     gameBoard[previous[0]][previous[1]] = -1;
-    gameBoard[actuel[0]][actuel[1]] = playedColor;
+    gameBoard[actual[0]][actual[1]] = playedColor;
     images[previous[0]][previous[1]].src = "images/pion-1.png";
-    images[actuel[0]][actuel[1]].src = "images/pion" + playedColor + ".png";
+    images[actual[0]][actual[1]].src = "images/pion" + playedColor + ".png";
     Sounds.jump.play();
     if (path.length > 2) {
       (function(path) {
@@ -177,10 +177,11 @@ else if (role === "guest"){
   }
 
 function endGame(winner, score) {
-  var modal = document.getElementById('myModal');
-  var btn = document.getElementById("myBtn"); // Get the button that opens the modal
+  var modal = document.getElementById('modal');
+  // var button = document.getElementById("myBtn"); // Get the button that opens the modal
   var span = document.getElementsByClassName("close")[0]; // Get the <span> element that closes the modal
-  var content = document.getElementById("modal_text");
+  var content = document.getElementById("modalText");
+  var restartButton = document.getElementById("restartButton");
   modal.style.display = "block";
   Sounds.win.play();
   span.onclick = function() {                // When the user clicks on <span> (x), close the modal
@@ -193,9 +194,11 @@ function endGame(winner, score) {
   }
   if (typeof(winner) === 'undefined') {
     content.innerHTML = "Vous avez gagné par forfait.";
+    restartButton.style.display = "none";
   }
   else {
     content.innerHTML = PLAYERS[winner].name + " a gagné en " + score + " coups." ;
+    restartButton.style.display = "inline";
   }
 
 }
@@ -210,16 +213,16 @@ function endGame(winner, score) {
 
       this.createFrame = function() {  // crée un cadre pour les infos d'un joueur
           var frame = document.createElement('div');
-          frame.className = 'player_info';
+          frame.className = 'playerInfo';
           frame.id = 'player' + this.number;
           var name = document.createElement('p');
-          name.className = 'player_name';
+          name.className = 'playerName';
           name.innerHTML = this.name;
           var score = document.createElement('p');
-          score.className = 'player_score';
+          score.className = 'playerScore';
           score.innerHTML = ('score : ' + this.score);
           var colors = document.createElement('span');
-          colors.className = 'player_colors';
+          colors.className = 'playerColors';
           var code = '';
           for (var i=0, max=this.colors.length, color; i<max; i++) {
             color = this.colors[i];
@@ -228,7 +231,7 @@ function endGame(winner, score) {
           colors.innerHTML = code;
           frame.appendChild(name);
           frame.appendChild(colors);
-          document.getElementById('left_panel').appendChild(frame);
+          document.getElementById('leftPanel').appendChild(frame);
           this.frame = frame;
         };
     }
@@ -236,20 +239,20 @@ function endGame(winner, score) {
 
  // se déclenche à chaque clic sur une case du plateau
 function play(event) {
-    var R = parseInt(event.currentTarget.getAttribute('line'),10);
-    var C = parseInt(event.currentTarget.getAttribute('column'),10);
-    socket.emit('move request', { cell : [R,C] });
+    var row = parseInt(event.currentTarget.getAttribute('line'),10);
+    var col = parseInt(event.currentTarget.getAttribute('column'),10);
+    socket.emit('move request', { cell : [row,col] });
     }
 
 
   function updatePlayerFrames() {
-    var player_frames = document.querySelectorAll('.player_info');
-    for (var i=0, max=player_frames.length; i<max; i++) {
-      if (player_frames[i].id === 'player' + (player+1)) {
-        player_frames[i].firstChild.style.textDecoration = 'underline';
+    var playerFrames = document.querySelectorAll('.playerInfo');
+    for (var i=0, max=playerFrames.length; i<max; i++) {
+      if (playerFrames[i].id === 'player' + (player+1)) {
+        playerFrames[i].firstChild.style.textDecoration = 'underline';
       }
       else {
-        player_frames[i].firstChild.style.textDecoration = 'none';
+        playerFrames[i].firstChild.style.textDecoration = 'none';
       }
     }
   }
@@ -271,16 +274,16 @@ function play(event) {
     }
   }
 
-  function initArray(lignes, colonnes, valeur) { // partager avec serveur ?
+  function initArray(lines, columns, value) { // partager avec serveur ?
     var array = [];
-    for (var i=0; i<lignes; i++) {
-      if (colonnes) {
+    for (var i=0; i<lines; i++) {
+      if (columns) {
         array[i] = [];
-        for (var j=0; j<colonnes; j++) {
-          array[i][j] = valeur;
+        for (var j=0; j<columns; j++) {
+          array[i][j] = value;
         }
       }
-      else array[i] = valeur;
+      else array[i] = value;
     }
     return array;
   }
@@ -290,15 +293,15 @@ function play(event) {
     })
     socket.on('select', function (data) {
       console.log("select : ", data);
-      var R = data["cell"][0];
-      var C = data["cell"][1];
-      images[R][C].src = "images/pion" + gameBoard[R][C] + "vide.png";
+      var row = data["cell"][0];
+      var col = data["cell"][1];
+      images[row][col].src = "images/pion" + gameBoard[row][col] + "vide.png";
     });
     socket.on('deselect', function (data) {
       console.log("deselect : ", data);
-      var R = data["cell"][0];
-      var C = data["cell"][1];
-      images[R][C].src = "images/pion" + data["color"] + ".png";
+      var row = data["cell"][0];
+      var col = data["cell"][1];
+      images[row][col].src = "images/pion" + data["color"] + ".png";
     });
     socket.on('game error', function (data) {
       console.log("game error : ", data);
@@ -306,7 +309,7 @@ function play(event) {
     });
     socket.on('move', function (data) {
       console.log("move : ", data);
-      move(data["traject"], data["playedColor"]);
+      move(data["path"], data["playedColor"]);
     });
     socket.on('new turn', function (data) {
       console.log("new turn : ", data);
@@ -318,14 +321,6 @@ function play(event) {
       numPlayers = data["numPlayers"];
       numColors = data["numColors"];
       COLORS = data["COLORS"];
-      // myRole = data["myRole"]
-      // ************************************************** tests automatisés *************************************************
-      if (isInTestMode) {
-        Tests[testName].run_test();
-      }
-      else {
-        // init();
-      }
     });
     socket.on('end game', function (data) {
       console.log('end game :', data);
@@ -336,15 +331,6 @@ function play(event) {
       numPlayers = data["numPlayers"];
       numColors = data["numColors"];
       COLORS = data["COLORS"];
-      // myRole = data["myRole"];
-      // ************************************************** tests automatisés *************************************************
-
-      if (isInTestMode) {
-        Tests[testName].run_test();
-      }
-      else {
-        // init();
-      }
     });
     socket.on('name error', function (data) {
       document.getElementById("player1").value = prompt("Ce nom est déjà pris, veuillez en choisir un nouveau :", data['name']);
@@ -355,7 +341,7 @@ function play(event) {
       document.getElementById("joinGame").style.display = "none";
       isPlayedByIa = data["isPlayedByIa"];
       numPlayers = data["numPlayers"];
-      n_colors = data["numColors"];
+      numColors = data["numColors"];
       COLORS = data["COLORS"];
       gameBoard = initGameBoard();
       images = createGameBoard(gameBoard);
@@ -374,7 +360,7 @@ function play(event) {
     socket.on('restart game', function () {
       console.log('restart game');
       gameBoard = initGameBoard();
-      refresh_board(gameBoard);
+      refreshBoard(gameBoard);
       player = 0;
       updatePlayerFrames();
     });

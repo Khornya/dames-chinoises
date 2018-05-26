@@ -6,7 +6,7 @@ html
     title Hop hop hop
   body
     include includes/header.pug
-    #main_wrapper
+    #mainWrapper
       section
         h1 Bienvenue sur HOP HOP HOP !
         p
@@ -15,18 +15,18 @@ html
         h1 Les dames chinoises
         p
           | Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
-        #seemore(style="display:none")
-          | orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in. orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in.
-        button#voirPlus(onclick="seemore()") Voir plus
-      #test
+        #seeMoreDiv(style="display:none")
+          | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in. orem ipsum dolor sit amet, consectetur adipiscing elit. Etiam commodo odio non consectetur porta. Quisque iaculis nec augue a facilisis. Duis mollis nulla odio, non convallis purus commodo ac. Sed in.
+        button#seeMoreButton(onclick="seeMore()") Voir plus
+      #container
         section#game
           h1 Jouer une partie
-          form#form1(name="form1" action="game" target="_self" method="POST")
-            select#mode(name="nombre_joueurs" onclick="updateChoices()")
-              option(value="2") 2 players
-              option(value="3") 3 players
-              option(value="4") 4 players
-              option(value="6") 6 players
+          form#newGameForm(name="newGameForm" action="game" target="_self" method="POST")
+            select#mode(name="numPlayers" onclick="updateChoices()")
+              option(value="2") 2 joueurs
+              option(value="3") 3 joueurs
+              option(value="4") 4 joueurs
+              option(value="6") 6 joueurs
             br
             div
               input#player1(type="text" name="player1" placeholder="Joueur 1")
@@ -64,26 +64,26 @@ html
               span.tooltip
             span#color_choice
               | Nombre de couleurs :
-              input#1(type="radio" name="colors" value="1" onclick="updateColors()" checked="")
+              input#1(type="radio" name="numColors" value="1" onclick="updateColors()" checked="")
               label(for="1" onclick="updateColors()") 1
-              input#2(type="radio" name="colors" value="2" onclick="updateColors()")
+              input#2(type="radio" name="numColors" value="2" onclick="updateColors()")
               label(for="2" onclick="updateColors()") 2
-              input#3(type="radio" name="colors" value="3" onclick="updateColors()")
+              input#3(type="radio" name="numColors" value="3" onclick="updateColors()")
               label(for="3" onclick="updateColors()") 3
               br
-            input#inputform1(style="display:none" name="inputform1" value="inputform1")
-            input#PLAY(type="submit" name="PLAY" value="PLAY")
-          form#form2(name="form2" action="game" target="_self" method="POST")
+            input#inputNewGameForm(style="display:none" name="inputNewGameForm" value="inputNewGameForm")
+            input#JOUER(type="submit" name="JOUER" value="JOUER")
+          form#joinGameForm(name="joinGameForm" action="game" target="_self" method="POST")
             div
-              input#player(type="text" name="player" placeholder="Votre nom")
+              input#player(type="text" name="player" placeholder="Nom")
               span.tooltip
               br
             div
-              input#roomID(type="text" name="roomID" placeholder="room ID")
+              input#roomID(type="text" name="roomID" placeholder="N° de partie")
               span.tooltip
               br
-            input#inputform2(style="display:none" name="inputform2" value="inputform2")
-            input#JOIN(type="submit" name="JOIN" value="JOIN")
+            input#inputJoinGameForm(style="display:none" name="inputJoinGameForm" value="inputJoinGameForm")
+            input#REJOINDRE(type="submit" name="REJOINDRE" value="REJOINDRE")
         include includes/high-scores.pug
       footer(clear:both="")
         a(href="mailto:contact@hophophop.fr") Nous contacter

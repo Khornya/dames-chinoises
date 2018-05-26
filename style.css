@@ -80,7 +80,7 @@ section
   padding: 10px 0px;
 }
 
-#main_wrapper
+#mainWrapper
 {
   width: 900px;
   margin: auto;
@@ -96,13 +96,13 @@ section
   width:60%;
 }
 
-#test
+#container
 {
   display: flex;
   align-content: space-between;
 }
 
-#game_zone
+#gameZone
 {
   display: flex;
   justify-content: space-between;
@@ -138,6 +138,7 @@ section
 {
   margin-bottom: 37px;
 }
+
 .cell
 {
   margin-left: 3px;
@@ -151,7 +152,7 @@ section
   align-items: center;
 }
 
-.player_info
+.playerInfo
 {
   /*display: flex;*/
   /*border: 1px solid black;*/
@@ -159,7 +160,7 @@ section
   margin: 10px;
 }
 
-.player_name
+.playerName
 {
   margin: 5px 0 0 0;
 }

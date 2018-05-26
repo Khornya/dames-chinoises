@@ -2,9 +2,9 @@ utilities.someSharedMethod();
 
 var socket = io();
 
-function seemore() {
-  var x = document.getElementById("seemore");
-  var y = document.getElementById("voirPlus");
+function seeMore() {
+  var x = document.getElementById("seeMoreDiv");
+  var y = document.getElementById("seeMoreButton");
   if (x.style.display === "none") {
       x.style.display = "block";
       y.innerHTML = "Voir moins";
@@ -31,8 +31,8 @@ function updateChoices() {
     checkbox.style.display = 'none';
     checkbox.nextSibling.style.display = 'none';
   }
-  var e = document.getElementById("mode");
-  var mode = e.options[e.selectedIndex].value;
+  var list = document.getElementById("mode");
+  var mode = list.options[list.selectedIndex].value;
   document.getElementById("color_choice").style.display = colorChoices[mode]['display'];
   for (var i=1; i<=3; i++) {
     document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false;
@@ -44,18 +44,18 @@ function updateChoices() {
     checkbox.nextSibling.style.display = 'inline';
   }
   updateColors();
-  for (var i in checkForm1) {
+  for (var i in checkNewGameForm) {
     if (document.getElementById(i).value != '' && parseInt(i[6]) <= mode) {
-      checkForm1[i](i);
+      checkNewGameForm[i](i);
     }
   }
 }
 
 function updateColors() {
-  var e = document.getElementById("mode");
-  var mode = parseInt(e.options[e.selectedIndex].value);
-  for (var n_color = 1; n_color <= 3; n_color++) {
-    if (document.getElementById(n_color).checked) break;
+  var list = document.getElementById("mode");
+  var mode = parseInt(list.options[list.selectedIndex].value);
+  for (var numColors = 1; numColors <= 3; numColors++) {
+    if (document.getElementById(numColors).checked) break;
   }
   var colors = { // attribution des couleurs à chaque joueur
     1: {
@@ -71,7 +71,7 @@ function updateColors() {
     3: { 2: [[1,3],[4,5],[2,6]] },
     4: { 1: [[1],[2],[3],[4]] },
     6: { 1: [[1],[3],[6],[2],[4],[5]] }
-  }[mode][n_color];
+  }[mode][numColors];
   for (var n=1; n<=mode; n++) {
     var code = '';
     for (var i=0, max = colors[n-1].length; i < max; i++) {
@@ -105,8 +105,8 @@ function getTooltip(elements) {
 }
 
 // Fonctions de vérification du formulaire, elles renvoient "true" si tout est ok
-var checkForm1 = {}; // On met toutes nos fonctions dans un objet littéral
-var checkForm2 = {};
+var checkNewGameForm = {}; // On met toutes nos fonctions dans un objet littéral
+var checkJoinGameForm = {};
 
 function check_player(id) {
     var player = document.getElementById(id),
@@ -117,8 +117,8 @@ function check_player(id) {
         player5 = document.getElementById('player5'),
         player6 = document.getElementById('player6'),
         tooltip = getTooltip(player);
-    var re = new RegExp("^[a-zA-Z0-9_-]{2,10}$", "g"); // variable contenant la regex pour valider le nom
-    if ((re.test(player.value)) || player.value === '') {
+    var regex = new RegExp("^[a-zA-Z0-9_-]{2,10}$", "g"); // variable contenant la regex pour valider le nom
+    if ((regex.test(player.value)) || player.value === '') {
       if (typeof(id[6]) === 'undefined') {
         player.className = 'correct';
         tooltip.style.display = 'none';
@@ -151,22 +151,22 @@ function check_player(id) {
     }
 }
 
-checkForm1['player1'] = check_player;
+checkNewGameForm['player1'] = check_player;
 
-checkForm2['player'] = checkForm1['player2'] = checkForm1['player3'] = checkForm1['player4'] = checkForm1['player5'] = checkForm1['player6'] = checkForm1['player1'] ;
+checkJoinGameForm['player'] = checkNewGameForm['player2'] = checkNewGameForm['player3'] = checkNewGameForm['player4'] = checkNewGameForm['player5'] = checkNewGameForm['player6'] = checkNewGameForm['player1'] ;
 
-checkForm2['roomID'] = function () {
+checkJoinGameForm['roomID'] = function () {
   var input = document.getElementById('roomID');
   var tooltip = getTooltip(input);
-  var re = new RegExp("^[0-9]{1,6}$", "g");
-  if (re.test(input.value) && input.value <= 100000) {
+  var regex = new RegExp("^[0-9]{1,6}$", "g");
+  if (regex.test(input.value) && input.value <= 100000) {
     input.className = 'correct';
     tooltip.style.display = 'none';
     return true;
   }
   else {
       input.className = 'incorrect';
-      tooltip.innerHTML = 'Le game ID doit être comrpis netre 0 et 100000';
+      tooltip.innerHTML = 'Le game ID doit être compris entre 0 et 100000';
       tooltip.style.display = 'inline-block';
       return false;
   }
@@ -187,51 +187,51 @@ function disablePlayer(n) {
 
 // Mise en place des événements
 
-  var form1 = document.getElementById('form1'),
+  var newGameForm = document.getElementById('newGameForm'),
       inputs = document.querySelectorAll('input[type=text]');
   for (var i = 0; i <= 5; i++) {
-      inputs[i].addEventListener('keyup', function(e) {
-          checkForm1[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
+      inputs[i].addEventListener('keyup', function(event) {
+          checkNewGameForm[event.target.id](event.target.id); // "event.target" représente l'input actuellement modifié
       });
   }
 
-  form1.addEventListener('submit', function(e) {
+  newGameForm.addEventListener('submit', function(event) {
       var result = true;
       var element = document.getElementById("mode");
       var mode = element.options[element.selectedIndex].value;
-      for (var i in checkForm1) {
-          result = (parseInt(i[6]) > mode || checkForm1[i](i)) && result;
+      for (var i in checkNewGameForm) {
+          result = (parseInt(i[6]) > mode || checkNewGameForm[i](i)) && result;
       }
       if (result === true) {
-        document.form1.submit();
+        document.newGameForm.submit();
       }
-      e.preventDefault();
+      event.preventDefault();
   });
 
-  var form2 = document.getElementById('form2'),
+  var joinGameForm = document.getElementById('joinGameForm'),
       inputs = document.querySelectorAll('input[type=text]');
   for (var i = 6; i <= 7; i++) {
-      inputs[i].addEventListener('keyup', function(e) {
-          checkForm2[e.target.id](e.target.id); // "e.target" représente l'input actuellement modifié
+      inputs[i].addEventListener('keyup', function(event) {
+          checkJoinGameForm[event.target.id](event.target.id); // "event.target" représente l'input actuellement modifié
       });
   }
 
-  form2.addEventListener('submit', function(e) {
+  joinGameForm.addEventListener('submit', function(event) {
       var result = true;
-      for (var i in checkForm2) {
-          result = (checkForm2[i](i) && result);
+      for (var i in checkJoinGameForm) {
+          result = (checkJoinGameForm[i](i) && result);
       }
       if (result === true) {
-        document.form2.submit();
+        document.joinGameForm.submit();
       }
-      e.preventDefault();
+      event.preventDefault();
   });
 
   var boxes = document.querySelectorAll('input[type=checkbox]'),
       boxesLength = boxes.length;
   for (var i = 0; i < boxesLength; i++) {
-      boxes[i].addEventListener('click', function(e) {
-        checkForm1["player" + e.target.id[4]]("player" + e.target.id[4]);
+      boxes[i].addEventListener('click', function(event) {
+        checkNewGameForm["player" + event.target.id[4]]("player" + event.target.id[4]);
       });
   }
 

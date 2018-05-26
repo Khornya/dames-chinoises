@@ -6,9 +6,9 @@ html
     title Hop hop hop
   body
     include includes/header.pug
-    #main_wrapper
+    #mainWrapper
       form(style="display:none")
-        input#nombre_joueurs(name="nombre_joueurs" value=nombre_joueurs)
+        input#numPlayers(name="numPlayers" value=numPlayers)
         input#player1(name="player1" value=player1)
         input#player2(name="player2" value=player2)
         input#player3(name="player3" value=player3)
@@ -21,25 +21,25 @@ html
         input#IA4(name="IA4" value=ordi4)
         input#IA5(name="IA5" value=ordi5)
         input#IA6(name="IA6" value=ordi6)
-        input#colors(name="colors" value=colors)
+        input#numColors(name="numColors" value=numColors)
         input#role(name="role" value=role)
         input#gameId(name="gameId" value=gameId)
       p#joinGame Demandez à vos amis de rejoindre la partie n° #{gameId}
-      #game_zone
-        section#left_panel
+      #gameZone
+        section#leftPanel
         section#board
-        section#right_panel
+        section#rightPanel
           img#muteButton(src="images/unmute.png")
           p#rules Voir les règles
           p
             a(href="") Quitter
-      #myModal.modal(style="display:none")
+      #modal.modal(style="display:none")
         // Modal content
         .modal-content
           span.close ×
-          p#modal_text
-          a.button(href="#" onclick="restart()") PLAY AGAIN
-          a.button(href="#" onclick=" window.open('/', '_self')") QUIT GAME
+          p#modalText
+          a#restartButton.button(href="#" onclick="restart()") REJOUER
+          a#quitButton.button(href="#" onclick=" window.open('/', '_self')") QUITTER
       #rulesModal.modal(style="display:none")
         // Modal content
         .modal-content

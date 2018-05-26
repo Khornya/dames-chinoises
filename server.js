@@ -19,12 +19,12 @@ app.set('view engine', 'pug');
 // const { matchedData, sanitize } = require('express-validator/filter');
 
 app.post('/game', function(request, response) {
-  if (typeof(request.body.inputform1) !== 'undefined' && typeof(request.body.inputform2) !== 'undefined') {
+  if (typeof(request.body.inputNewGameForm) !== 'undefined' && typeof(request.body.inputJoinGameForm) !== 'undefined') {
     response.redirect('/');
   }
-  else if (typeof(request.body.inputform1) !== 'undefined') {
-    var numColors = escapeHtml(request.body.colors);
-    var numPlayers = escapeHtml(request.body.nombre_joueurs);
+  else if (typeof(request.body.inputNewGameForm) !== 'undefined') {
+    var numColors = escapeHtml(request.body.numColors);
+    var numPlayers = escapeHtml(request.body.numPlayers);
     var player1 = (typeof(request.body.player1) !== 'undefined' && request.body.player1 !== '')? escapeHtml(request.body.player1) : "Joueur 1";
     var player2 = (typeof(request.body.player2) !== 'undefined' && request.body.player2 !== '')? escapeHtml(request.body.player2) : "Joueur 2";
     var player3 = (typeof(request.body.player3) !== 'undefined' && request.body.player3 !== '')? escapeHtml(request.body.player3) : "Joueur 3";
@@ -66,8 +66,8 @@ app.post('/game', function(request, response) {
       // Create a unique Socket.IO Room
       var gameId = ( Math.random() * 100000 ) | 0;
       response.render('game', {
-        nombre_joueurs: numPlayers,
-        colors: numColors,
+        numPlayers: numPlayers,
+        numColors: numColors,
         player1: player1,
         player2: player2,
         player3: player3,
@@ -85,7 +85,7 @@ app.post('/game', function(request, response) {
       });
     }
   }
-  else if (typeof(request.body.inputform2) !== 'undefined') {
+  else if (typeof(request.body.inputJoinGameForm) !== 'undefined') {
     var gameId = escapeHtml(request.body.roomID);
     var player = escapeHtml(request.body.player);
     var gameIdRegex = new RegExp("[0-9]{1-6}");
@@ -130,15 +130,15 @@ app.get('/score',function(request,response){
     var adversaire4 = request.query.adversaire4;
     var adversaire5 = request.query.adversaire5;
     var sql = "INSERT INTO parties (nom, score, adversaire1, adversaire2, adversaire3, adversaire4, adversaire5, dategame) VALUES ('" + name + "', " + score + ", '" + adversaire1 + "', '" + adversaire2 + "', '" + adversaire3 + "', '" + adversaire4 + "', '" + adversaire5 +  "', now())";
-    connection.query(sql, function(err, rows, fields) {
-      if (err) throw err;
+    connection.query(sql, function(error, rows, fields) {
+      if (error) throw error;
     });
     response.sendStatus(200);
   }
 });
 
 var mysql = require('mysql');
-var db_config = {
+var dbConfig = {
   host     : 'us-cdbr-iron-east-05.cleardb.net',
   user     : 'bb4e923f5faaa9',
   password : '382b4542',
@@ -149,22 +149,22 @@ var db_config = {
 var connection;
 
 function handleDisconnect() { // https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
-  connection = mysql.createConnection(db_config); // Recreate the connection, since
+  connection = mysql.createConnection(dbConfig); // Recreate the connection, since
                                                   // the old one cannot be reused.
 
-  connection.connect(function(err) {              // The server is either down
-    if(err) {                                     // or restarting (takes a while sometimes).
-      console.log('error when connecting to db:', err);
+  connection.connect(function(error) {              // The server is either down
+    if(error) {                                     // or restarting (takes a while sometimes).
+      console.log('error when connecting to db:', error);
       setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
     }                                     // to avoid a hot loop, and to allow our node script to
   });                                     // process asynchronous requests in the meantime.
                                           // If you're also serving http, display a 503 error.
-  connection.on('error', function(err) {
-    console.log('db error', err);
-    if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+  connection.on('error', function(error) {
+    console.log('db error', error);
+    if(error.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
       handleDisconnect();                         // lost due to either server restart, or a
     } else {                                      // connnection idle timeout (the wait_timeout
-      throw err;                                  // server variable configures this)
+      throw error;                                  // server variable configures this)
     }
   });
 }
@@ -175,10 +175,10 @@ var PORT = (process.env.PORT || 8000);
 
 server.listen(PORT);
 
-app.get('/', function(req, res) {
-  connection.query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 10', function(err, rows, fields) {
-    if (err) throw err;
-    res.render('index', {
+app.get('/', function(request, response) {
+  connection.query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 10', function(error, rows, fields) {
+    if (error) throw error;
+    response.render('index', {
       score1: rows[0],
       score2: rows[1],
       score3: rows[2],
@@ -193,8 +193,8 @@ app.get('/', function(req, res) {
   });
 });
 
-app.get('/game', function (req, res) {
-  res.redirect('/');
+app.get('/game', function (request, response) {
+  response.redirect('/');
 });
 
 app.use(express.static(__dirname));
@@ -317,25 +317,25 @@ var TRIANGLES_COORDS = [
 // initialise la matrice pour le plateau de jeu
 function initGameBoard() {
   var matrice = initArray(17,25,false);
-  for (var R=0; R<4; R++) { // R pour row, C pour column
-    for (var C=12-R; C<=12+R; C+=2) {
-      matrice[R][C] = 1;
-      matrice[16-R][C] = 2;
+  for (var row=0; row<4; row++) {
+    for (var col=12-row; col<=12+row; col+=2) {
+      matrice[row][col] = 1;
+      matrice[16-row][col] = 2;
     }
   }
-  for (var R=4; R<8; R++) {
-    for (var C=12-R; C<=12+R; C+=2) {
-      matrice[R][C] = -1;
-      matrice[16-R][C] = -1;
+  for (var row=4; row<8; row++) {
+    for (var col=12-row; col<=12+row; col+=2) {
+      matrice[row][col] = -1;
+      matrice[16-row][col] = -1;
     }
-    for (var C=R-4; C<=10-R; C+=2) {
-      matrice[R][C] = 3;
-      matrice[16-R][24-C] = 4;
-      matrice[R][24-C] = 5;;
-      matrice[16-R][C] = 6;
+    for (var col=row-4; col<=10-row; col+=2) {
+      matrice[row][col] = 3;
+      matrice[16-row][24-col] = 4;
+      matrice[row][24-col] = 5;;
+      matrice[16-row][col] = 6;
     }
   }
-  for (var C=4; C<21; C+=2) { matrice[8][C] = -1 }
+  for (var col=4; col<21; col+=2) { matrice[8][col] = -1 }
   return matrice;
 }
 
@@ -381,15 +381,15 @@ function isMovingBackward(color, startCell, endCell) {
 }
 
 
-function sameTraject(gameId, traject) { // utile ? myArray.reverse()
+function sameTraject(gameId, path) { // utile ? myArray.reverse()
   var i, j;
-  i = traject.length;
+  i = path.length;
   j = i-1;
   last = games[gameId]["history"][games[gameId]["player"]];
   if (i !== last.length) return false;
   while (i--) {
-    if (traject[j-i][0] !== last[i][0] ||
-       traject[j-i][1] !== last[i][1])
+    if (path[j-i][0] !== last[i][0] ||
+       path[j-i][1] !== last[i][1])
        return false;
    }
    return true;
@@ -397,13 +397,13 @@ function sameTraject(gameId, traject) { // utile ? myArray.reverse()
 
 function getPath(gameId, startCell, endCell) {
   games[gameId]["reachableCells"] = [];                                  // init reachableCells
-  var R = startCell[0];
-  var C = startCell[1];
+  var row = startCell[0];
+  var col = startCell[1];
   var i, j;
-  for (i =R-1; i <= R+1; i++)  {               // add mouvement adjaçant
-    for (j=C-2; j<= C+2; j++) {
-       if ((i!=R || j!=C) && isOnGameBoard([i,j]) && games[gameId]["gameBoard"][i][j]== -1){
-         if(! isMovingBackward(games[gameId]["playedColor"], [R,C], [i,j]) &&
+  for (i =row-1; i <= row+1; i++)  {               // add mouvement adjaçant
+    for (j=col-2; j<= col+2; j++) {
+       if ((i!=row || j!=col) && isOnGameBoard([i,j]) && games[gameId]["gameBoard"][i][j]== -1){
+         if(! isMovingBackward(games[gameId]["playedColor"], [row,col], [i,j]) &&
                ! sameTraject(gameId, [startCell, [i,j]]))
             games[gameId]["reachableCells"].push([i,j]);                    // used by IA
          if (i==endCell[0] && j==endCell[1]) return [startCell,[i,j]];
@@ -418,34 +418,34 @@ function getPath(gameId, startCell, endCell) {
 function getJumps(gameId, cells , endCell, oldPath=[]) {
   if (cells.length<1) return false;
   var i, j, k;
-  var pivot_r , pivot_c;
+  var pivotRow , pivotCol;
   var n, index;
   var access_cell = []
-  var R = cells[0][0]; var C = cells[0][1];
+  var row = cells[0][0]; var col = cells[0][1];
 
   // chercher saut sur ligne + diagonal 6 directions :
   for (i=-1; i<2; i++) {     // i in [-1, 0, 1]
     for (j=-1; j<2; j+=2) {  // j in [-1, 1]
-      pivot_r = R+i;
-      pivot_c = C+j;
-      while (isOnGameBoard([pivot_r, pivot_c]) && games[gameId]["gameBoard"][pivot_r][pivot_c] < 1) { // avancer jusqu'a case occupée
-        pivot_r += i;
-        pivot_c += j;
+      pivotRow = row+i;
+      pivotCol = col+j;
+      while (isOnGameBoard([pivotRow, pivotCol]) && games[gameId]["gameBoard"][pivotRow][pivotCol] < 1) { // avancer jusqu'a case occupée
+        pivotRow += i;
+        pivotCol += j;
       }
       n=0;
-      for (k=1; k< j*(pivot_c-C); k+=1) {
-        if (!isOnGameBoard([pivot_r+i*k, pivot_c+j*k])) break;
-        if (games[gameId]["gameBoard"][pivot_r+i*k][pivot_c+j*k] > 0) n+=1; // si un autre pion sur le chemin break
+      for (k=1; k< j*(pivotCol-col); k+=1) {
+        if (!isOnGameBoard([pivotRow+i*k, pivotCol+j*k])) break;
+        if (games[gameId]["gameBoard"][pivotRow+i*k][pivotCol+j*k] > 0) n+=1; // si un autre pion sur le chemin break
       }
       if (n===0) {
-        index_r = 2*pivot_r-R;   //(quand i=0; , pivot_r=R ; 2*R-R=R (on reste sur la même la ligne)
-        index_c = 2*pivot_c-C;
+        index_r = 2*pivotRow-row;   //(quand i=0; , pivotRow=row ; 2*row-row=row (on reste sur la même la ligne)
+        index_c = 2*pivotCol-col;
         if (contains(oldPath,[index_r, index_c])) continue ; // éviter de tourner rond
         if (isOnGameBoard([index_r, index_c]) && games[gameId]["gameBoard"][index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
-          if(! isMovingBackward(games[gameId]["playedColor"], [R,C], [index_r,index_c]) &&
-               ! sameTraject(gameId, oldPath.concat([[R,C], [index_r, index_c]])))
+          if(! isMovingBackward(games[gameId]["playedColor"], [row,col], [index_r,index_c]) &&
+               ! sameTraject(gameId, oldPath.concat([[row,col], [index_r, index_c]])))
             games[gameId]["reachableCells"].push([index_r, index_c])
-          if (index_r==endCell[0] && index_c==endCell[1]) return oldPath.concat([[R,C], [index_r, index_c]]);
+          if (index_r==endCell[0] && index_c==endCell[1]) return oldPath.concat([[row,col], [index_r, index_c]]);
           else access_cell.push([index_r, index_c]);
         }
       }
@@ -457,12 +457,12 @@ function getJumps(gameId, cells , endCell, oldPath=[]) {
 
 
 function hasWon(gameId, color) {
-  var R, C;
+  var row, col;
   var n =  (color%2 ? color : color-2);
   for (var i=0; i<10; i++) {
-    R = TRIANGLES_COORDS[n][i][0];
-    C = TRIANGLES_COORDS[n][i][1]
-    if (games[gameId]["gameBoard"][R][C] != color) return false ;
+    row = TRIANGLES_COORDS[n][i][0];
+    col = TRIANGLES_COORDS[n][i][1]
+    if (games[gameId]["gameBoard"][row][col] != color) return false ;
   }
   for (n=0; n< games[gameId]["COLORS"][games[gameId]["player"]].length; n++) {
     if (games[gameId]["COLORS"][games[gameId]["player"]][n] === color)
@@ -525,10 +525,10 @@ function makeBestMove(gameId) {
   if (games[gameId]["gameOver"]) return;       // Isover
   games[gameId]["isIaPlaying"] = true;
   var i, j, k;             // var pour itération
-  var weight=-99, selected; // meilleur poid et chemin depart arrivé correspondant
-  var x, y, x0, y0, w=0, n;
-  var a , b, p, p0;         // géomitrie
-  var s=0;                  // pour avoir une idée sur le nombre d'itération
+  var maxWeight=-99, selectedMove; // meilleur poid et chemin depart arrivé correspondant
+  var x, y, x0, y0, weight=0, n;
+  var xDirection , yDirection, axis, axis0;         // géométrie
+  var count=0;                  // pour avoir une idée sur le nombre d'itération
   for( i = 0; i<17; i++) {  // parcourt du plateau
     for (j=0 ; j<25; j++) {
       if(games[gameId]["COLORS"][games[gameId]["player"]].includes(games[gameId]["gameBoard"][i][j])) {       // si pion de l'IA
@@ -539,35 +539,35 @@ function makeBestMove(gameId) {
         for(k=0; k< games[gameId]["reachableCells"].length; k++){       // set weight // compare  (pour toute cellule accesible accorde un poid
           n =  (games[gameId]["playedColor"]%2 ? games[gameId]["playedColor"] : games[gameId]["playedColor"]-2);
           x0= TRIANGLES_COORDS[n][0][0] ;y0= TRIANGLES_COORDS[n][0][1]  // (x0, y0) pointe du triangle opposé // on souhaite diminuer au max la distance
-          a = (games[gameId]["playedColor"]%2 ? 1: -1) ;               // dans quelle direction vont les x? selon les couleur (1, 3, 5 direction +1, 2, 4, 6 direction -1
-          b = (games[gameId]["playedColor"]%3 ? (games[gameId]["playedColor"]<3 ? 0 : -1) : 1); // dans quelle direction vont les y? selon les couleur (1, 2:aucun effet 3,6: +1 4, 5:-1
-          p = -3*a*b;                            // ce code trouve l'equation de la droite allant de la pointe du home a la pointe de l'opposé
-          p0 = -p*8-12;
-          s+=1
+          xDirection = (games[gameId]["playedColor"]%2 ? 1: -1) ;               // dans quelle direction vont les x? selon les couleur (1, 3, 5 direction +1, 2, 4, 6 direction -1
+          yDirection = (games[gameId]["playedColor"]%3 ? (games[gameId]["playedColor"]<3 ? 0 : -1) : 1); // dans quelle direction vont les y? selon les couleur (1, 2:aucun effet 3,6: +1 4, 5:-1
+          axis = -3*xDirection*yDirection;                            // ce code trouve l'equation de la droite allant de la pointe du home a la pointe de l'opposé
+          axis0 = -axis*8-12;
+          count+=1
           x = games[gameId]["reachableCells"][k][0];  y = games[gameId]["reachableCells"][k][1];  // (x, y) cellule accesible a partir de (i, j)
-          w  = 10* (a*(x-i)+b*(y-j));                                // main direction, selon les option a, et b
-          w += 10* (Math.pow((i-x0), 2) + Math.pow((j-y0), 2)/3);    // max distance from depart
-          w -= 10* (Math.pow((x-x0), 2) + Math.pow((y-y0), 2)/3);    // min distance de la case accesible à la pointe (ds le meilleur cas val=0
+          weight  = 10* (xDirection*(x-i)+yDirection*(y-j));                                // main direction, selon les option xDirection, et yDirection
+          weight += 10* (Math.pow((i-x0), 2) + Math.pow((j-y0), 2)/3);    // max distance from depart
+          weight -= 10* (Math.pow((x-x0), 2) + Math.pow((y-y0), 2)/3);    // min distance de la case accesible à la pointe (ds le meilleur cas val=0
           // le code suivant pour rester sur la ligne droite entre le home et l'oppossé
-          w += 15* (Math.pow(p*i+j+p0, 2)/(Math.pow(p, 2)+3));    // privilégier le spions les plus éloignés
-          w -= 15* (Math.pow(p*x+y+p0, 2)/(Math.pow(p, 2)+3));    // privilégier les positions les plus proches
-          if (w > weight) {                                                      // compare
-            weight =w;
-            selected = [[i, j], x, y];
+          weight += 15* (Math.pow(axis*i+j+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier le spions les plus éloignés
+          weight -= 15* (Math.pow(axis*x+y+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier les positions les plus proches
+          if (weight > maxWeight) {                                                      // compare
+            maxWeight = weight;
+            selectedMove = [[i, j], x, y];
           }
         }
       }
     }
   }
-  games[gameId]["playedColor"] = games[gameId]["gameBoard"][selected[0][0]][selected[0][1]];                                    // ici on valide le meilleur choix
-  console.log(s + " scénario evaluated");
-  games[gameId]["gameBoard"][selected[0][0]][selected[0][1]]=-1;
-  traject = getPath(gameId, selected[0], [selected[1],selected[2]]);
-  games[gameId]["history"][games[gameId]["player"]] = traject;
-  games[gameId]["Time"] += 500*(traject.length)
-  move(gameId, traject, games[gameId]["playedColor"]);
+  games[gameId]["playedColor"] = games[gameId]["gameBoard"][selectedMove[0][0]][selectedMove[0][1]];                                    // ici on valide le meilleur choix
+  console.log(count + " scénario evaluated");
+  games[gameId]["gameBoard"][selectedMove[0][0]][selectedMove[0][1]]=-1;
+  path = getPath(gameId, selectedMove[0], [selectedMove[1],selectedMove[2]]);
+  games[gameId]["history"][games[gameId]["player"]] = path;
+  games[gameId]["Time"] += 500*(path.length)
+  move(gameId, path, games[gameId]["playedColor"]);
   setTimeout(function() {
-    io.sockets.in(gameId).emit('move', { traject : traject, playedColor: games[gameId]["playedColor"] });
+    io.sockets.in(gameId).emit('move', { path : path, playedColor: games[gameId]["playedColor"] });
     games[gameId]["isIaPlaying"] = false;
   }, games[gameId]["Time"]);
   games[gameId]["PLAYERS"][games[gameId]["player"]].score += 1;
@@ -588,8 +588,8 @@ function validateMove(gameId, socket, cell) {
     socket.emit('game error', { message: 'wait for your turn', sound: "fail" });
     return;
   }
-  var R = cell[0];
-  var C = cell[1];
+  var row = cell[0];
+  var col = cell[1];
   var startCell = games[gameId]["startCell"];
   var COLORS = games[gameId]["COLORS"];
   var playedColor = games[gameId]["playedColor"];
@@ -598,44 +598,44 @@ function validateMove(gameId, socket, cell) {
   var Time = games[gameId]["Time"];
   var isPlayedByIa = games[gameId]["isPlayedByIa"];
   if (startCell === (0,0)) {                                     // premier click
-    if (!(COLORS[player].includes(gameBoard[R][C]))) {                    // vérifie qu'on click sur le pion du joueur qui a la main
+    if (!(COLORS[player].includes(gameBoard[row][col]))) {                    // vérifie qu'on click sur le pion du joueur qui a la main
       if (!isPlayedByIa[player]) socket.emit('game error', { message: "please click on your own pieces", sound: "fail" });
       else socket.emit('game error', { message: "please wait until computer finish playing", sound: "fail" });
       return false;
     }
-    games[gameId]["startCell"] = [R,C];
-    socket.emit('select', { cell : [R,C] });
-    games[gameId]["playedColor"] = gameBoard[R][C];
-    games[gameId]["gameBoard"][R][C] = -1;
+    games[gameId]["startCell"] = [row,col];
+    socket.emit('select', { cell : [row,col] });
+    games[gameId]["playedColor"] = gameBoard[row][col];
+    games[gameId]["gameBoard"][row][col] = -1;
     return false;                                               // marquer la case depart vide pour ne pas l'utiliser comme pivot dans getJumps()
   }
   else {
-    if (startCell[0] === R && startCell[1] === C) {            // retour à la case départ annule le mouvement
-      games[gameId]["gameBoard"][R][C] = playedColor;
+    if (startCell[0] === row && startCell[1] === col) {            // retour à la case départ annule le mouvement
+      games[gameId]["gameBoard"][row][col] = playedColor;
       games[gameId]["startCell"] = (0,0);
-      socket.emit('deselect', { cell : [R,C], color: playedColor });
+      socket.emit('deselect', { cell : [row,col], color: playedColor });
       return false;
     }
-    if (gameBoard[R][C] !== -1) {                                        // cell not empty
+    if (gameBoard[row][col] !== -1) {                                        // cell not empty
       socket.emit('game error', { message: "Cell not empty!", sound: "fail" });
       return false;
     }
-    if (isMovingBackward(playedColor, startCell, [R,C])) {    // mouvement illégal en réculant
+    if (isMovingBackward(playedColor, startCell, [row,col])) {    // mouvement illégal en réculant
       socket.emit('game error', { message: "You can't go back!", sound: "fail" });
       return false;
     }
-    if (!(traject = getPath(gameId, startCell, [R,C]))) {            // mouvement invalide
+    if (!(path = getPath(gameId, startCell, [row,col]))) {            // mouvement invalide
       socket.emit('game error', { message: "Invalid move!", sound: "fail" });
       return false;
     }
-    if (sameTraject(gameId, traject)) {
+    if (sameTraject(gameId, path)) {
       socket.emit('game error', { message: "You can't replay the last move", sound: "fail" });
       return false;
     }
-    games[gameId]["history"][player] = traject;
-    games[gameId]["Time"] = 500*(traject.length-1);
-    move(gameId, traject, games[gameId]["playedColor"]);
-    io.sockets.in(gameId).emit('move', { traject : traject, playedColor: games[gameId]["playedColor"] });
+    games[gameId]["history"][player] = path;
+    games[gameId]["Time"] = 500*(path.length-1);
+    move(gameId, path, games[gameId]["playedColor"]);
+    io.sockets.in(gameId).emit('move', { path : path, playedColor: games[gameId]["playedColor"] });
     games[gameId]["PLAYERS"][player].score += 1;
     if (hasWon(gameId, playedColor)) {
       games[gameId]["gameOver"] = true;
