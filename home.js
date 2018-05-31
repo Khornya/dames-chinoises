@@ -1,22 +1,20 @@
-utilities.someSharedMethod();
+utilities.someSharedMethod(); // méthode partagé entre client en serveur
 
-var socket = io();
-
-function seeMore() {
-  var x = document.getElementById("seeMoreDiv");
-  var y = document.getElementById("seeMoreButton");
-  if (x.style.display === "none") {
+function seeMore() { // pour afficher le div qui contient les infos sur les dames chinoises
+  var x = document.getElementById("seeMoreDiv"); // on récupère le div #seeMoreDiv
+  var y = document.getElementById("seeMoreButton"); // on récupère le bouton #seeMoreButton
+  if (x.style.display === "none") { // si le div est masqué, on affiche le div et on change le label du botuon
       x.style.display = "block";
       y.innerHTML = "Voir moins";
   }
-  else {
+  else { // sinon, on masque le div et on change le label du bouton
       x.style.display = "none";
       y.innerHTML = "Voir plus";
   }
 }
 
-function updateChoices() {
-  var colorChoices = {
+function updateChoices() { // fonction déclenchée quand on change le nombre de joueurs
+  var colorChoices = { // un dictionnaire qui indique pour chaque nombre de joueurs s'il faut afficher le choix du nombre de couleurs, et quelle valeur doit être cochée par défaut
     1: { display: '', default: 1 },
     2: { display: '', default: 1 },
     3: { display: 'none', default: 2 },
@@ -24,29 +22,29 @@ function updateChoices() {
     6: { display: 'none', default: 1 }
   };
   var checkbox;
-  deactivateTooltips();
-  for (var i = 2; i <= 6; i++) {
-    document.getElementById("player"+i).style.display = 'none';
-    checkbox = document.getElementById("ordi"+i);
-    checkbox.style.display = 'none';
-    checkbox.nextSibling.style.display = 'none';
+  deactivateTooltips(); // masque tous les tooltips
+  for (var i = 2; i <= 6; i++) { // pour tous les champs de nom de joueur à partir du 2e
+    document.getElementById("player"+i).style.display = 'none'; // masque le champ
+    checkbox = document.getElementById("ordi"+i); // récupère la case IA associée à ce joeuur
+    checkbox.style.display = 'none'; // masque la case à cocher
+    checkbox.nextSibling.style.display = 'none'; // masque le label de la case à cocher
   }
-  var list = document.getElementById("mode");
-  var mode = list.options[list.selectedIndex].value;
-  document.getElementById("color_choice").style.display = colorChoices[mode]['display'];
-  for (var i=1; i<=3; i++) {
-    document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false;
+  var list = document.getElementById("mode"); // on récupèr ele menu déroulant
+  var mode = list.options[list.selectedIndex].value; // on récupère la valeur sélectionnée
+  document.getElementById("color_choice").style.display = colorChoices[mode]['display']; // on affiche ou on masque le choix du nombre de couleurs
+  for (var i=1; i<=3; i++) { // on coche une case par défaut
+    document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false
   }
-  for (var i = 2; i <= mode; i++) {
-    document.getElementById("player"+i).style.display = 'inline';
-    checkbox = document.getElementById("ordi"+i);
-    checkbox.style.display = 'inline';
-    checkbox.nextSibling.style.display = 'inline';
+  for (var i = 2; i <= mode; i++) { // pou rhcaque joueur
+    document.getElementById("player"+i).style.display = 'inline'; // on affiche le champ du nom du joueur
+    checkbox = document.getElementById("ordi"+i); // on récupère la case IA associée
+    checkbox.style.display = 'inline'; // on affiche la case à cocher
+    checkbox.nextSibling.style.display = 'inline'; // on affiche le label de l acase à cocherr
   }
-  updateColors();
-  for (var i in checkNewGameForm) {
-    if (document.getElementById(i).value != '' && parseInt(i[6]) <= mode) {
-      checkNewGameForm[i](i);
+  updateColors(); // on met à jour le socuelurs pour chauqe joueur
+  for (var i in checkNewGameForm) { // pour chaque fonction de vérification su rl eocntenu du formulaire
+    if (document.getElementById(i).value != '' && parseInt(i[6]) <= mode) { // on ne vérifie que si quelque chose a été saisi et si le joueur va jouer
+      checkNewGameForm[i](i); // on vérfie le ocntenu du formulaire
     }
   }
 }
@@ -242,7 +240,3 @@ for (var i=2;i<=6;i++) {
 }
 
 updateChoices();
-
-socket.on('connect', function () {
-  // console.log("socket id : ", this.id);
-});
