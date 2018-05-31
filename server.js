@@ -1,29 +1,28 @@
-var share = require('./utils.js');
-share.someSharedMethod();
+var share = require('./utils.js'); // appel du fichier poru récupérer les méthodes partagées
+share.someSharedMethod(); // appel une méthode partagée
 
-var express = require('express');
-var app = express();
-var http = require('http');
-var server = http.Server(app);
-var io = require('socket.io')(server);
+var express = require('express'); // requiert le framework express
+var app = express(); // invoque une instance d'express
+var http = require('http'); // requiert le module http
+var server = http.Server(app); // crée le serveur
+var io = require('socket.io')(server); // invoque une instance de socket.io liée au serveur
 
 
-var bodyParser = require("body-parser");
-//Here we are configuring express to use body-parser as middle-ware.
-app.use(bodyParser.urlencoded({ extended: false }));
+var bodyParser = require("body-parser"); // configure express pour utiliser body-parser comme intermédiaire
+app.use(bodyParser.urlencoded({ extended: false })); // on configure body-parser (voir site pug)
 app.use(bodyParser.json());
-app.set('views', './views');
-app.set('view engine', 'pug');
+app.set('views', './views'); // dossier pour les templates html
+app.set('view engine', 'pug'); // configuration du moteur d'affichage des templates
 
 var isInTestMode = true; // true pour lancer un test
-var testName = 'sameTraject';
-var testId = 999999;
+var testName = 'sameTraject'; // le nom du test à lancer
+var testId = 999999; // un numéro de partie pour effectuer les tests
 
-app.post('/game', function(request, response) {
-  if (typeof(request.body.inputNewGameForm) !== 'undefined' && typeof(request.body.inputJoinGameForm) !== 'undefined') {
+app.post('/game', function(request, response) { // en cas re requête post sur la page de jeu
+  if (typeof(request.body.inputNewGameForm) !== 'undefined' && typeof(request.body.inputJoinGameForm) !== 'undefined') { // on redirige si aucune variable n'est transmise par formulaire
     response.redirect('/');
   }
-  else if (typeof(request.body.inputNewGameForm) !== 'undefined') {
+  else if (typeof(request.body.inputNewGameForm) !== 'undefined') { // sinon si c'est le foormulaire de création de partie qui est rempli on récupère les données du formulaire
     var numColors = escapeHtml(request.body.numColors);
     var numPlayers = escapeHtml(request.body.numPlayers);
     var player1 = (typeof(request.body.player1) !== 'undefined' && request.body.player1 !== '')? escapeHtml(request.body.player1) : "Joueur 1";
@@ -38,14 +37,14 @@ app.post('/game', function(request, response) {
     var ordi4 = escapeHtml(request.body.ordi4);
     var ordi5 = escapeHtml(request.body.ordi5);
     var ordi6 = escapeHtml(request.body.ordi6);
-    // Check form
+    // on effectue les tests sur les données du formulaire
     var players = [player1,player2,player3,player4,player5,player6];
     var userRegex = new RegExp("^[a-zA-Z0-9_-]{2,10}$");
     var defaultRegex = new RegExp("^Joueur [1-6]$");
     var namesFormatCheck = true;
     var namesDuplicatesCheck = true;
     for (var i=0; i<players.length; i++) {
-      if (! userRegex.test(players[i]) || defaultRegex.test(players[i])) amesFormatCheck = false;
+      if (! userRegex.test(players[i]) || defaultRegex.test(players[i])) namesFormatCheck = false;
       for (var j=0; j<players.length; j++) {
         if (i === j) continue;
         if (players[i] === players[j]) namesDuplicatesCheck = false;
@@ -64,9 +63,9 @@ app.post('/game', function(request, response) {
       response.send("<p>Nom déjà pris</p>");
     }
     else {
-      // Create a unique Socket.IO Room
+      // on crée une salle unique avec Socket.IO
       var gameId = ( Math.random() * 100000 ) | 0;
-      response.render('game', {
+      response.render('game', { // on affiche le template avec les bonnes valeurs
         numPlayers: numPlayers,
         numColors: numColors,
         player1: player1,
@@ -86,7 +85,7 @@ app.post('/game', function(request, response) {
       });
     }
   }
-  else if (typeof(request.body.inputJoinGameForm) !== 'undefined') {
+  else if (typeof(request.body.inputJoinGameForm) !== 'undefined') { // si le formulaire pour rejoindre une partie à été rempli on récupère les valeurs et on effectue les tests sur ces dernières
     var gameId = escapeHtml(request.body.roomID);
     var player = escapeHtml(request.body.player);
     var gameIdRegex = new RegExp("[0-9]{1-6}");
@@ -118,11 +117,11 @@ app.post('/game', function(request, response) {
   }
 });
 
-app.get('/score',function(request,response){
-  if (Object.keys(request.query).length === 0 && request.query.constructor === Object) { // empty query
+app.get('/score',function(request,response){ // en cas de requête get sur la page de scores
+  if (Object.keys(request.query).length === 0 && request.query.constructor === Object) { // on redirige si aucune variable n'est transmise
     response.redirect('/');
   }
-  else {
+  else { // sinon on récupère les valeurs
     var name = request.query.name;
     var score = parseInt(request.query.score);
     var adversaire1 = request.query.adversaire1;
@@ -131,15 +130,15 @@ app.get('/score',function(request,response){
     var adversaire4 = request.query.adversaire4;
     var adversaire5 = request.query.adversaire5;
     var sql = "INSERT INTO parties (nom, score, adversaire1, adversaire2, adversaire3, adversaire4, adversaire5, dategame) VALUES ('" + name + "', " + score + ", '" + adversaire1 + "', '" + adversaire2 + "', '" + adversaire3 + "', '" + adversaire4 + "', '" + adversaire5 +  "', now())";
-    connection.query(sql, function(error, rows, fields) {
+    connection.query(sql, function(error, rows, fields) { // et on les met dans la base de données
       if (error) throw error;
     });
-    response.sendStatus(200);
+    response.sendStatus(200); // on ferme la requête
   }
 });
 
-var mysql = require('mysql');
-var dbConfig = {
+var mysql = require('mysql'); // on requiert le module mysql
+var dbConfig = { // on configure la base de données
   host     : 'us-cdbr-iron-east-05.cleardb.net',
   user     : 'bb4e923f5faaa9',
   password : '382b4542',
@@ -147,9 +146,9 @@ var dbConfig = {
   dateStrings: 'date'
 };
 
-var connection;
+var connection; // variable pour la connexion à la base de données
 
-function handleDisconnect() { // https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
+function handleDisconnect() { // fonction pour se reconnecter en cas de déconnexion - https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
   connection = mysql.createConnection(dbConfig); // Recreate the connection, since
                                                   // the old one cannot be reused.
 
@@ -170,9 +169,9 @@ function handleDisconnect() { // https://stackoverflow.com/questions/20210522/no
   });
 }
 
-handleDisconnect();
+handleDisconnect(); // on invoque la fonction de reconnexion
 
-var PORT = (process.env.PORT || 8000);
+var PORT = (process.env.PORT || 8000); 
 
 server.listen(PORT);
 
