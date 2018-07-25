@@ -1,4 +1,4 @@
-var share = require('./utils.js'); // appel du fichier poru récupérer les méthodes partagées
+var share = require('./utils.js'); // appel du fichier pour récupérer les méthodes partagées
 share.someSharedMethod(); // appel une méthode partagée
 
 var express = require('express'); // requiert le framework express
@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.set('views', './views'); // dossier pour les templates html
 app.set('view engine', 'pug'); // configuration du moteur d'affichage des templates
 
-var isInTestMode = true; // true pour lancer un test
+var isInTestMode = false; // true pour lancer un test
 var testName = 'sameTraject'; // le nom du test à lancer
 var testId = 999999; // un numéro de partie pour effectuer les tests
 
@@ -44,7 +44,7 @@ app.post('/game', function(request, response) { // en cas re requête post sur l
     var namesFormatCheck = true;
     var namesDuplicatesCheck = true;
     for (var i=0; i<players.length; i++) {
-      if (! userRegex.test(players[i]) || defaultRegex.test(players[i])) namesFormatCheck = false;
+      if (! (userRegex.test(players[i]) || defaultRegex.test(players[i]))) namesFormatCheck = false;
       for (var j=0; j<players.length; j++) {
         if (i === j) continue;
         if (players[i] === players[j]) namesDuplicatesCheck = false;
@@ -299,7 +299,7 @@ io.on('connection', function (socket) {
       console.log('deleting game ', clients[this.id]["gameId"]);
       delete games[clients[this.id]["gameId"]];
     }
-  });
+});
   socket.on('restart request', function () {
     games[clients[this.id]["gameId"]]["restartCount"] += 1;
     if (games[clients[this.id]["gameId"]]["restartCount"] === games[clients[this.id]["gameId"]]["numHumanPlayers"]) {
@@ -402,7 +402,8 @@ function sameTraject(gameId, path) { // utile ? myArray.reverse()
 }
 
 function getPath(gameId, startCell, endCell) {
-  games[gameId]["reachableCells"] = [];                                  // init reachableCells
+  games[gameId]["reachableCells"] = [];                        // init reachableCells
+  games[gameId]["path"] = [];                                  // init list of path to get shortest one
   var row = startCell[0];
   var col = startCell[1];
   var i, j;
@@ -412,16 +413,21 @@ function getPath(gameId, startCell, endCell) {
          if(! isMovingBackward(games[gameId]["playedColor"], [row,col], [i,j]) &&
                ! sameTraject(gameId, [startCell, [i,j]]))
             games[gameId]["reachableCells"].push([i,j]);                    // used by IA
-         if (i==endCell[0] && j==endCell[1]) return [startCell,[i,j]];
+         if (i==endCell[0] && j==endCell[1]) return ([startCell,[i,j]]);
        }
     }
   }
-  return getJumps(gameId, [startCell], endCell) ;
+  getJumps(gameId, [startCell], endCell, []) ;
+  if(games[gameId]["path"].length>0) { 
+    var path = games[gameId]["path"].reduce(function (a, b) { return a.length < b.length ? a : b; });
+    return path;
+  }
+  else return false;
 }
 
 
 
-function getJumps(gameId, cells , endCell, oldPath=[]) {
+function getJumps(gameId, cells , endCell, oldPath) {
   if (cells.length<1) return false;
   var i, j, k;
   var pivotRow , pivotCol;
@@ -451,7 +457,8 @@ function getJumps(gameId, cells , endCell, oldPath=[]) {
           if(! isMovingBackward(games[gameId]["playedColor"], [row,col], [index_r,index_c]) &&
                ! sameTraject(gameId, oldPath.concat([[row,col], [index_r, index_c]])))
             games[gameId]["reachableCells"].push([index_r, index_c])
-          if (index_r==endCell[0] && index_c==endCell[1]) return oldPath.concat([[row,col], [index_r, index_c]]);
+          if (index_r==endCell[0] && index_c==endCell[1]) 
+            games[gameId]["path"].push(oldPath.concat([[row,col], [index_r, index_c]]));
           else access_cell.push([index_r, index_c]);
         }
       }
@@ -474,7 +481,7 @@ function hasWon(gameId, color) {
     if (games[gameId]["COLORS"][games[gameId]["player"]][n] === color)
       games[gameId]["gameState"][games[gameId]["player"]][n]=true;
   }
-  return (! (games[gameId]["gameState"][games[gameId]["player"]].includes(false)))
+  return (! (games[gameId]["gameState"][games[gameId]["player"]].indexOf(false)>-1))
 }
 
 
@@ -537,7 +544,7 @@ function makeBestMove(gameId) {
   var count=0;                  // pour avoir une idée sur le nombre d'itération
   for( i = 0; i<17; i++) {  // parcourt du plateau
     for (j=0 ; j<25; j++) {
-      if(games[gameId]["COLORS"][games[gameId]["player"]].includes(games[gameId]["gameBoard"][i][j])) {       // si pion de l'IA
+      if(games[gameId]["COLORS"][games[gameId]["player"]].indexOf(games[gameId]["gameBoard"][i][j])>-1) {       // si pion de l'IA
         games[gameId]["playedColor"]=games[gameId]["gameBoard"][i][j];                        // fait semblant qu'on va le déplacer
         games[gameId]["gameBoard"][i][j]=-1;                           //  (i, j) cellule depart
         getPath(gameId, [i,j], [-1,-1]);           // set in reachableCells all reachable cell
@@ -566,11 +573,11 @@ function makeBestMove(gameId) {
     }
   }
   games[gameId]["playedColor"] = games[gameId]["gameBoard"][selectedMove[0][0]][selectedMove[0][1]];                                    // ici on valide le meilleur choix
-  console.log(count + " scénario evaluated");
+  console.log(count + " scénarios evaluated");
   games[gameId]["gameBoard"][selectedMove[0][0]][selectedMove[0][1]]=-1;
   path = getPath(gameId, selectedMove[0], [selectedMove[1],selectedMove[2]]);
   games[gameId]["history"][games[gameId]["player"]] = path;
-  games[gameId]["Time"] += 500*(path.length)
+  games[gameId]["Time"] += 500*(path.length-1)
   move(gameId, path, games[gameId]["playedColor"]);
   setTimeout(function() {
     io.sockets.in(gameId).emit('move', { path : path, playedColor: games[gameId]["playedColor"] });
@@ -579,7 +586,9 @@ function makeBestMove(gameId) {
   games[gameId]["PLAYERS"][games[gameId]["player"]].score += 1;
   if (hasWon(gameId, games[gameId]["playedColor"])) {
     games[gameId]["gameOver"] = true;
-    io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"], score: games[gameId]["PLAYERS"][games[gameId]["player"]].score });
+    setTimeout(function() {
+      io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"], score: games[gameId]["PLAYERS"][games[gameId]["player"]].score });
+    }, games[gameId]["Time"]); 
     sendScore(gameId, games[gameId]["PLAYERS"][games[gameId]["player"]]);
     return true;
   }
@@ -604,7 +613,7 @@ function validateMove(gameId, socket, cell) {
   var Time = games[gameId]["Time"];
   var isPlayedByIa = games[gameId]["isPlayedByIa"];
   if (startCell === (0,0)) {                                     // premier click
-    if (!(COLORS[player].includes(gameBoard[row][col]))) {                    // vérifie qu'on click sur le pion du joueur qui a la main
+    if (!(COLORS[player].indexOf(gameBoard[row][col])>-1)) {                    // vérifie qu'on click sur le pion du joueur qui a la main
       if (!isPlayedByIa[player]) socket.emit('game error', { message: "please click on your own pieces", sound: "fail" });
       else socket.emit('game error', { message: "please wait until computer finish playing", sound: "fail" });
       return false;
