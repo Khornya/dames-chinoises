@@ -53,7 +53,7 @@ function updateColors() { // met à jour l'affichage des couleurs à droite du n
   var list = document.getElementById("mode"); // on récupère le menu déroulant
   var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
   for (var numColors = 1; numColors <= 3; numColors++) {   // on récupère le nombre de couleurs
-    if (document.getElementById(numColors).checked) break; 
+    if (document.getElementById(numColors).checked) break;
   }
   var colors = { // attribution des couleurs à chaque joueur
     1: { // pour un joueur
@@ -61,7 +61,7 @@ function updateColors() { // met à jour l'affichage des couleurs à droite du n
       2: [[1,3],[2,4]], // deux couleurs
       3: [[1,3,5],[2,4,6]] // trois couleurs
     },
-    2: { // pour deux joueurs 
+    2: { // pour deux joueurs
       1: [[1],[2]], // une couleur
       2: [[1,3],[2,4]], // deux couleurs
       3: [[1,3,5],[2,4,6]] // trois couleurs
@@ -100,7 +100,7 @@ function getTooltip(elements) { // on récupére la "tooltip" qui correspond à 
 }
 
 // Fonctions de vérification du formulaire, elles renvoient "true" si tout est ok
-var checkNewGameForm = {}; // On met toutes nos fonctions pour la création d'une nouvelle partie dans un objet littéral 
+var checkNewGameForm = {}; // On met toutes nos fonctions pour la création d'une nouvelle partie dans un objet littéral
 var checkJoinGameForm = {}; // On met toutes nos fonctions pour rejoindre une partie dans un objet littéral
 
 function check_player(id) { // vérifie le nom d'un joueur
@@ -139,7 +139,7 @@ function check_player(id) { // vérifie le nom d'un joueur
       }
     }
     else { // si la regex n'est pas validée
-        player.className = 'incorrect'; 
+        player.className = 'incorrect';
         tooltip.innerHTML = 'Le nom doit comprendre :<br>- 2 à 10 caractères alphanumériques<br>ou des tirets'; // on change le texte du tooltip
         tooltip.style.display = 'inline-block'; // on affiche le tooltip
         return false;
@@ -147,12 +147,12 @@ function check_player(id) { // vérifie le nom d'un joueur
 }
 
 // pour tous les champs "nom" on appliquera la fonction check_player
-checkNewGameForm['player1'] = check_player; 
+checkNewGameForm['player1'] = check_player;
 checkJoinGameForm['player'] = checkNewGameForm['player2'] = checkNewGameForm['player3'] = checkNewGameForm['player4'] = checkNewGameForm['player5'] = checkNewGameForm['player6'] = checkNewGameForm['player1'] ;
 
 checkJoinGameForm['roomID'] = function () { // fonction pour vérifier le numéro de la salle de jeu saisi pour rejoindre une partie
   var input = document.getElementById('roomID'); // on récupère le numéro saisi
-  var tooltip = getTooltip(input); // on récupère le tooltip 
+  var tooltip = getTooltip(input); // on récupère le tooltip
   var regex = new RegExp("^[0-9]{1,6}$", "g"); // on définit la regex correspondante
   if (regex.test(input.value) && input.value <= 100000) { // si la regex est validée et que la valeur et inférieure à 100000
     input.className = 'correct'; // on valide
@@ -205,7 +205,7 @@ function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inac
 
 
 // même chose pour le formulaire pour rejoindre une partie
-  var joinGameForm = document.getElementById('joinGameForm'), 
+  var joinGameForm = document.getElementById('joinGameForm'),
       inputs = document.querySelectorAll('input[type=text]');
   for (var i = 6; i <= 7; i++) {
       inputs[i].addEventListener('keyup', function(event) {
@@ -225,14 +225,14 @@ function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inac
   });
 
   var boxes = document.querySelectorAll('input[type=checkbox]'), // on séléctionne tous les inputs de type checkbox
-      boxesLength = boxes.length; 
+      boxesLength = boxes.length;
   for (var i = 0; i < boxesLength; i++) { // pour chaque checkbox
       boxes[i].addEventListener('click', function(event) { // on lie la fonction de vérification à l'event "click"
         checkNewGameForm["player" + event.target.id[4]]("player" + event.target.id[4]);
       });
   }
 
-// initialisation 
+// initialisation
 
 deactivateTooltips(); // on désactive tous les tooltips
 
