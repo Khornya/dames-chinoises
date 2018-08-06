@@ -41,6 +41,41 @@ var winningBoard = [ // tous les joueurs ont gagné
       [false,false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false,false],
       [false,false,false,false,false,false,false,false,false,false,false,false,  1  ,false,false,false,false,false,false,false,false,false,false,false,false] ]
 
+function emit(message,data) {
+    lastMessage = message;
+    lastData = data;
+    messages.push(message);
+}
+
+var messages = [];
+var lastMessage;
+var lastData;
+var socket = { // pour contourner les méthodes réseau
+  id : 23,
+  emit : emit
+}
+var io = {
+  sockets : {
+    in : function(gameId) {
+      return {
+        emit : emit
+      };
+    }
+  }
+}
+var clients = {
+  23 : {
+    number : 0
+  }
+}
+function setTimeout(f,t) { // pour ne pas attendre
+f();
+}
+
+test('Echapper les caractères HTML', t => {
+  t.is(Server.escapeHtml('<script>'),'&lt;script&gt;');
+});
+
 test('Initialiser le plateau de jeu', t => {
   t.deepEqual(Server.initGameBoard(), [
     [false, false, false, false, false, false, false, false, false, false, false, false, 1, false, false, false, false, false, false, false, false, false, false, false, false],
@@ -485,7 +520,7 @@ test('Vérifier si une liste contient un certain élément', t => {
   t.false(Server.contains([[2,3],[3,5],[4,2]], [1,2]));
 });
 
-test('Calculer les sauts nécessaires pour relier deux cases', t => {
+test.skip('Calculer les sauts nécessaires pour relier deux cases', t => {
   var tests = {
     1: {
       start : [8,12],
@@ -672,45 +707,16 @@ test('Initialiser un Array avec une valeur', t => {
   }
 });
 
-test.todo('sendScore');
-test.todo('makeBestMove');
+test.todo('envoyer les scores à la BDD');
+test.todo('Calculer le meilleur coup à jouer');
 
-test.skip("Vérifier la validité d'un mouvement", t => {
-  var lastMessage;
-  var lastBroadcastedMessage;
-  var lastData;
-  var socket = { // pour contourner les méthodes réseau
-    id : 23,
-    emit : function(message, data) {
-      lastMessage = message;
-      lastData = data;
-    }
-  }
-  var io = {
-    sockets : {
-      // in : function(gameId) { return "broadcast" },
-      // broadcast : function(message, data) {
-        // lastBroadcastedMessage = message;
-      // }
-      in: {
-        broadcast : function(message, data) {
-          lastBroadcastedMessage = message;
-        }
-      }
-    }
-  }
-  console.log(io.sockets.in(2).broadcast('hey', {}));
-  var clients = {
-    23 : {
-      number : 0
-    }
-  }
+test("Vérifier la validité d'un mouvement", t => {
   var games = {
     1: {
       gameBoard : Server.initGameBoard(),
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
-      playedColor : 1,
+      playedColor : 2,
       startCell : 0,
       history : [false, false],
       isIaPlaying : false,
@@ -728,6 +734,7 @@ test.skip("Vérifier la validité d'un mouvement", t => {
     },
     3: {
       gameBoard : Server.initGameBoard(),
+      numPlayers : 2,
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
       playedColor : 1,
@@ -735,26 +742,55 @@ test.skip("Vérifier la validité d'un mouvement", t => {
       history : [false, false],
       isIaPlaying : false,
       PLAYERS : [{score:0},{score:0}]
+    },
+    4: {
+      gameBoard : winningBoard,
+      numPlayers : 2,
+      COLORS : [[1,3,5],[2,4,6]],
+      player : 0,
+      playedColor : 1,
+      startCell : 0,
+      history : [false, false],
+      isIaPlaying : false,
+      PLAYERS : [{score:0},{score:0}],
+      gameState : [[false,true,true],[false,false,false]],
+      gameOver : false
     }
   }
-  t.false(Server.validateMove(clients, games, 1, socket, [16,12])); // sélectionner pion de l'adversaire
-  t.is(lastMessage, 'game error');
+  t.false(Server.validateMove(io, clients, games, 1, socket, [16,12])); // sélectionner pion de l'adversaire
   t.is(lastData["message"], 'please click on your own pieces');
-  t.false(Server.validateMove(clients, games, 1, socket, [8,12])); // sélectionner case vide
-  t.is(lastMessage, 'game error');
+  t.false(Server.validateMove(io, clients, games, 1, socket, [8,12])); // sélectionner case vide
   t.is(lastData["message"], 'please click on your own pieces');
-  t.false(Server.validateMove(clients, games, 1, socket, [2,14])); // sélectionner un pion
-  t.is(lastMessage, 'select');
-  t.false(Server.validateMove(clients, games, 2, socket, [2,14])); // désélectionner un pion
-  t.is(lastMessage, 'deselect');
-  t.true(Server.validateMove(clients, games, 3, socket, [4,12])); // saut
-  t.is(lastBroadcastedMessage, 'move');
-  // to do : can't go back, invalid move, cell not empty, can't replay last move
+  t.false(Server.validateMove(io, clients, games, 1, socket, [2,14])); // sélectionner un pion
+  t.deepEqual(games[1]["startCell"],[2,14]);
+  t.is(games[1]["playedColor"],1);
+  t.is(games[1]["gameBoard"][2][14],-1);
+  t.false(Server.validateMove(io, clients, games, 2, socket, [2,14])); // désélectionner un pion
+  t.is(games[2]["startCell"],0);
+  t.is(games[2]["gameBoard"][2][14],1);
+  t.true(Server.validateMove(io, clients, games, 3, socket, [4,12])); // sauter
+  t.is(games[3]["startCell"],0);
+  t.is(games[3]["player"],1);
+  t.deepEqual(games[3]["history"],[[[2,14],[4,12]], false]);
+  t.deepEqual(games[3]["PLAYERS"],[{score:1},{score:0}]);
+  // TODO : check side effects
+  games[3]["player"] = 0;
+  t.false(Server.validateMove(io, clients, games, 3, socket, [4,12])); // sélectionner un pion
+  t.false(Server.validateMove(io, clients, games, 3, socket, [2,14])); // aller vers l'arrière
+  t.true(Server.validateMove(io, clients, games, 3, socket, [4,10])); // déplacer un pion
+  games[3]["player"] = 0;
+  t.false(Server.validateMove(io, clients, games, 3, socket, [4,10])); // sélectionner un pion
+  t.false(Server.validateMove(io, clients, games, 3, socket, [4,12])); // rejouer le dernier coup
+  t.false(Server.validateMove(io, clients, games, 3, socket, [4,10])); // désélectionner un pion
+  t.false(Server.validateMove(io, clients, games, 3, socket, [0,12])); // sélectionner un pion
+  t.false(Server.validateMove(io, clients, games, 3, socket, [4,14])); // mouvement invalide
+  t.false(Server.validateMove(io, clients, games, 3, socket, [1,13])); // case occupée
+  games[4]["gameBoard"][13][9] = -1;
+  games[4]["gameBoard"][12][10] = 1;
+  t.false(Server.validateMove(io, clients, games, 4, socket, [12,10])); // sélectionner un pion
+  t.true(Server.validateMove(io, clients, games, 4, socket, [13,9])); // remporter la partie
+  t.deepEqual(messages, ['game error','game error', 'select', 'deselect', 'move', 'new turn', 'select', 'game error', 'move', 'new turn', 'select', 'game error', 'deselect', 'select', 'game error', 'game error', 'select', 'move', 'end game']);
 });
 
-test.todo('play');
-test.todo('move');
-
-test('Echapper les caractères HTML', t => {
-  t.is(Server.escapeHtml('<script>'),'&lt;script&gt;');
-});
+test.todo('Jouer un tour');
+test.todo('Effectuer le déplacement d\'un pion');

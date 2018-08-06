@@ -608,7 +608,7 @@ function makeBestMove(games, gameId) {
   games[gameId]["startCell"] = 0;
 }
 
-function validateMove(clients, games, gameId, socket, cell) {
+function validateMove(io, clients, games, gameId, socket, cell) {
   var player = games[gameId]["player"];
   if (player !== clients[socket.id]["number"] || games[gameId]["isIaPlaying"]) {
     socket.emit('game error', { message: 'wait for your turn', sound: "fail" });
@@ -670,7 +670,7 @@ function validateMove(clients, games, gameId, socket, cell) {
       return true
     }
     games[gameId]["player"] = (player+1) % games[gameId]["numPlayers"];
-    io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] })
+    io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] });
     games[gameId]["startCell"] = 0;
     return true;
   }
@@ -679,7 +679,7 @@ function validateMove(clients, games, gameId, socket, cell) {
 function play(games, gameId, socket, cell) {
   if (games[gameId]["gameOver"]) return;
   if (!games[gameId]["isPlayedByIa"][games[gameId]["player"]])
-    if (! validateMove(clients, games, gameId, socket, cell)) return ;
+    if (! validateMove(io, clients, games, gameId, socket, cell)) return ;
   setTimeout(function() { makeBestMove(games, gameId); }, games[gameId]["Time"]);
   if (games[gameId]["isPlayedByIa"][(games[gameId]["player"]+1)%games[gameId]["numPlayers"]]) {
     setTimeout(function() { play(games, gameId); }, games[gameId]["Time"]);
