@@ -485,79 +485,43 @@ test('Vérifier si une liste contient un certain élément', t => {
   t.false(Server.contains([[2,3],[3,5],[4,2]], [1,2]));
 });
 
-test.skip('Calculer les sauts nécessaires pour relier deux cases', t => {
+test('Calculer les sauts nécessaires pour relier deux cases', t => {
   var tests = {
     1: {
       start : [8,12],
       pions : [[6,12],[7,11],[7,13],[8,10],[8,14],[9,11],[9,13],[10,12]],
       cases : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
-      expected : [ // correct ?
+      expected : [
         [],
         [ [ [ 8, 12 ], [ 6, 14 ] ],
           [ [ 8, 12 ], [ 6, 10 ], [ 6, 14 ] ] ],
-        [ [ [ 8, 12 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 6, 10 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 8, 16 ] ] ],
-        [ [ [ 8, 12 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 6, 10 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 8, 16 ] ],
-          [ [ 8, 12 ], [ 10, 14 ] ],
-          [ [ 8, 12 ], [ 10, 10 ], [ 10, 14 ] ] ],
-        [ [ [ 8, 12 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 6, 10 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 8, 16 ] ],
-          [ [ 8, 12 ], [ 10, 14 ] ],
-          [ [ 8, 12 ], [ 10, 10 ], [ 10, 14 ] ] ],
-        [ [ [ 8, 12 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 6, 10 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 8, 16 ] ],
-          [ [ 8, 12 ], [ 10, 14 ] ],
-          [ [ 8, 12 ], [ 10, 10 ], [ 10, 14 ] ],
-          [ [ 8, 12 ], [ 10, 10 ] ],
-          [ [ 8, 12 ], [ 10, 14 ], [ 10, 10 ] ] ],
-        [ [ [ 8, 12 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 6, 10 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 8, 16 ] ],
-          [ [ 8, 12 ], [ 10, 14 ] ],
-          [ [ 8, 12 ], [ 10, 10 ], [ 10, 14 ] ],
-          [ [ 8, 12 ], [ 10, 10 ] ],
-          [ [ 8, 12 ], [ 10, 14 ], [ 10, 10 ] ],
-          [ [ 8, 12 ], [ 8, 8 ] ] ],
-        [ [ [ 8, 12 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 6, 10 ], [ 6, 14 ] ],
-          [ [ 8, 12 ], [ 8, 16 ] ],
-          [ [ 8, 12 ], [ 10, 14 ] ],
-          [ [ 8, 12 ], [ 10, 10 ], [ 10, 14 ] ],
-          [ [ 8, 12 ], [ 10, 10 ] ],
-          [ [ 8, 12 ], [ 10, 14 ], [ 10, 10 ] ],
-          [ [ 8, 12 ], [ 8, 8 ] ],
-          [ [ 8, 12 ], [ 6, 10 ] ],
-          [ [ 8, 12 ], [ 6, 14 ], [ 6, 10 ] ] ] ]
+        [ [ [ 8, 12 ], [ 8, 16 ] ] ] // a continuer
+      ]
     },
-    // 2: {
-    //   start : [8,12],
-    //   pions : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
-    //   cases : [[0,12],[4,16],[8,20],[12,16],[16,12],[12,8],[8,4],[4,8]],
-    //   expected : [false, [[8,12],[4,16]], [[8,12],[8,20]], [[8,12],[12,16]], false, [[8,12],[12,8]], [[8,12],[8,4]], [[8,12],[4,8]]]
-    // },
-    // 3: {
-    //   start : [12,16],
-    //   pions : [[8,12],[8,20],[12,8]],
-    //   cases : [[4,8],[4,24],[12,0]],
-    //   expected : [[[12,16],[4,8]], [[12,16],[4,24]], [[12,16],[12,0]]]
-    // },
-    // 4: {
-    //   start : [12,16],
-    //   pions : [[8,12],[8,20],[12,8],[5,9],[12,2],[5,23]],
-    //   cases : [[4,8],[4,24],[12,0]],
-    //   expected : [false,false,false]
-    // },
-    // 5: {
-    //   start : [8,20],
-    //   pions : [[9,17],[12,16],[10,12],[13,9]],
-    //   cases : [[8,16]],
-    //   expected : [[[8, 20],[16, 12],[10, 6],[10, 18],[8, 16]]]
-    // },
+    2: {
+      start : [8,12],
+      pions : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
+      cases : [[0,12],[4,16],[8,20],[12,16],[16,12],[12,8],[8,4],[4,8]],
+      expected : [[], [[[8,12],[4,16]]], [[[8,12],[8,20]]], [[[8,12],[12,16]]], [], [[[8,12],[12,8]]], [[[8,12],[8,4]]], [[[8,12],[4,8]]]]
+    },
+    3: {
+      start : [12,16],
+      pions : [[8,12],[8,20],[12,8]],
+      cases : [[4,8],[4,24],[12,0]],
+      expected : [[[12,16],[4,8]], [[12,16],[4,24]], [[12,16],[12,0]]]
+    },
+    4: {
+      start : [12,16],
+      pions : [[8,12],[8,20],[12,8],[5,9],[12,2],[5,23]],
+      cases : [[4,8],[4,24],[12,0]],
+      expected : [[],[],[]]
+    },
+    5: {
+      start : [8,20],
+      pions : [[9,17],[12,16],[10,12],[13,9]],
+      cases : [[8,16]],
+      expected : [[[8, 20],[16, 12],[10, 6],[10, 18],[8, 16]]]
+    },
   };
   var coordPion, coordCase;
   var games = {};
@@ -578,8 +542,11 @@ test.skip('Calculer les sauts nécessaires pour relier deux cases', t => {
       games[1]["gameBoard"][coordPion[0]][coordPion[1]] = 1;
     }
     for (var k=0; k < tests[i].cases.length; k++) {
+      games[1]["path"] = [];
+      games[1]["reachableCells"] = [];
       coordCase = tests[i].cases[k];
       Server.getJumps(games, 1, [tests[i].start], coordCase, []);
+      console.log(i, tests[i].start, coordCase); console.log("path :",games[1]["path"]); console.log("expected :", tests[i].expected[k]);
       t.deepEqual(games[1]["path"], tests[i].expected[k]);
     }
   }
@@ -598,8 +565,8 @@ test.skip('Calculer le chemin pour relier deux cases', t => {
     1: {
       start : [8,12],
       pions : [[4,12],[5,9],[6,14],[7,9],[11,11],[15,13]],
-      cases : [[16,12],[9,13],[13,9]],
-      expected : [[[8,12],[4,16],[4,8],[6,10],[8,8],[14,14],[16,12]],[[8,12],[9,13]],false]
+      cases : [[16,12],[7,13],[3,9]],
+      expected : [[[[8,12],[4,16],[4,8],[6,10],[8,8],[14,14],[16,12]]],[[[8,12],[7,13]]],[]]
     }
   };
   var coordPion, coordCase;
@@ -610,8 +577,10 @@ test.skip('Calculer le chemin pour relier deux cases', t => {
       games[1]["gameBoard"][coordPion[0]][coordPion[1]] = 2;
     }
     for (var k=0; k < tests[i].cases.length; k++) {
+      games[1]["path"] = [];
       coordCase = tests[i].cases[k];
       Server.getPath(games, 1, tests[i].start, coordCase);
+      // console.log(games[1]["path"]);
       t.deepEqual(games[1]["path"], tests[i].expected[k]);
     }
   }
@@ -707,10 +676,30 @@ test.todo('sendScore');
 test.todo('makeBestMove');
 
 test.skip("Vérifier la validité d'un mouvement", t => {
+  var lastMessage;
+  var lastBroadcastedMessage;
+  var lastData;
   var socket = { // pour contourner les méthodes réseau
     id : 23,
-    emit : function(message, data) {}
+    emit : function(message, data) {
+      lastMessage = message;
+      lastData = data;
+    }
   }
+  var io = {
+    sockets : {
+      // in : function(gameId) { return "broadcast" },
+      // broadcast : function(message, data) {
+        // lastBroadcastedMessage = message;
+      // }
+      in: {
+        broadcast : function(message, data) {
+          lastBroadcastedMessage = message;
+        }
+      }
+    }
+  }
+  console.log(io.sockets.in(2).broadcast('hey', {}));
   var clients = {
     23 : {
       number : 0
@@ -721,13 +710,17 @@ test.skip("Vérifier la validité d'un mouvement", t => {
       gameBoard : Server.initGameBoard(),
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
+      playedColor : 1,
       startCell : 0,
-      isIaPlaying : false
+      history : [false, false],
+      isIaPlaying : false,
+      isPlayedByIa : [false,false]
     },
     2: {
       gameBoard : Server.initGameBoard(),
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
+      playedColor : 1,
       startCell : [2,14],
       history : [false, false],
       isIaPlaying : false,
@@ -737,15 +730,26 @@ test.skip("Vérifier la validité d'un mouvement", t => {
       gameBoard : Server.initGameBoard(),
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
+      playedColor : 1,
       startCell : [2,14],
       history : [false, false],
       isIaPlaying : false,
       PLAYERS : [{score:0},{score:0}]
     }
   }
-  t.false(Server.validateMove(clients, games, 1, socket, [2,14]));
-  t.false(Server.validateMove(clients, games, 2, socket, [2,14]));
-  t.false(Server.validateMove(clients, games, 3, socket, [4,12]));
+  t.false(Server.validateMove(clients, games, 1, socket, [16,12])); // sélectionner pion de l'adversaire
+  t.is(lastMessage, 'game error');
+  t.is(lastData["message"], 'please click on your own pieces');
+  t.false(Server.validateMove(clients, games, 1, socket, [8,12])); // sélectionner case vide
+  t.is(lastMessage, 'game error');
+  t.is(lastData["message"], 'please click on your own pieces');
+  t.false(Server.validateMove(clients, games, 1, socket, [2,14])); // sélectionner un pion
+  t.is(lastMessage, 'select');
+  t.false(Server.validateMove(clients, games, 2, socket, [2,14])); // désélectionner un pion
+  t.is(lastMessage, 'deselect');
+  t.true(Server.validateMove(clients, games, 3, socket, [4,12])); // saut
+  t.is(lastBroadcastedMessage, 'move');
+  // to do : can't go back, invalid move, cell not empty, can't replay last move
 });
 
 test.todo('play');
