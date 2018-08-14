@@ -31,6 +31,8 @@
     "mysql": "^2.16.0",
     "pug": "^2.0.3",
     "regex": "^0.1.1",
+    "rewire": "^4.0.1",
+    "sinon": "^6.1.4",
     "socket.io": "^1.7.4",
     "xmlhttprequest": "^1.8.0"
   },

@@ -176,15 +176,15 @@ else if (role === "guest"){ // si le joueur est invité
 
 function endGame(winner, score) { // fonction pour afficher la fin de la partie
   var modal = document.getElementById('modal'); // on sélectionne le modal
-  var span = document.getElementsByClassName("close")[0]; 
+  var span = document.getElementsByClassName("close")[0];
   var content = document.getElementById("modalText");
   var restartButton = document.getElementById("restartButton");
   modal.style.display = "block";
   Sounds.win.play();
-  span.onclick = function() {                
+  span.onclick = function() {
       modal.style.display = "none";
   }
-  window.onclick = function(event) {         
+  window.onclick = function(event) {
       if (event.target == modal) {
           modal.style.display = "none";
       }
@@ -209,9 +209,9 @@ function endGame(winner, score) { // fonction pour afficher la fin de la partie
 
       this.createFrame = function() {  // crée un cadre pour les infos d'un joueur
           var frame = document.createElement('div'); // on crée un div
-          frame.className = 'playerInfo'; // on attribue la classe 
+          frame.className = 'playerInfo'; // on attribue la classe
           frame.id = 'player' + this.number; // on attribue l'ID avec le numéro du joueur
-          var name = document.createElement('p'); // on crée un paragraphe 
+          var name = document.createElement('p'); // on crée un paragraphe
           name.className = 'playerName'; // on attribue la classe playerName
           name.innerHTML = this.name; // on affiche le nom dans le paragraphe
           var score = document.createElement('p'); // on crée un paragraphe pour le score
@@ -219,7 +219,7 @@ function endGame(winner, score) { // fonction pour afficher la fin de la partie
           score.innerHTML = ('score : ' + this.score); // on affiche le score dans le paragraphe
           var colors = document.createElement('span'); // on crée un span
           colors.className = 'playerColors'; // on attribue la classe
-          var code = ''; 
+          var code = '';
           for (var i=0, max=this.colors.length, color; i<max; i++) { // on ajoute toutes les images des couleurs jouées par le joueur
             color = this.colors[i];
              code += "<img class='imagetag' alt='color' src='images/pion" + color + ".png' />"
@@ -233,7 +233,7 @@ function endGame(winner, score) { // fonction pour afficher la fin de la partie
     }
 
 
-function play(event) {  // fonction pour jouer un coup - se déclenche à chaque clic sur une case du plateau
+function play(event) { // fonction pour jouer un coup - se déclenche à chaque clic sur une case du plateau
     var row = parseInt(event.currentTarget.getAttribute('line'),10); // récupère le numéro de ligne
     var col = parseInt(event.currentTarget.getAttribute('column'),10); // récupère le numéro de colonne
     socket.emit('move request', { cell : [row,col] }); // envoie un message "move request" au serveur avec les coordonnées de la case
@@ -287,7 +287,7 @@ function play(event) {  // fonction pour jouer un coup - se déclenche à chaque
     socket.on('connect', function() { // A ENLEVER
       console.log("socket id : ", this.id);
     })
-    socket.on('select', function (data) { // si on recoit un message "select" 
+    socket.on('select', function (data) { // si on recoit un message "select"
       console.log("select : ", data); // permet de vérifier les données envoyées sur la console
       var row = data["cell"][0]; // on récupère le numéro de ligne
       var col = data["cell"][1]; // on récupère le numéro de colonne
@@ -324,7 +324,7 @@ function play(event) {  // fonction pour jouer un coup - se déclenche à chaque
     });
     socket.on('game joined', function (data) { // si on recoit un message "game joined"
       console.log("game joined : ", data); // permet de vérifier les données envoyées sur la console
-      numPlayers = data["numPlayers"]; // on met à jour le nombre de joueurs 
+      numPlayers = data["numPlayers"]; // on met à jour le nombre de joueurs
       numColors = data["numColors"]; // on met à jour le nombre de couleurs
       COLORS = data["COLORS"]; // on met à jour la liste des couleurs pour chaque joueur
     });
@@ -336,7 +336,7 @@ function play(event) {  // fonction pour jouer un coup - se déclenche à chaque
       console.log("game full : ", data); // permet de vérifier les données envoyées sur la console
       document.getElementById("joinGame").style.display = "none"; // on cache le message affichant le numéro de la salle de jeu
       isPlayedByIa = data["isPlayedByIa"]; // on récupère les variables du serveur
-      numPlayers = data["numPlayers"]; 
+      numPlayers = data["numPlayers"];
       numColors = data["numColors"];
       COLORS = data["COLORS"];
       gameBoard = initGameBoard(); // on initialise le plateau de jeu

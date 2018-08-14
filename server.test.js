@@ -1,26 +1,12 @@
 import test from 'ava';
+import sinon from 'sinon';
 
-var Server = require('./server.js'); // le fichier contenant les fonctions à tester
+var rewire = require('rewire'); // pour les spies
 
-var emptyBoard = [
-  [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false],
-  [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
-  [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
-  [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
-  [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
-  [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
-  [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
-  [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
-  [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
-  [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
-  [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
-  [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
-  [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
-  [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
-  [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
-  [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
-  [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false]
-];
+var http = require('http'); // pour simuler une requête HTTP
+var PassThrough = require('stream').PassThrough;
+
+var Server = rewire('./server.js'); // le fichier contenant les fonctions à tester
 
 var winningBoard = [ // tous les joueurs ont gagné
       [false,false,false,false,false,false,false,false,false,false,false,false,  2  ,false,false,false,false,false,false,false,false,false,false,false,false],
@@ -41,19 +27,21 @@ var winningBoard = [ // tous les joueurs ont gagné
       [false,false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false,false],
       [false,false,false,false,false,false,false,false,false,false,false,false,  1  ,false,false,false,false,false,false,false,false,false,false,false,false] ]
 
+Server.__set__('console.log', () => {}); // supprime tout affichage dans la console
+
+var emitData = []; // pour mémoriser les messages émis par le serveur
+
+// pour contourner les méthodes réseau
+
 function emit(message,data) {
-    lastMessage = message;
-    lastData = data;
-    messages.push(message);
+    emitData.push([message,data]);
 }
 
-var messages = [];
-var lastMessage;
-var lastData;
-var socket = { // pour contourner les méthodes réseau
+var socket = {
   id : 23,
   emit : emit
 }
+
 var io = {
   sockets : {
     in : function(gameId) {
@@ -63,13 +51,17 @@ var io = {
     }
   }
 }
+
 var clients = {
   23 : {
     number : 0
   }
 }
+
+// var clock = sinon.useFakeTimers();
+var timedOut;
 function setTimeout(f,t) { // pour ne pas attendre
-f();
+  timedOut = f;
 }
 
 test('Echapper les caractères HTML', t => {
@@ -520,7 +512,7 @@ test('Vérifier si une liste contient un certain élément', t => {
   t.false(Server.contains([[2,3],[3,5],[4,2]], [1,2]));
 });
 
-test.skip('Calculer les sauts nécessaires pour relier deux cases', t => {
+test('Calculer les sauts nécessaires pour relier deux cases', t => {
   var tests = {
     1: {
       start : [8,12],
@@ -530,20 +522,45 @@ test.skip('Calculer les sauts nécessaires pour relier deux cases', t => {
         [],
         [ [ [ 8, 12 ], [ 6, 14 ] ],
           [ [ 8, 12 ], [ 6, 10 ], [ 6, 14 ] ] ],
-        [ [ [ 8, 12 ], [ 8, 16 ] ] ] // a continuer
+        [ [ [ 8, 12 ], [ 8, 16 ] ] ],
+        [ [ [ 8, 12 ], [ 10, 14 ] ],
+          [ [ 8, 12 ], [ 10, 10 ], [ 10, 14 ] ] ],
+        [],
+        [ [ [ 8, 12 ], [ 10, 10 ] ],
+          [ [ 8, 12 ], [ 10, 14 ], [ 10, 10 ] ] ],
+        [ [ [ 8, 12 ], [ 8, 8 ] ] ],
+        [ [ [ 8, 12 ], [ 6, 10 ] ],
+          [ [ 8, 12 ], [ 6, 14 ], [ 6, 10 ] ] ]
       ]
     },
     2: {
       start : [8,12],
       pions : [[4,12],[6,14],[8,16],[10,14],[12,12],[10,10],[8,8],[6,10]],
       cases : [[0,12],[4,16],[8,20],[12,16],[16,12],[12,8],[8,4],[4,8]],
-      expected : [[], [[[8,12],[4,16]]], [[[8,12],[8,20]]], [[[8,12],[12,16]]], [], [[[8,12],[12,8]]], [[[8,12],[8,4]]], [[[8,12],[4,8]]]]
+      expected : [
+        [],
+        [ [ [ 8, 12 ], [ 4, 16 ] ],
+          [ [ 8, 12 ], [ 4, 8 ], [ 4, 16 ] ] ],
+        [ [ [ 8, 12 ], [ 8, 20 ] ] ],
+        [ [ [ 8, 12 ], [ 12, 16 ] ],
+          [ [ 8, 12 ], [ 12, 8 ], [ 12, 16 ] ] ],
+        [],
+        [ [ [ 8, 12 ], [ 12, 8 ] ],
+          [ [ 8, 12 ], [ 12, 16 ], [ 12, 8 ] ] ],
+        [ [ [ 8, 12 ], [ 8, 4 ] ] ],
+        [ [ [ 8, 12 ], [ 4, 8 ] ],
+          [ [ 8, 12 ], [ 4, 16 ], [ 4, 8 ] ] ]
+      ]
     },
     3: {
       start : [12,16],
       pions : [[8,12],[8,20],[12,8]],
       cases : [[4,8],[4,24],[12,0]],
-      expected : [[[12,16],[4,8]], [[12,16],[4,24]], [[12,16],[12,0]]]
+      expected : [
+        [ [ [ 12, 16 ], [ 4, 8 ] ] ],
+        [ [ [ 12, 16 ], [ 4, 24 ] ] ],
+        [ [ [ 12, 16 ], [ 12, 0 ] ] ]
+      ]
     },
     4: {
       start : [12,16],
@@ -555,44 +572,77 @@ test.skip('Calculer les sauts nécessaires pour relier deux cases', t => {
       start : [8,20],
       pions : [[9,17],[12,16],[10,12],[13,9]],
       cases : [[8,16]],
-      expected : [[[8, 20],[16, 12],[10, 6],[10, 18],[8, 16]]]
+      expected : [[[[8, 20],[16, 12],[10, 6],[10, 18],[8, 16]]]]
     },
   };
   var coordPion, coordCase;
   var games = {};
   for (var i=1, max=Object.keys(tests).length;i<=max; i++) {
-    games = {
-      1: {
-        gameBoard : emptyBoard,
+    games[i] = {
+        gameBoard : [
+          [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+          [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+          [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+          [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+          [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+          [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+          [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+          [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+          [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+          [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+          [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+          [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false]
+        ],
         playedColor : 2,
         reachableCells : [],
         path : [],
         history : [false, false],
         player : 1
       }
-    }
-    games[1]["gameBoard"][tests[i].start[0]][tests[i].start[1]] = 2; // positionne un pion
+    games[i]["gameBoard"][tests[i].start[0]][tests[i].start[1]] = 2; // positionne un pion
     for (var j=0; j < tests[i].pions.length; j++){ // positionne les pivots potentiels
       coordPion = tests[i].pions[j];
-      games[1]["gameBoard"][coordPion[0]][coordPion[1]] = 1;
+      games[i]["gameBoard"][coordPion[0]][coordPion[1]] = 1;
     }
     for (var k=0; k < tests[i].cases.length; k++) {
-      games[1]["path"] = [];
-      games[1]["reachableCells"] = [];
+      games[i]["path"] = [];
+      games[i]["reachableCells"] = [];
       coordCase = tests[i].cases[k];
-      Server.getJumps(games, 1, [tests[i].start], coordCase, []);
-      console.log(i, tests[i].start, coordCase); console.log("path :",games[1]["path"]); console.log("expected :", tests[i].expected[k]);
-      t.deepEqual(games[1]["path"], tests[i].expected[k]);
+      Server.getJumps(games, i, [tests[i].start], coordCase, []);
+      t.deepEqual(games[i]["path"], tests[i].expected[k]);
     }
   }
 });
 
-test.skip('Calculer le chemin pour relier deux cases', t => {
+test('Calculer le chemin pour relier deux cases', t => {
   var games = {
     1: {
-      gameBoard : emptyBoard,
-      playedColor : 1,
-      player : 0,
+      gameBoard : [
+        [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+        [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+        [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+        [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+        [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+        [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
+        [false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false],
+        [false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false],
+        [false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false],
+        [-1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1],
+        [false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, false, -1, false, -1, false, false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false, false, false, -1, false, false, false, false, false, false, false, false, false, false, false, false]
+      ],
+      playedColor : 2,
+      player : 1,
       history : [false, false]
     }
   }
@@ -601,22 +651,25 @@ test.skip('Calculer le chemin pour relier deux cases', t => {
       start : [8,12],
       pions : [[4,12],[5,9],[6,14],[7,9],[11,11],[15,13]],
       cases : [[16,12],[7,13],[3,9]],
-      expected : [[[[8,12],[4,16],[4,8],[6,10],[8,8],[14,14],[16,12]]],[[[8,12],[7,13]]],[]]
+      expected : [
+        [[8,12],[4,16],[4,8],[6,10],[8,8],[14,14],[16,12]],
+        [[8,12],[7,13]],
+        false
+      ]
     }
+    // faire d'autres tests
   };
   var coordPion, coordCase;
   for (var i=1, max=Object.keys(tests).length;i<=max; i++) {
-    games[1]["gameBoard"][tests[i].start[0]][tests[i].start[1]] = 1; // positionne un pion
+    games[i]["gameBoard"][tests[i].start[0]][tests[i].start[1]] = 1; // positionne un pion
     for (var j=0; j < tests[i].pions.length; j++){ // positionne les pivots potentiels
       coordPion = tests[i].pions[j];
-      games[1]["gameBoard"][coordPion[0]][coordPion[1]] = 2;
+      games[i]["gameBoard"][coordPion[0]][coordPion[1]] = 2;
     }
     for (var k=0; k < tests[i].cases.length; k++) {
-      games[1]["path"] = [];
+      games[i]["path"] = [];
       coordCase = tests[i].cases[k];
-      Server.getPath(games, 1, tests[i].start, coordCase);
-      // console.log(games[1]["path"]);
-      t.deepEqual(games[1]["path"], tests[i].expected[k]);
+      t.deepEqual(Server.getPath(games, i, tests[i].start, coordCase), tests[i].expected[k]);
     }
   }
 });
@@ -624,7 +677,7 @@ test.skip('Calculer le chemin pour relier deux cases', t => {
 test('Vérifier si un joueur a gagné', t => {
   var games = {
     1: {
-      gameBoard : winningBoard,
+      gameBoard : winningBoard.slice(0),
       numPlayers : 6,
       numColors : 1,
       COLORS : [[1],[3],[6],[2],[4],[5]],
@@ -632,7 +685,7 @@ test('Vérifier si un joueur a gagné', t => {
       player : 0
     },
     2: {
-      gameBoard : winningBoard,
+      gameBoard : winningBoard.slice(0),
       numPlayers : 2,
       numColors : 3,
       COLORS : [[1, 3, 5],[2, 4, 6]],
@@ -640,7 +693,7 @@ test('Vérifier si un joueur a gagné', t => {
       player : 0
     },
     3: {
-      gameBoard : winningBoard,
+      gameBoard : winningBoard.slice(0),
       numPlayers : 2,
       numColors : 3,
       COLORS : [[1, 3, 5],[2, 4, 6]],
@@ -707,8 +760,118 @@ test('Initialiser un Array avec une valeur', t => {
   }
 });
 
-test.todo('envoyer les scores à la BDD');
-test.todo('Calculer le meilleur coup à jouer');
+test('Envoyer les scores à la BDD', t => {
+  var games = {
+    1: {
+      PLAYERS: [{name: 'Test1', score:0},{name: 'Test2', score:1}]
+    }
+  };
+  // https://codeutopia.net/blog/2015/01/30/how-to-unit-test-nodejs-http-requests/
+  var stub = sinon.stub(http,'get');
+  var expected = { hello: 'world' };
+	var response = new PassThrough();
+	response.write(JSON.stringify(expected));
+	response.end();
+  var request = new PassThrough();
+	stub.callsArgWith(1,response).returns(request);
+  Server.sendScore(games,1,games[1]["PLAYERS"][0], (error, result) => {
+    t.deepEqual(expected, result);
+  });
+  t.is(stub.firstCall.args[0],'http://hop-hop-hop.herokuapp.com/score?name=Test1&score=0&adversaire1=Test2&adversaire2=undefined&adversaire3=undefined&adversaire4=undefined&adversaire5=undefined');
+  expected = "some error";
+  request = new PassThrough();
+  stub.resetBehavior();
+  stub.returns(request);
+  Server.sendScore(games,1,games[1]["PLAYERS"][0], (error) => {
+    t.deepEqual(error, expected);
+  });
+  request.emit('error', expected);
+});
+
+test('Calculer le meilleur coup à jouer', t => {
+  var games = {
+    1: {
+      gameBoard : Server.initGameBoard(),
+      gameOver : true,
+      isPlayedByIa : [true, true],
+      player : 1
+    },
+    2: {
+      gameBoard : Server.initGameBoard(),
+      gameOver : false,
+      isPlayedByIa : [false, true],
+      player : 0
+    },
+    3: {
+      gameBoard : Server.initGameBoard(),
+      gameOver : false,
+      isPlayedByIa : [false, true],
+      player : 1,
+      COLORS : [[1,3,5],[2,4,6]],
+      history : [false,false],
+      PLAYERS : [{score:0},{score:0}],
+      Time : 500,
+      numPlayers : 2,
+      numColors : 3
+    },
+    4: {
+      gameBoard : [ // plus qu'un mouvement pour gagner
+            [false,false,false,false,false,false,false,false,false,false,false,false,  2  ,false,false,false,false,false,false,false,false,false,false,false,false],
+            [false,false,false,false,false,false,false,false,false,false,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false,false,false],
+            [false,false,false,false,false,false,false,false,false,false,  2  ,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false,false],
+            [false,false,false,false,false,false,false,false,false, -1  ,false,  2  ,false,  2  ,false,  2  ,false,false,false,false,false,false,false,false,false],
+            [  4  ,false,  4  ,false,  4  ,false,  4  ,false,  2  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,  6  ,false,  6  ],
+            [false,  4  ,false,  4  ,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,  6  ,false],
+            [false,false,  4  ,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,  6  ,false,false],
+            [false,false,false,  4  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  6  ,false,false,false],
+            [false,false,false,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,false,false,false],
+            [false,false,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,false,false],
+            [false,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,false],
+            [false,  5  ,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,  3  ,false],
+            [  5  ,false,  5  ,false,  5  ,false,  5  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false, -1  ,false,  3  ,false,  3  ,false,  3  ,false,  3  ],
+            [false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false],
+            [false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false],
+            [false,false,false,false,false,false,false,false,false,false,false,  1  ,false,  1  ,false,false,false,false,false,false,false,false,false,false,false],
+            [false,false,false,false,false,false,false,false,false,false,false,false,  1  ,false,false,false,false,false,false,false,false,false,false,false,false] ],
+      gameOver : false,
+      gameState : [[false,false,false],[false,true,true]],
+      isPlayedByIa : [true, true],
+      player : 1,
+      COLORS : [[1,3,5],[2,4,6]],
+      history : [false,false],
+      PLAYERS : [{score:0},{score:0}],
+      Time : 500,
+      numPlayers : 2,
+      numColors : 3
+    }
+  }
+  Server.__set__('move', sinon.spy());
+  Server.__set__('sendScore', sinon.spy());
+  Server.makeBestMove(games,1);
+  t.false(Server.__get__('move').called);
+  t.false(Server.__get__('sendScore').called);
+  Server.__get__('move').resetHistory();
+  Server.__get__('sendScore').resetHistory();
+  Server.makeBestMove(games,2);
+  t.false(Server.__get__('move').called);
+  t.false(Server.__get__('sendScore').called);
+  Server.__get__('move').resetHistory();
+  Server.__get__('sendScore').resetHistory();
+  Server.makeBestMove(games,3);
+  t.true(Server.__get__('move').calledOnce);
+  t.false(Server.__get__('sendScore').called);
+  t.is(games[3]["player"],0);
+  t.is(games[3]["startCell"],0);
+  t.is(games[3]["PLAYERS"][1]["score"],1);
+  t.not(games[3]["history"][1],false);
+  t.true(games[3]["Time"] >= 500);
+  t.true(games[3]["isIaPlaying"]);
+  Server.__set__('move', Server.move);
+  Server.__get__('sendScore').resetHistory();
+  t.true(Server.makeBestMove(games,4));
+  t.true(Server.__get__('sendScore').calledOnce);
+  t.true(games[4]["gameOver"]);
+});
 
 test("Vérifier la validité d'un mouvement", t => {
   var games = {
@@ -744,7 +907,7 @@ test("Vérifier la validité d'un mouvement", t => {
       PLAYERS : [{score:0},{score:0}]
     },
     4: {
-      gameBoard : winningBoard,
+      gameBoard : winningBoard.slice(0),
       numPlayers : 2,
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
@@ -758,9 +921,7 @@ test("Vérifier la validité d'un mouvement", t => {
     }
   }
   t.false(Server.validateMove(io, clients, games, 1, socket, [16,12])); // sélectionner pion de l'adversaire
-  t.is(lastData["message"], 'please click on your own pieces');
   t.false(Server.validateMove(io, clients, games, 1, socket, [8,12])); // sélectionner case vide
-  t.is(lastData["message"], 'please click on your own pieces');
   t.false(Server.validateMove(io, clients, games, 1, socket, [2,14])); // sélectionner un pion
   t.deepEqual(games[1]["startCell"],[2,14]);
   t.is(games[1]["playedColor"],1);
@@ -771,9 +932,9 @@ test("Vérifier la validité d'un mouvement", t => {
   t.true(Server.validateMove(io, clients, games, 3, socket, [4,12])); // sauter
   t.is(games[3]["startCell"],0);
   t.is(games[3]["player"],1);
+  t.is(games[3]["Time"],500);
   t.deepEqual(games[3]["history"],[[[2,14],[4,12]], false]);
   t.deepEqual(games[3]["PLAYERS"],[{score:1},{score:0}]);
-  // TODO : check side effects
   games[3]["player"] = 0;
   t.false(Server.validateMove(io, clients, games, 3, socket, [4,12])); // sélectionner un pion
   t.false(Server.validateMove(io, clients, games, 3, socket, [2,14])); // aller vers l'arrière
@@ -789,8 +950,129 @@ test("Vérifier la validité d'un mouvement", t => {
   games[4]["gameBoard"][12][10] = 1;
   t.false(Server.validateMove(io, clients, games, 4, socket, [12,10])); // sélectionner un pion
   t.true(Server.validateMove(io, clients, games, 4, socket, [13,9])); // remporter la partie
-  t.deepEqual(messages, ['game error','game error', 'select', 'deselect', 'move', 'new turn', 'select', 'game error', 'move', 'new turn', 'select', 'game error', 'deselect', 'select', 'game error', 'game error', 'select', 'move', 'end game']);
+  t.deepEqual(games[4]["history"],[[[12,10],[13,9]],false]);
+  t.is(games[4]["Time"],500);
+  t.deepEqual(games[4]["PLAYERS"], [{score:1},{score:0}]);
+  t.true(games[4]["gameOver"]);
+  t.deepEqual(emitData, [
+    ['game error', {
+      message: 'please click on your own pieces',
+      sound: 'fail' }],
+    ['game error', {
+      message: 'please click on your own pieces',
+      sound: 'fail' }],
+    ['select', { cell: [2,14] }],
+    ['deselect', {
+      cell: [2,14],
+      color: 1 }],
+    ['move', {
+      path: [[2,14],[4,12]],
+      playedColor: 1 }],
+    ['new turn', { player: 1 }],
+    ['select', { cell: [4,12] }],
+    ['game error', {
+      message: 'You can\'t go back!',
+      sound: 'fail' }],
+    ['move', {
+      path: [[4,12],[4,10]],
+      playedColor: 1 }],
+    ['new turn', { player: 1 }],
+    ['select', { cell: [4,10] }],
+    ['game error', {
+      message: 'You can\'t replay the last move',
+      sound: 'fail' }],
+    ['deselect', {
+      cell: [4,10],
+      color: 1 }],
+    ['select', { cell: [0,12] }],
+    ['game error', {
+      message: 'Invalid move!',
+      sound: 'fail' }],
+    ['game error', {
+      message: 'Cell not empty!',
+      sound: 'fail' }],
+    ['select', { cell: [12,10] }],
+    ['move', {
+      path: [[12,10],[13,9]],
+      playedColor: 1 }],
+    ['end game', {
+      score: 1,
+      winner: 0 }]
+  ]);
 });
 
-test.todo('Jouer un tour');
-test.todo('Effectuer le déplacement d\'un pion');
+test('Jouer un tour', t => {
+  var games = {
+    1: {
+      gameOver: true
+    },
+    2: {
+      isPlayedByIa: [false, false],
+      player: 0,
+      gameBoard: Server.initGameBoard(),
+      startCell: 0,
+      COLORS: [[1],[2]]
+    },
+    3: {
+      isPlayedByIa: [true, false],
+      player: 0,
+      gameBoard: Server.initGameBoard(),
+      startCell: 0,
+      COLORS: [[1],[2]],
+      history: [false,false],
+      PLAYERS: [{score:0},{score:0}]
+    },
+    4: {
+      isPlayedByIa: [true, true],
+      player: 0,
+      gameBoard: Server.initGameBoard(),
+      startCell: 0,
+      COLORS: [[1],[2]],
+      history: [false,false],
+      PLAYERS: [{score:0},{score:0}]
+    }
+  }
+  Server.__set__('validateMove', sinon.spy());
+  Server.__set__('makeBestMove', sinon.spy());
+  Server.__set__('play', sinon.spy());
+  t.false(Server.play(io, clients, games, 1, socket, [2,14]));
+  t.false(Server.__get__('validateMove').called);
+  t.false(Server.__get__('makeBestMove').called);
+  t.false(Server.__get__('play').called);
+  t.false(Server.play(io, clients, games, 2, socket, [8,12]));
+  t.true(Server.__get__('validateMove').calledOnce);
+  t.false(Server.__get__('makeBestMove').called);
+  t.false(Server.__get__('play').called);
+  Server.__get__('validateMove').resetHistory();
+  Server.__get__('makeBestMove').resetHistory();
+  Server.__get__('play').resetHistory();
+  t.true(Server.play(io, clients, games, 3));
+  // clock.tick(500);
+  t.false(Server.__get__('validateMove').called);
+  // t.true(Server.__get__('makeBestMove').calledOnce); // impossible a tester à cause du setTimeout ?
+  t.false(Server.__get__('play').called);
+  t.is(games[3]["Time"],500);
+  Server.__get__('validateMove').resetHistory();
+  Server.__get__('makeBestMove').resetHistory();
+  Server.__get__('play').resetHistory();
+  t.true(Server.play(io, clients, games, 4));
+  t.false(Server.__get__('validateMove').called);
+  // t.true(Server.__get__('makeBestMove').calledOnce); // impossible a tester à cause du setTimeout ?
+  // t.true(Server.__get__('play').calledOnce); // impossible a tester à cause du setTimeout ?
+});
+
+test('Effectuer le déplacement d\'un pion', t => {
+  var games = {
+    1: {
+      gameBoard: Server.initGameBoard()
+    }
+  }
+  Server.move(games, 1, [[2,14],[4,12]], 1);
+  t.is(games[1]["gameBoard"][2][14], -1);
+  t.is(games[1]["gameBoard"][4][12], 1);
+  Server.move(games, 1, [[0,12],[2,14],[4,16],[4,8]], 1);
+  t.is(games[1]["gameBoard"][0][12], -1);
+  t.is(games[1]["gameBoard"][2][14], -1);
+  t.is(games[1]["gameBoard"][4][16], -1);
+  t.is(games[1]["gameBoard"][4][8], 1);
+});

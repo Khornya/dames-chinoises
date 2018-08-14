@@ -293,7 +293,7 @@ io.on('connection', function (socket) {
   });
   socket.on('move request', function (data) {
     console.log('move request : ', data);
-    play(games, clients[this.id]["gameId"], this, data["cell"]);
+    play(io, clients, games, clients[this.id]["gameId"], this, data["cell"]);
   });
   socket.on('disconnecting', function (reason) {
     if (contains(Object.keys(clients), this.id)) {
@@ -526,22 +526,26 @@ function initArray(lines, columns, value) {
   return array;
 }
 
-function sendScore(games, gameId, winner) {
+function sendScore(games, gameId, winner, callback) {
   var name = encodeURIComponent(winner.name);
   var score = encodeURIComponent(winner.score);
   var adversaires = games[gameId]["PLAYERS"].filter(item => item !== winner);
   adversaires.forEach(function(value, index, array) {
     array[index] = encodeURIComponent(value.name);
   })
-  http.get('http://hop-hop-hop.herokuapp.com/score?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4], function(response) {
+  var request = http.get('http://hop-hop-hop.herokuapp.com/score?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4], function(response) {
    var data = ''; //This will store the page we're downloading.
    response.on('data', function(chunk) { //Executed whenever a chunk is received.
         data += chunk; //Append each chunk to the data variable.
    });
-  response.on('end', function() {
-      console.log('envoi des scores à la BDD :', data);
+   response.on('end', function() {
+      callback(null, data);
   });
- }).end();
+ })
+ request.on('error', function(error){
+   callback(error);
+ });
+ request.end();
 }
 
 function makeBestMove(games, gameId) {
@@ -588,7 +592,7 @@ function makeBestMove(games, gameId) {
   games[gameId]["gameBoard"][selectedMove[0][0]][selectedMove[0][1]]=-1;
   path = getPath(games, gameId, selectedMove[0], [selectedMove[1],selectedMove[2]]);
   games[gameId]["history"][games[gameId]["player"]] = path;
-  games[gameId]["Time"] += 500*(path.length-1)
+  games[gameId]["Time"] += 500*(path.length-1);
   move(games, gameId, path, games[gameId]["playedColor"]);
   setTimeout(function() {
     io.sockets.in(gameId).emit('move', { path : path, playedColor: games[gameId]["playedColor"] });
@@ -600,8 +604,11 @@ function makeBestMove(games, gameId) {
     setTimeout(function() {
       io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"], score: games[gameId]["PLAYERS"][games[gameId]["player"]].score });
     }, games[gameId]["Time"]);
-    sendScore(games, gameId, games[gameId]["PLAYERS"][games[gameId]["player"]]);
-    return true;
+    sendScore(games, gameId, games[gameId]["PLAYERS"][games[gameId]["player"]], (error,data) => { // factoriser
+      if (error) console.log('Echec de l\'envoi des scores à la BDD');
+      else console.log('Envoi des scores à la BDD :', data);
+    });
+    return true; // pourquoi pas juste return ?
   }
   games[gameId]["player"] = (games[gameId]["player"]+1) % games[gameId]["numPlayers"];
   setTimeout(function() { io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] }); }, games[gameId]["Time"]);
@@ -666,7 +673,10 @@ function validateMove(io, clients, games, gameId, socket, cell) {
     if (hasWon(games, gameId, playedColor)) {
       games[gameId]["gameOver"] = true;
       io.sockets.in(gameId).emit('end game', { winner: player, score: games[gameId]["PLAYERS"][player].score });
-      sendScore(games, gameId, games[gameId]["PLAYERS"][player]);
+      sendScore(games, gameId, games[gameId]["PLAYERS"][player], (error,data) => { // factoriser
+        if (error) console.log('Echec de l\'envoi des scores à la BDD');
+        else console.log('Envoi des scores à la BDD :', data);
+      });
       return true
     }
     games[gameId]["player"] = (player+1) % games[gameId]["numPlayers"];
@@ -676,15 +686,16 @@ function validateMove(io, clients, games, gameId, socket, cell) {
   }
 }
 
-function play(games, gameId, socket, cell) {
-  if (games[gameId]["gameOver"]) return;
+function play(io, clients, games, gameId, socket, cell) {
+  if (games[gameId]["gameOver"]) return false;
   if (!games[gameId]["isPlayedByIa"][games[gameId]["player"]])
-    if (! validateMove(io, clients, games, gameId, socket, cell)) return ;
+    if (! validateMove(io, clients, games, gameId, socket, cell)) return false;
   setTimeout(function() { makeBestMove(games, gameId); }, games[gameId]["Time"]);
   if (games[gameId]["isPlayedByIa"][(games[gameId]["player"]+1)%games[gameId]["numPlayers"]]) {
-    setTimeout(function() { play(games, gameId); }, games[gameId]["Time"]);
+    setTimeout(function() { play(io, clients, games, gameId); }, games[gameId]["Time"]);
   }
   games[gameId]["Time"] = 500;
+  return true;
 }
 
 function move(games, gameId, path, playedColor) {
@@ -694,9 +705,6 @@ function move(games, gameId, path, playedColor) {
   games[gameId]["gameBoard"][actuel[0]][actuel[1]] = playedColor;
   if (path.length > 2) {
     move(games, gameId, path.slice(1), playedColor);
-  }
-  else {
-
   }
 }
 
