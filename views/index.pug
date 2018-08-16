@@ -88,6 +88,13 @@ html
               input#3(type="radio" name="numColors" value="3" onclick="updateColors()")
               label(for="3" onclick="updateColors()") 3
               br
+            span#level_choice
+              | Difficulté :
+              input#1(type="radio" name="level" value="Débutant" onclick="" checked="")
+              label(for="Débutant" onclick="") débutant
+              input#2(type="radio" name="level" value="Expert" onclick="")
+              label(for="Expert" onclick="") Expert
+              br            
             input#inputNewGameForm(style="display:none" name="inputNewGameForm" value="inputNewGameForm")
             input#JOUER(type="submit" name="JOUER" value="JOUER")
           form#joinGameForm(name="joinGameForm" action="game" target="_self" method="POST")
