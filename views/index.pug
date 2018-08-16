@@ -11,14 +11,30 @@ html
         h1 Bienvenue sur HOP HOP HOP !
         p
           | Ce projet est un projet de fin d’année de deuxième année de licence d’informatique de l’IED Paris 8. Son but est de synthétiser une large partie des connaissances acquises dans les différents enseignements de la première et de la deuxième année.
-      section
-        h1 Les dames chinoises
-        p
-          | Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
-        #seeMoreDiv(style="display:none")
-        p
-          | Les pions sont disposés dans les six triangles extérieurs d'une étoile à six branches, formant six groupes de dix pions. Chaque groupe a une couleur différente. Chaque pion est toujours sur un emplacement, et un emplacement n'est occupé que par un pion.
-         button#seeMoreButton(onclick="seeMore()") Voir plus
+          section
+            h1 Les dames chinoises
+            p
+              | Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
+            #seeMoreDiv(style="display:none")
+              | Les pions sont disposés dans les six triangles extérieurs d'une étoile à six branches, formant six groupes de dix pions. Chaque groupe a une couleur différente. Chaque pion est toujours sur un emplacement, et un emplacement n'est occupé que par un pion.
+              br
+              | Le but du jeu est de déplacer l'ensemble de ses pions dans la zone opposée à sa zone de départ. Le vainqueur est le premier joueur à avoir amené la totalité de ses pions dans sa zone d'arrivée.
+              br
+              | Chacun contrôle un groupe de dix pions, qu'il faut amener dans la zone symétrique de sa zone de départ par rapport au centre du tablier.
+              br
+              | Chacun joue tour à tour un seul pion. Un mouvement se déroule selon deux modes, au choix et de façon exclusive :
+              br
+              | - Déplacement d'une case dans une des six directions du plateau.
+              br
+              | - Déplacement par sauts successifs (au cours d'un seul tour) :
+              br
+              Chaque saut se fait au-dessus d'un pion d'une couleur quelconque, de façon symétrique par rapport à ce pion, et selon l'une des directions du plateau. La règle de base indique que le pion par-dessus lequel on saute doit être directement adjacent, une variante fréquemment jouée par les professionnels autorise les "sauts longs" (c’est la version choisie pour ce projet). Dans tous les cas, le saut ne peut être autorisé que si aucun autre pion ne se trouve sur la trajectoire du saut ni dans la case d'arrivée, à l'exception du pion qui sert de pivot.
+              br
+              | Règles supplémentaires :
+              | Un saut en arrière n’est autorisé que si la case finale est située en avant de la case de départ.
+              | Il est interdit de jouer le coup inverse du dernier coup.
+              | Un pion peut être déplacé dans tous les triangles de départ tant que la case n’est pas occupée.
+            button#seeMoreButton(onclick="seeMore()") Voir plus
       #container
         section#game
           h1 Jouer une partie
