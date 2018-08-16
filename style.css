@@ -222,6 +222,10 @@ section
     width: 20%;
 }
 
+#rulesModal > .modal-content {
+  width: 80%;
+}
+
 .close {
     color: #aaa;
     float: right;

@@ -30,7 +30,8 @@ html
         section#board
         section#rightPanel
           img#muteButton(src="images/unmute.png")
-          p#rules Voir les règles
+          p#rules
+            a(href="#") Voir les règles
           p
             a(href="") Quitter
       #modal.modal(style="display:none")
@@ -44,7 +45,19 @@ html
         // Modal content
         .modal-content
           span.close ×
-          p Voici les règles des dames chinoises : br Les dames chinoises sont un jeu de société se jouant sur un tablier (jeu) généralement circulaire ou hexagonal, sur lequel une étoile à six branches est représentée, comportant 121 emplacements au total.
+          p
+            | Chacun joue tour à tour un seul pion. Un mouvement se déroule selon deux modes, au choix et de façon exclusive :
+            br
+            | - Déplacement d'une case dans une des six directions du plateau.
+            br
+            | - Déplacement par sauts successifs (au cours d'un seul tour) :
+            br
+            | Chaque saut se fait au-dessus d'un pion d'une couleur quelconque, de façon symétrique par rapport à ce pion, et selon l'une des directions du plateau. La règle de base indique que le pion par-dessus lequel on saute doit être directement adjacent, une variante fréquemment jouée par les professionnels autorise les "sauts longs" (c’est la version choisie pour ce projet). Dans tous les cas, le saut ne peut être autorisé que si aucun autre pion ne se trouve sur la trajectoire du saut ni dans la case d'arrivée, à l'exception du pion qui sert de pivot.
+            br
+            | Règles supplémentaires :
+            | Un saut en arrière n’est autorisé que si la case finale est située en avant de la case de départ.
+            | Il est interdit de jouer le coup inverse du dernier coup.
+            | Un pion peut être déplacé dans tous les triangles de départ tant que la case n’est pas occupée.
       footer
         button#pass(style="position:absolute;transition: .5s ease;left: 202px;top: 198px;display:none") pass
         a(href="mailto:contact@hophophop.fr") Nous contacter
