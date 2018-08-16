@@ -167,16 +167,42 @@ checkJoinGameForm['roomID'] = function () { // fonction pour vérifier le numér
   }
 };
 
+function checkIA()
+{
+  var atLeastOneChecked = false; 
+  var i = 1;  
+  while (document.getElementById("ordi"+i))
+  {
+    if (document.getElementById("ordi"+i).checked)
+    {
+      atLeastOneChecked = true;
+      break;
+    }
+    i++;
+  }
+  if(atLeastOneChecked == true)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+} 
+
 function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inactif
   var input = document.getElementById("player"+n); // on récupère le joueur n
   var checkbox = document.getElementById("ordi"+n); // on récupère la checkbox correspondante
+  var level = document.getElementById("level_choice");
   if (checkbox.checked) { // si la checkbox est cochée
     input.disabled = true; // on désactive le champs "nom"
     input.value = "Ordinateur"; // on attribue la valeur "ordinateur"
+    if (checkIA() == false) level.style.display='';
   }
   else { // si la checkbox n'est aps cochée
     input.disabled = false; // on active le champs texte
     input.value = ""; // on réinitialise le nom du joueur
+    if (checkIA() == false) level.style.display='none';
   }
 }
 
