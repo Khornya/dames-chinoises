@@ -173,6 +173,7 @@ function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inac
   if (checkbox.checked) { // si la checkbox est cochée
     input.disabled = true; // on désactive le champs "nom"
     input.value = "Ordinateur"; // on attribue la valeur "ordinateur"
+  }
   else { // si la checkbox n'est aps cochée
     input.disabled = false; // on active le champs texte
     input.value = ""; // on réinitialise le nom du joueur
