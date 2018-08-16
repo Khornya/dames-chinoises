@@ -223,7 +223,8 @@ section
 }
 
 #rulesModal > .modal-content {
-  width: 80%;
+  width: 50%;
+  border: 1px solid black;
 }
 
 .close {
