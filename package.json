@@ -14,6 +14,11 @@
     "cover": "nyc npm run test",
     "check-coverage": "nyc check-coverage --statements 100 --branches 100 --functions 100 --lines 100"
   },
+  "ava": {
+    "require": [
+      "./helpers/setup-browser-env.js"
+    ]
+  },
   "nyc": {
     "reporter": [
       "lcov",
@@ -37,6 +42,8 @@
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
-    "ava": "^0.25.0"
+    "ava": "^0.25.0",
+    "browser-env": "^3.2.5",
+    "window": "^4.2.5"
   }
 }

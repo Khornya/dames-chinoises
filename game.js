@@ -7,8 +7,8 @@ var socket = io(); // crée une instance de io à partir de socket.io
 var numPlayers; // nombre de joueurs
 var numColors; // nombre de couleurs
 var COLORS; // liste des couleurs de chaque joueur
-var gameId = parseInt(document.getElementById("gameId").value,10); // numéro de la partie
-var role = document.getElementById("role").value; // rôle du joueur - host ou guess
+var gameId = parseInt(document.getElementById("gameId").value,10); // numéro de la partie généré par le serveur
+var role = document.getElementById("role").value; // rôle du joueur - host ou guest
 
 // ********************************** configuration nombre de joueurs nombre de couleurs ***************************
 

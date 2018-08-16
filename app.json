@@ -1,6 +1,6 @@
 {
-  "name": "Node.js Socket.io Example",
-  "description": "Part of the Using WebSockets on Heroku Tutorial",
-  "repository": "https://github.com/heroku-examples/node-socket.io",
-  "keywords": ["node", "websocket", "socket.io"]
+  "name": "Dames Chinoises en ligne",
+  "description": "jeu de dames chinoises en ligne proposant de jouer seul ou à plusieurs",
+  "repository": "https://github.com/Khornya/dames-chinoises",
+  "keywords": ["dames chinoises", "chinese checkers", "socket.io"]
 }
