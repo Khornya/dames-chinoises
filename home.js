@@ -190,6 +190,8 @@ function checkIA()
   }
 } 
 
+var numIA = 5; // nombre max possible d'IA
+
 function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inactif
   var input = document.getElementById("player"+n); // on récupère le joueur n
   var checkbox = document.getElementById("ordi"+n); // on récupère la checkbox correspondante
@@ -197,12 +199,14 @@ function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inac
   if (checkbox.checked) { // si la checkbox est cochée
     input.disabled = true; // on désactive le champs "nom"
     input.value = "Ordinateur"; // on attribue la valeur "ordinateur"
-    if (checkIA() == false) level.style.display='';
+    if (numIA == 0) level.style.display=''; // si aucune IA ne joue on affiche le choix de difficulté
+    numIA += 1;
   }
   else { // si la checkbox n'est aps cochée
     input.disabled = false; // on active le champs texte
     input.value = ""; // on réinitialise le nom du joueur
-    if (checkIA() == false) level.style.display='none';
+    numIA -= 1;
+    if (numIA == 0) level.style.display='none'; // si aucune IA ne joue on cache le choix de difficulté
   }
 }
 
