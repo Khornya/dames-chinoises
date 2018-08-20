@@ -37,12 +37,12 @@ html
               | - Il est interdit de jouer le coup inverse du dernier coup.
               br
               | - Un pion peut être déplacé dans tous les triangles de départ tant que la case n’est pas occupée.
-            button#seeMoreButton(onclick="seeMore()") Voir plus
+            button#seeMoreButton(onclick="Client.seeMore()") Voir plus
       #container
         section#game
           h1 Jouer une partie
           form#newGameForm(name="newGameForm" action="game" target="_self" method="POST")
-            select#mode(name="numPlayers" onclick="updateChoices()")
+            select#mode(name="numPlayers" onclick="Client.updateChoices()")
               option(value="2") 2 joueurs
               option(value="3") 3 joueurs
               option(value="4") 4 joueurs
@@ -55,41 +55,41 @@ html
             div
               input#player2(type="text" name="player2" placeholder="Joueur 2")
               span#player2colors
-              input#ordi2(type="checkbox" name="ordi2" value="Ordinateur" onclick="disablePlayer(2)")
-              label(for="ordi2" onclick="disablePlayer(2)") IA
+              input#ordi2(type="checkbox" name="ordi2" value="Ordinateur" onclick="Client.disablePlayer(2)")
+              label(for="ordi2" onclick="Client.disablePlayer(2)") IA
               span.tooltip
             div
               input#player3(type="text" name="player3" placeholder="Joueur 3")
               span#player3colors
-              input#ordi3(type="checkbox" name="ordi3" value="Ordinateur" onclick="disablePlayer(3)")
-              label(for="ordi3" onclick="disablePlayer(3)") IA
+              input#ordi3(type="checkbox" name="ordi3" value="Ordinateur" onclick="Client.disablePlayer(3)")
+              label(for="ordi3" onclick="Client.disablePlayer(3)") IA
               span.tooltip
             div
               input#player4(type="text" name="player4" placeholder="Joueur 4")
               span#player4colors
-              input#ordi4(type="checkbox" name="ordi4" value="Ordinateur" onclick="disablePlayer(4)")
-              label(for="ordi4" onclick="disablePlayer(4)") IA
+              input#ordi4(type="checkbox" name="ordi4" value="Ordinateur" onclick="Client.disablePlayer(4)")
+              label(for="ordi4" onclick="Client.disablePlayer(4)") IA
               span.tooltip
             div
               input#player5(type="text" name="player5" placeholder="Joueur 5")
               span#player5colors
-              input#ordi5(type="checkbox" name="ordi5" value="Ordinateur" onclick="disablePlayer(5)")
-              label(for="ordi5" onclick="disablePlayer(5)") IA
+              input#ordi5(type="checkbox" name="ordi5" value="Ordinateur" onclick="Client.disablePlayer(5)")
+              label(for="ordi5" onclick="Client.disablePlayer(5)") IA
               span.tooltip
             div
               input#player6(type="text" name="player6" placeholder="Joueur 6")
               span#player6colors
-              input#ordi6(type="checkbox" name="ordi6" value="Ordinateur" onclick="disablePlayer(6)")
-              label(for="ordi6" onclick="disablePlayer(6)") IA
+              input#ordi6(type="checkbox" name="ordi6" value="Ordinateur" onclick="Client.disablePlayer(6)")
+              label(for="ordi6" onclick="Client.disablePlayer(6)") IA
               span.tooltip
             span#color_choice
               | Nombre de couleurs :
-              input#1(type="radio" name="numColors" value="1" onclick="updateColors()" checked="")
-              label(for="1" onclick="updateColors()") 1
-              input#2(type="radio" name="numColors" value="2" onclick="updateColors()")
-              label(for="2" onclick="updateColors()") 2
-              input#3(type="radio" name="numColors" value="3" onclick="updateColors()")
-              label(for="3" onclick="updateColors()") 3
+              input#1(type="radio" name="numColors" value="1" onclick="Client.updateColors()" checked="")
+              label(for="1" onclick="Client.updateColors()") 1
+              input#2(type="radio" name="numColors" value="2" onclick="Client.updateColors()")
+              label(for="2" onclick="Client.updateColors()") 2
+              input#3(type="radio" name="numColors" value="3" onclick="Client.updateColors()")
+              label(for="3" onclick="Client.updateColors()") 3
               br
             span#level_choice(style="display:none")
               | Difficulté :
@@ -97,7 +97,7 @@ html
               label(for="Débutant" onclick="") Débutant
               input#2(type="radio" name="level" value="Expert")
               label(for="Expert" onclick="") Expert
-              br            
+              br
             input#inputNewGameForm(style="display:none" name="inputNewGameForm" value="inputNewGameForm")
             input#JOUER(type="submit" name="JOUER" value="JOUER")
           form#joinGameForm(name="joinGameForm" action="game" target="_self" method="POST")
@@ -116,4 +116,5 @@ html
         a(href="mailto:contact@hophophop.fr") Nous contacter
     script(src="/socket.io/socket.io.js")
     script(src="utils.js")
+    script(src="client.js")
     script(src="home.js")
