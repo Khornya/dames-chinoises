@@ -54,8 +54,6 @@ utilities.someSharedMethod(); // méthode partagé entre client en serveur
 
 // initialisation
 
-var numIA = 5; // nombre max possible d'IA
-
 Client.deactivateTooltips(); // on désactive tous les tooltips
 
 for (var i=2;i<=6;i++) { // pour tous les joueurs sauf le premier

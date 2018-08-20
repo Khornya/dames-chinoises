@@ -30,7 +30,7 @@
       checkbox.nextSibling.style.display = 'none'; // masque le label de la case à cocher
     }
     var list = document.getElementById("mode"); // on récupère le menu déroulant
-    var mode = list.options[list.selectedIndex].value; // on récupère la valeur sélectionnée
+    var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
     document.getElementById("color_choice").style.display = colorChoices[mode]['display']; // on affiche ou on masque le choix du nombre de couleurs
     for (var i=1; i<=3; i++) { // on coche une case par défaut
       document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false
@@ -174,19 +174,23 @@
   function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inactif
     var input = document.getElementById("player"+n); // on récupère le joueur n
     var checkbox = document.getElementById("ordi"+n); // on récupère la checkbox correspondante
-    var level = document.getElementById("level_choice");
     if (checkbox.checked) { // si la checkbox est cochée
       input.disabled = true; // on désactive le champs "nom"
       input.value = "Ordinateur"; // on attribue la valeur "ordinateur"
-      level.style.display='block'; // on affiche le choix de difficulté
-      numIA += 1;
     }
-    else { // si la checkbox n'est aps cochée
+    else { // si la checkbox n'est pas cochée
       input.disabled = false; // on active le champs texte
       input.value = ""; // on réinitialise le nom du joueur
-      numIA -= 1;
-      if (numIA === 0) level.style.display='none'; // si aucune IA ne joue on cache le choix de difficulté
     }
+    var iaLevel = document.getElementById("level_choice");
+    var displayIaLevel = false;
+    var list = document.getElementById("mode"); // on récupère le menu déroulant
+    var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
+    for (var i=2; i<=mode; i++) {
+      checkbox = document.getElementById("ordi"+i);
+      if (checkbox.checked) displayIaLevel = true;
+    }
+    iaLevel.style.display = (displayIaLevel) ? 'block' : 'none'; // on affiche ou pas le choix de difficulté
   }
 
   exports.seeMore = seeMore;
