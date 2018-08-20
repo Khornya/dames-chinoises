@@ -25,7 +25,7 @@ function updateChoices() { // fonction déclenchée quand on change le nombre de
   deactivateTooltips(); // masque tous les tooltips
   for (var i = 2; i <= 6; i++) { // pour tous les champs de nom de joueur à partir du 2e
     document.getElementById("player"+i).style.display = 'none'; // masque le champ
-    checkbox = document.getElementById("ordi"+i); // récupère la case IA associée à ce joeuur
+    checkbox = document.getElementById("ordi"+i); // récupère la case IA associée à ce joueur
     checkbox.style.display = 'none'; // masque la case à cocher
     checkbox.nextSibling.style.display = 'none'; // masque le label de la case à cocher
   }
@@ -35,12 +35,16 @@ function updateChoices() { // fonction déclenchée quand on change le nombre de
   for (var i=1; i<=3; i++) { // on coche une case par défaut
     document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false
   }
-  for (var i = 2; i <= mode; i++) { // pou rhcaque joueur
+  var iaLevel = document.getElementById('level_choice');
+  var displayIaLevel = false;
+  for (var i = 2; i <= mode; i++) { // pour chaque joueur
     document.getElementById("player"+i).style.display = 'inline'; // on affiche le champ du nom du joueur
     checkbox = document.getElementById("ordi"+i); // on récupère la case IA associée
+    if (checkbox.checked) displayIaLevel = true; // si au moins une case est cochée, on change la valeur de displayIaLevel
     checkbox.style.display = 'inline'; // on affiche la case à cocher
     checkbox.nextSibling.style.display = 'inline'; // on affiche le label de l acase à cocherr
   }
+  iaLevel.style.display = displayIaLevel ? 'block' : 'none';
   updateColors(); // on met à jour le socuelurs pour chauqe joueur
   for (var i in checkNewGameForm) { // pour chaque fonction de vérification su rl eocntenu du formulaire
     if (document.getElementById(i).value != '' && parseInt(i[6]) <= mode) { // on ne vérifie que si quelque chose a été saisi et si le joueur va jouer
@@ -167,31 +171,6 @@ checkJoinGameForm['roomID'] = function () { // fonction pour vérifier le numér
   }
 };
 
-function checkIA()
-{
-  var atLeastOneChecked = false; 
-  var i = 1;  
-  while (document.getElementById("ordi"+i))
-  {
-    if (document.getElementById("ordi"+i).checked)
-    {
-      atLeastOneChecked = true;
-      break;
-    }
-    i++;
-  }
-  if(atLeastOneChecked == true)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-} 
-
-var numIA = 5; // nombre max possible d'IA
-
 function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inactif
   var input = document.getElementById("player"+n); // on récupère le joueur n
   var checkbox = document.getElementById("ordi"+n); // on récupère la checkbox correspondante
@@ -199,14 +178,14 @@ function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inac
   if (checkbox.checked) { // si la checkbox est cochée
     input.disabled = true; // on désactive le champs "nom"
     input.value = "Ordinateur"; // on attribue la valeur "ordinateur"
-    if (numIA == 0) level.style.display=''; // si aucune IA ne joue on affiche le choix de difficulté
+    level.style.display='block'; // on affiche le choix de difficulté
     numIA += 1;
   }
   else { // si la checkbox n'est aps cochée
     input.disabled = false; // on active le champs texte
     input.value = ""; // on réinitialise le nom du joueur
     numIA -= 1;
-    if (numIA == 0) level.style.display='none'; // si aucune IA ne joue on cache le choix de difficulté
+    if (numIA === 0) level.style.display='none'; // si aucune IA ne joue on cache le choix de difficulté
   }
 }
 
@@ -263,6 +242,8 @@ function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inac
   }
 
 // initialisation
+
+var numIA = 5; // nombre max possible d'IA
 
 deactivateTooltips(); // on désactive tous les tooltips
 
