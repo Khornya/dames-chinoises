@@ -1,5 +1,3 @@
-utilities.someSharedMethod(); // méthode partagé entre client en serveur
-
 // Mise en place des événements
 
   var newGameForm = document.getElementById('newGameForm'), // on récupère le formulaire de création de partie
@@ -53,8 +51,6 @@ utilities.someSharedMethod(); // méthode partagé entre client en serveur
   }
 
 // initialisation
-
-Client.deactivateTooltips(); // on désactive tous les tooltips
 
 for (var i=2;i<=6;i++) { // pour tous les joueurs sauf le premier
   Client.disablePlayer(i); // on les cache
