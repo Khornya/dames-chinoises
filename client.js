@@ -23,12 +23,6 @@
     };
     var checkbox;
     deactivateTooltips(); // masque tous les tooltips
-    for (var i = 2; i <= 6; i++) { // pour tous les champs de nom de joueur à partir du 2e
-      document.getElementById("player"+i).style.display = 'none'; // masque le champ
-      checkbox = document.getElementById("ordi"+i); // récupère la case IA associée à ce joueur
-      checkbox.style.display = 'none'; // masque la case à cocher
-      checkbox.nextSibling.style.display = 'none'; // masque le label de la case à cocher
-    }
     var list = document.getElementById("mode"); // on récupère le menu déroulant
     var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
     document.getElementById("color_choice").style.display = colorChoices[mode]['display']; // on affiche ou on masque le choix du nombre de couleurs
@@ -42,13 +36,19 @@
       checkbox = document.getElementById("ordi"+i); // on récupère la case IA associée
       if (checkbox.checked) displayIaLevel = true; // si au moins une case est cochée, on change la valeur de displayIaLevel
       checkbox.style.display = 'inline'; // on affiche la case à cocher
-      checkbox.nextSibling.style.display = 'inline'; // on affiche le label de l acase à cocherr
+      checkbox.nextSibling.style.display = 'inline'; // on affiche le label de la case à cocherr
+    }
+    for (var i = mode+1; i <= 6; i++) { // pour chaque joueur qui ne joue pas
+      document.getElementById("player"+i).style.display = 'none'; // masque le champ
+      checkbox = document.getElementById("ordi"+i); // récupère la case IA associée à ce joueur
+      checkbox.style.display = 'none'; // masque la case à cocher
+      checkbox.nextSibling.style.display = 'none'; // masque le label de la case à cocher
     }
     iaLevel.style.display = displayIaLevel ? 'block' : 'none';
     updateColors(); // on met à jour le socuelurs pour chauqe joueur
-    for (var i in checkNewGameForm) { // pour chaque fonction de vérification su rl eocntenu du formulaire
+    for (var i in checkNewGameForm) { // pour chaque fonction de vérification sur le contenu du formulaire
       if (document.getElementById(i).value != '' && parseInt(i[6]) <= mode) { // on ne vérifie que si quelque chose a été saisi et si le joueur va jouer
-        checkNewGameForm[i](i); // on vérfie le ocntenu du formulaire
+        checkNewGameForm[i](i); // on vérifie le contenu du formulaire
       }
     }
   }
@@ -76,12 +76,12 @@
     }[mode][numColors]; // on retourne pour chaque joueur la liste des couleurs
     for (var n=1; n<=mode; n++) { // pour chaque joueur qui joue
       var code = '';
-      for (var i=0, max = colors[n-1].length; i < max; i++) { // pour chaque couleur on affiche les images correspondanes
-        code += "<img class='imagetag' src='images/pion" + colors[n-1][i] + ".png'/>";
+      for (var i=0, max = colors[n-1].length; i < max; i++) { // pour chaque couleur on affiche les images correspondantes
+        code += "<img class=\"imagetag\" src=\"images/pion" + colors[n-1][i] + ".png\">";
       }
       document.getElementById('player'+n+'colors').innerHTML = code;
     }
-    for (var n=mode+1; n<=6; n++) { // on masque les joueurs qui ne jouent pas
+    for (var n=mode+1; n<=6; n++) { // on efface les couleurs des joueurs qui ne jouent pas
       document.getElementById('player'+n+'colors').innerHTML = '';
     }
   }
@@ -107,7 +107,7 @@
   var checkNewGameForm = {}; // On met toutes nos fonctions pour la création d'une nouvelle partie dans un objet littéral
   var checkJoinGameForm = {}; // On met toutes nos fonctions pour rejoindre une partie dans un objet littéral
 
-  function check_player(id) { // vérifie le nom d'un joueur
+  function checkPlayer(id) { // vérifie le nom d'un joueur
       var player = document.getElementById(id),
           player1 = document.getElementById('player1'),
           player2 = document.getElementById('player2'),
@@ -117,7 +117,7 @@
           player6 = document.getElementById('player6'),
           tooltip = getTooltip(player);
       var regex = new RegExp("^[a-zA-Z0-9_-]{2,10}$", "g"); // variable contenant la regex pour valider le nom
-      if ((regex.test(player.value)) || player.value === '') { // si la regex est validée ou le champs et vide
+      if ((regex.test(player.value)) || player.value === '') { // si la regex est validée ou le champs est vide
         if (typeof(id[6]) === 'undefined') { // pour le champs "nom" du formulaire pour rejoindre une partie
           player.className = 'correct'; // on valide
           tooltip.style.display = 'none'; // on cache le tooltip
@@ -139,6 +139,7 @@
             player.className = 'incorrect';
             tooltip.innerHTML = 'Ce nom est déjà pris'; // on change le texte du tooltip
             tooltip.style.display = 'inline-block'; // on affiche le tooltip
+            return false;
           }
         }
       }
@@ -150,15 +151,15 @@
       }
   }
 
-  // pour tous les champs "nom" on appliquera la fonction check_player
-  checkNewGameForm['player1'] = check_player;
+  // pour tous les champs "nom" on appliquera la fonction checkPlayer
+  checkNewGameForm['player1'] = checkPlayer;
   checkJoinGameForm['player'] = checkNewGameForm['player2'] = checkNewGameForm['player3'] = checkNewGameForm['player4'] = checkNewGameForm['player5'] = checkNewGameForm['player6'] = checkNewGameForm['player1'] ;
 
   checkJoinGameForm['roomID'] = function () { // fonction pour vérifier le numéro de la salle de jeu saisi pour rejoindre une partie
     var input = document.getElementById('roomID'); // on récupère le numéro saisi
     var tooltip = getTooltip(input); // on récupère le tooltip
     var regex = new RegExp("^[0-9]{1,6}$", "g"); // on définit la regex correspondante
-    if (regex.test(input.value) && input.value <= 100000) { // si la regex est validée et que la valeur et inférieure à 100000
+    if (regex.test(input.value) && input.value <= 100000) { // si la regex est validée et que la valeur est inférieure à 100000
       input.className = 'correct'; // on valide
       tooltip.style.display = 'none'; // on cache le tooltip
       return true;
@@ -199,6 +200,7 @@
   exports.updateColors = updateColors;
   exports.updateChoices = updateChoices;
   exports.disablePlayer = disablePlayer;
+  exports.checkPlayer = checkPlayer;
   exports.checkNewGameForm = checkNewGameForm;
   exports.checkJoinGameForm = checkJoinGameForm;
 
