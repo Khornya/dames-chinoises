@@ -7,6 +7,7 @@ var http = require('http'); // pour simuler une requête HTTP
 var PassThrough = require('stream').PassThrough;
 
 var Server = rewire('./server.js'); // le fichier contenant les fonctions à tester
+var Shared = require('./shared.js'); // fonctions utilitaires
 
 var winningBoard = [ // tous les joueurs ont gagné
       [false,false,false,false,false,false,false,false,false,false,false,false,  2  ,false,false,false,false,false,false,false,false,false,false,false,false],
@@ -66,28 +67,6 @@ function setTimeout(f,t) { // pour ne pas attendre
 
 test('Echapper les caractères HTML', t => {
   t.is(Server.escapeHtml('<script>'),'&lt;script&gt;');
-});
-
-test('Initialiser le plateau de jeu', t => {
-  t.deepEqual(Server.initGameBoard(), [
-    [false, false, false, false, false, false, false, false, false, false, false, false, 1, false, false, false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false, false, 1, false, 1, false, false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false, 1, false, 1, false, 1, false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, 1, false, 1, false, 1, false, 1, false, false, false, false, false, false, false, false, false],
-    [3, false, 3, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, 5, false, 5],
-    [false, 3, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, 5, false],
-    [false, false, 3, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, 5, false, false],
-    [false, false, false, 3, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 5, false, false, false],
-    [false, false, false, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, false, false, false],
-    [false, false, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, false, false],
-    [false, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, false],
-    [false, 6, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, 4, false],
-    [6, false, 6, false, 6, false, 6, false, -1, false, -1, false, -1, false, -1, false, -1, false, 4, false, 4, false, 4, false, 4],
-    [false, false, false, false, false, false, false, false, false, 2, false, 2, false, 2, false, 2, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false, 2, false, 2, false, 2, false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false, false, 2, false, 2, false, false, false, false, false, false, false, false, false, false, false],
-    [false, false, false, false, false, false, false, false, false, false, false, false, 2, false, false, false, false, false, false, false, false, false, false, false, false]
-  ]);
 });
 
 test('Recommencer la partie', t => {
@@ -214,7 +193,7 @@ test('Recommencer la partie', t => {
            score: 0,
          } ],
       Time : 500,
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : false,
       gameState : [[false, false, false], [false, false, false]],
       history : [false, false],
@@ -254,7 +233,7 @@ test('Recommencer la partie', t => {
          }
       ],
       Time : 500,
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : false,
       gameState : [[false], [false], [false], [false]],
       history : [false, false, false, false],
@@ -285,7 +264,7 @@ test('Recommencer la partie', t => {
            score: 0,
          } ],
       Time : 500,
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : false,
       gameState : [[false], [false]],
       history : [false, false],
@@ -363,7 +342,7 @@ test('Initialiser les données de la partie', t => {
            score: 0,
          } ],
       Time : 500,
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : false,
       gameState : [[false, false, false], [false, false, false]],
       history : [false, false],
@@ -403,7 +382,7 @@ test('Initialiser les données de la partie', t => {
          }
       ],
       Time : 500,
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : false,
       gameState : [[false], [false], [false], [false]],
       history : [false, false, false, false],
@@ -434,7 +413,7 @@ test('Initialiser les données de la partie', t => {
            score: 0,
          } ],
       Time : 500,
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : false,
       gameState : [[false], [false]],
       history : [false, false],
@@ -701,7 +680,7 @@ test('Vérifier si un joueur a gagné', t => {
       player : 1
     },
     4: {
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       numPlayers : 2,
       numColors : 3,
       COLORS : [[1, 3, 5],[2, 4, 6]],
@@ -729,34 +708,6 @@ test('Vérifier si un joueur a gagné', t => {
   }
   for (var gameId in games) {
     t.deepEqual(Server.hasWon(games, gameId, tests[gameId]["color"]), tests[gameId]["expected"]);
-  }
-});
-
-test('Initialiser un Array avec une valeur', t => {
-  var tests = {
-    1: {
-      result : Server.initArray(2,3,0),
-      expected : [[0,0,0],[0,0,0]]
-    },
-    2: {
-      result : Server.initArray(4,0,false),
-      expected : [false,false,false,false]
-    },
-    3: {
-      result : Server.initArray(2,3),
-      expected : [[undefined, undefined, undefined],[undefined, undefined, undefined]]
-    },
-    4: {
-      result : Server.initArray(0,3,0),
-      expected : []
-    },
-    5: {
-      result : Server.initArray(2),
-      expected : [undefined, undefined]
-    }
-  };
-  for (var test in tests) {
-    t.deepEqual(test["result"], test["expected"]);
   }
 });
 
@@ -791,19 +742,19 @@ test('Envoyer les scores à la BDD', t => {
 test('Calculer le meilleur coup à jouer', t => {
   var games = {
     1: {
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : true,
       isPlayedByIa : [true, true],
       player : 1
     },
     2: {
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : false,
       isPlayedByIa : [false, true],
       player : 0
     },
     3: {
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       gameOver : false,
       isPlayedByIa : [false, true],
       player : 1,
@@ -876,7 +827,7 @@ test('Calculer le meilleur coup à jouer', t => {
 test("Vérifier la validité d'un mouvement", t => {
   var games = {
     1: {
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
       playedColor : 2,
@@ -886,7 +837,7 @@ test("Vérifier la validité d'un mouvement", t => {
       isPlayedByIa : [false,false]
     },
     2: {
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
       playedColor : 1,
@@ -896,7 +847,7 @@ test("Vérifier la validité d'un mouvement", t => {
       PLAYERS : [{score:0},{score:0}]
     },
     3: {
-      gameBoard : Server.initGameBoard(),
+      gameBoard : Shared.initGameBoard(),
       numPlayers : 2,
       COLORS : [[1,3,5],[2,4,6]],
       player : 0,
@@ -1009,14 +960,14 @@ test('Jouer un tour', t => {
     2: {
       isPlayedByIa: [false, false],
       player: 0,
-      gameBoard: Server.initGameBoard(),
+      gameBoard: Shared.initGameBoard(),
       startCell: 0,
       COLORS: [[1],[2]]
     },
     3: {
       isPlayedByIa: [true, false],
       player: 0,
-      gameBoard: Server.initGameBoard(),
+      gameBoard: Shared.initGameBoard(),
       startCell: 0,
       COLORS: [[1],[2]],
       history: [false,false],
@@ -1025,7 +976,7 @@ test('Jouer un tour', t => {
     4: {
       isPlayedByIa: [true, true],
       player: 0,
-      gameBoard: Server.initGameBoard(),
+      gameBoard: Shared.initGameBoard(),
       startCell: 0,
       COLORS: [[1],[2]],
       history: [false,false],
@@ -1064,7 +1015,7 @@ test('Jouer un tour', t => {
 test('Effectuer le déplacement d\'un pion', t => {
   var games = {
     1: {
-      gameBoard: Server.initGameBoard()
+      gameBoard: Shared.initGameBoard()
     }
   }
   Server.move(games, 1, [[2,14],[4,12]], 1);

@@ -1,5 +1,4 @@
 module.exports = {
-  initGameBoard,
   init,
   restart,
   isMovingBackward,
@@ -9,7 +8,6 @@ module.exports = {
   hasWon,
   isOnGameBoard,
   contains,
-  initArray,
   sendScore,
   makeBestMove,
   validateMove,
@@ -18,8 +16,7 @@ module.exports = {
   escapeHtml
 }
 
-var share = require('./utils.js'); // appel du fichier pour récupérer les méthodes partagées
-share.someSharedMethod(); // appel une méthode partagée
+var Shared = require('./shared.js'); // appel du fichier pour récupérer les méthodes partagées
 
 var express = require('express'); // requiert le framework express
 var app = express(); // invoque une instance d'express
@@ -330,32 +327,6 @@ var TRIANGLES_COORDS = [
  [[12,0],[12,2],[12,4],[12,6],[11,1],[11,3],[11,5],[10,2],[10,4],[9,3]]
 ];
 
-// initialise la matrice pour le plateau de jeu
-function initGameBoard() {
-  var matrice = initArray(17,25,false);
-  for (var row=0; row<4; row++) {
-    for (var col=12-row; col<=12+row; col+=2) {
-      matrice[row][col] = 1;
-      matrice[16-row][col] = 2;
-    }
-  }
-  for (var row=4; row<8; row++) {
-    for (var col=12-row; col<=12+row; col+=2) {
-      matrice[row][col] = -1;
-      matrice[16-row][col] = -1;
-    }
-    for (var col=row-4; col<=10-row; col+=2) {
-      matrice[row][col] = 3;
-      matrice[16-row][24-col] = 4;
-      matrice[row][24-col] = 5;;
-      matrice[16-row][col] = 6;
-    }
-  }
-  for (var col=4; col<21; col+=2) { matrice[8][col] = -1 }
-  return matrice;
-}
-
-
 // fonction pour recommencer le jeu
 function init(games, gameId) {
   // games[gameId]["gameBoard"] = initGameBoard(); // déjà dans restart
@@ -374,15 +345,15 @@ function init(games, gameId) {
 
 
 function restart(games, gameId) {
-  games[gameId]["gameBoard"] = initGameBoard();
+  games[gameId]["gameBoard"] = Shared.initGameBoard();
   for (var n=0; n < games[gameId]["numPlayers"]; n++) {
     games[gameId]["PLAYERS"][n].score = 0;
   }
   games[gameId]["player"] = 0;
   games[gameId]["startCell"] =  0;
   games[gameId]["gameOver"] = false;
-  games[gameId]["gameState"] = initArray(games[gameId]["numPlayers"], games[gameId]["numColors"], false);
-  games[gameId]["history"] = initArray(games[gameId]["numPlayers"], 0, false);
+  games[gameId]["gameState"] = Shared.initArray(games[gameId]["numPlayers"], games[gameId]["numColors"], false);
+  games[gameId]["history"] = Shared.initArray(games[gameId]["numPlayers"], 0, false);
   games[gameId]["restartCount"] = 0;
 }
 
@@ -511,20 +482,6 @@ function contains(array, element) {
   return false;
 }
 
-
-function initArray(lines, columns, value) {
-  var array = [];
-  for (var i=0; i<lines; i++) {
-    if (columns) {
-      array[i] = [];
-      for (var j=0; j<columns; j++) {
-        array[i][j] = value;
-      }
-    }
-    else array[i] = value;
-  }
-  return array;
-}
 
 function sendScore(games, gameId, winner, callback) {
   var name = encodeURIComponent(winner.name);
