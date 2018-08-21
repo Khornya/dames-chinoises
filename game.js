@@ -25,7 +25,7 @@ if (role === "host") { // si le joueur est host
     4: { 1: [[1],[2],[3],[4]] }, // quatre joueurs une couleur
     6: { 1: [[1],[3],[6],[2],[4],[5]] } // six joueurs une couleur
   }[numPlayers][numColors];
-  isPlayedByIa = initArray(numPlayers, 0, false); // on initialise l'array qui permet de savoir quel joueur est joué par l'IA
+  isPlayedByIa = Shared.initArray(numPlayers, 0, false); // on initialise l'array qui permet de savoir quel joueur est joué par l'IA
   for (var i=1; i<=numPlayers; i++) { // pour chaque joueur
     if (document.getElementById("IA"+i).value!== "") // si il est joué par l'IA
       isPlayedByIa[i-1] = true; // on attribue le joueur à l'IA
@@ -82,34 +82,9 @@ else if (role === "guest"){ // si le joueur est invité
 
   // *********************************************** fonctions de jeu ************************************************
 
-  // initialise la matrice pour le plateau de jeu de 17 par 25 et on y attribue les valeurs (voir cahier des charges)
-  function initGameBoard() { // partager avec serveur ?
-    var matrice = initArray(17,25,false);
-    for (var row=0; row<4; row++) {
-      for (var col=12-row; col<=12+row; col+=2) {
-        matrice[row][col] = 1;
-        matrice[16-row][col] = 2;
-      }
-    }
-    for (var row=4; row<8; row++) {
-      for (var col=12-row; col<=12+row; col+=2) {
-        matrice[row][col] = -1;
-        matrice[16-row][col] = -1;
-      }
-      for (var col=row-4; col<=10-row; col+=2) {
-        matrice[row][col] = 3;
-        matrice[16-row][24-col] = 4;
-        matrice[row][24-col] = 5;;
-        matrice[16-row][col] = 6;
-      }
-    }
-    for (var col=4; col<21; col+=2) { matrice[8][col] = -1 }
-    return matrice;
-  }
-
   // crée le plateau de jeu basé sur la matrice
   function createGameBoard(matrice) {
-    var board = initArray(17,25,false);
+    var board = Shared.initArray(17,25,false);
     var line, cell;
     for (var row=0; row<17; row++) { // crée un div pour chaque ligne
       line = document.createElement('div');
@@ -269,20 +244,6 @@ function play(event) { // fonction pour jouer un coup - se déclenche à chaque 
     }
   }
 
-  function initArray(lines, columns, value) { // fonction qui initialise un array de taille lines * columns avec la valeur value - partager avec serveur ?
-    var array = [];
-    for (var i=0; i<lines; i++) {
-      if (columns) {
-        array[i] = [];
-        for (var j=0; j<columns; j++) {
-          array[i][j] = value;
-        }
-      }
-      else array[i] = value;
-    }
-    return array;
-  }
-
 // on déclare tous les callbacks pour les messages serveur
     socket.on('connect', function() { // A ENLEVER
       console.log("socket id : ", this.id);
@@ -339,7 +300,7 @@ function play(event) { // fonction pour jouer un coup - se déclenche à chaque 
       numPlayers = data["numPlayers"];
       numColors = data["numColors"];
       COLORS = data["COLORS"];
-      gameBoard = initGameBoard(); // on initialise le plateau de jeu
+      gameBoard = Shared.initGameBoard(); // on initialise le plateau de jeu
       images = createGameBoard(gameBoard); // on crée l'affichage du plateau de jeu
       PLAYERS = data["PLAYERS"]; // on récupère les données des joueurs
       for (var i=0, max=PLAYERS.length; i<max; i++) { // on crée les instances de la classe Player et les cadres des joueurs
@@ -355,7 +316,7 @@ function play(event) { // fonction pour jouer un coup - se déclenche à chaque 
     });
     socket.on('restart game', function () { // si on recoit un message "restart game"
       console.log('restart game'); // permet de vérifier les données envoyées sur la console
-      gameBoard = initGameBoard(); // on reinitialise le plateau de jeu
+      gameBoard = Shared.initGameBoard(); // on reinitialise le plateau de jeu
       refreshBoard(gameBoard); // on réinitialise l'affichage
       player = 0; // on remet le tour au joueur 1
       updatePlayerFrames(); // on actualise les cadres des joueurs
