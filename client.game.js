@@ -1,5 +1,6 @@
 (function(exports){
 
+
   // crée le plateau de jeu basé sur la matrice
   function createGameBoard(matrice) {
     var board = Shared.initArray(17,25,false);
@@ -33,7 +34,7 @@
 
   function restart(option=1) { // fonction pour redémarrer une partie
     if (option) { // si une partie est déjà en cours
-      document.getElementById('myModal').style.display = "none"; // on cache le modal
+      document.getElementById('modal').style.display = "none"; // on cache le modal
       socket.emit('restart request'); // on envoie un message "restart request" au serveur
     }
     updatePlayerFrames(); // on reinitialise les frames de joueurs
@@ -60,7 +61,7 @@
       (function(path) { // appel la fonction move avec le reste du chemin dans 500 ms
         setTimeout(function(){
           move(path, playedColor);
-        }, 500*(!isInTestMode)); // temps d'exécution réduit pour les tests
+        }, 500); // temps d'exécution réduit pour les tests
       })(path.slice(1));
     }
   }
@@ -72,7 +73,7 @@
     var restartButton = document.getElementById("restartButton");
     modal.style.display = "block";
     SOUNDS.win.play();
-    span.onclick = function() {
+    span.onclick = function() { // devrait être dans game.js
         modal.style.display = "none";
     }
     window.onclick = function(event) {
@@ -128,7 +129,7 @@
   }
 
   function updatePlayerFrames() { // fonction pour actualiser l'affichage des cadres joueurs
-    var playerFrames = document.querySelectorAll('.playerInfo'); // récupÈre tous les cadres
+    var playerFrames = document.querySelectorAll('.playerInfo'); // récupère tous les cadres
     for (var i=0, max=playerFrames.length; i<max; i++) { // pour chaque cadre
       if (playerFrames[i].id === 'player' + (player+1)) { // si le joueur est le joueur dont c'est le tour
         playerFrames[i].firstChild.style.textDecoration = 'underline'; // on souligne son nom
