@@ -1,7 +1,7 @@
 import test from 'ava';
 var pug = require('pug');
 
-var Client = require('./client.js'); // le fichier contenant les fonctions à tester
+var Client = require('./client.home.js'); // le fichier contenant les fonctions à tester
 
 document.write(pug.renderFile('./views/index.pug', {})); // écrit la page d'accueil dans la simulation du DOM
 
