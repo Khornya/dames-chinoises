@@ -6,6 +6,7 @@ var socket = io(); // crée une instance de io à partir de socket.io
 
 var numPlayers; // nombre de joueurs
 var numColors; // nombre de couleurs
+var level;     // level de l'IA
 var COLORS; // liste des couleurs de chaque joueur
 var gameId = parseInt(document.getElementById("gameId").value,10); // numéro de la partie généré par le serveur
 var role = document.getElementById("role").value; // rôle du joueur - host ou guest
@@ -14,7 +15,8 @@ var role = document.getElementById("role").value; // rôle du joueur - host ou g
 
 if (role === "host") { // si le joueur est host
   numPlayers = parseInt(document.getElementById("numPlayers").value,10); // on récupère le nombre de joueurs
-  numColors = parseInt(document.getElementById("numColors").value,10); // on récupère le nombre de couleurs
+  numColors = parseInt(document.getElementById("numColors").value,10);   // on récupère le nombre de couleurs
+  level = parseInt(document.getElementById("level").value,10);           // on récupère le level de l'IA 
   COLORS = { // on attribue les couleurs à chaque joueur
     2: { // deux joueurs
       1: [[1],[2]], // une couleur
@@ -27,8 +29,8 @@ if (role === "host") { // si le joueur est host
   }[numPlayers][numColors];
   isPlayedByIa = Shared.initArray(numPlayers, 0, false); // on initialise l'array qui permet de savoir quel joueur est joué par l'IA
   for (var i=1; i<=numPlayers; i++) { // pour chaque joueur
-    if (document.getElementById("IA"+i).value!== "") // si il est joué par l'IA
-      isPlayedByIa[i-1] = true; // on attribue le joueur à l'IA
+    if (document.getElementById("IA"+i).value!== ""){ // si il est joué par l'IA
+      isPlayedByIa[i-1] = level;} // on attribue le joueur à l'IA avec le niveau choisi
   }
   socket.emit('create game', { // on emet un message de création de partie au serveur
     numPlayers: numPlayers, // et on envoie les données correspondantes
