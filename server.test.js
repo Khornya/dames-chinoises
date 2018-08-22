@@ -6,7 +6,8 @@ var rewire = require('rewire'); // pour les spies
 var http = require('http'); // pour simuler une requête HTTP
 var PassThrough = require('stream').PassThrough;
 
-var Server = rewire('./server.js'); // le fichier contenant les fonctions à tester
+// var Server = rewire('./server.js'); // le fichier contenant les fonctions à tester
+var Server = rewire('./server.functions.js');
 var Shared = require('./shared.js'); // fonctions utilitaires
 
 var winningBoard = [ // tous les joueurs ont gagné
@@ -793,17 +794,17 @@ test('Calculer le meilleur coup à jouer', t => {
   }
   Server.__set__('move', sinon.spy());
   Server.__set__('sendScore', sinon.spy());
-  Server.makeBestMove(games,1);
+  Server.makeBestMove(io,games,1);
   t.false(Server.__get__('move').called);
   t.false(Server.__get__('sendScore').called);
   Server.__get__('move').resetHistory();
   Server.__get__('sendScore').resetHistory();
-  Server.makeBestMove(games,2);
+  Server.makeBestMove(io,games,2);
   t.false(Server.__get__('move').called);
   t.false(Server.__get__('sendScore').called);
   Server.__get__('move').resetHistory();
   Server.__get__('sendScore').resetHistory();
-  Server.makeBestMove(games,3);
+  Server.makeBestMove(io,games,3);
   t.true(Server.__get__('move').calledOnce);
   t.false(Server.__get__('sendScore').called);
   t.is(games[3]["player"],0);
@@ -814,7 +815,7 @@ test('Calculer le meilleur coup à jouer', t => {
   t.false(games[3]["isIaPlaying"]);
   Server.__set__('move', Server.move);
   Server.__get__('sendScore').resetHistory();
-  t.true(Server.makeBestMove(games,4));
+  t.true(Server.makeBestMove(io,games,4));
   t.true(Server.__get__('sendScore').calledOnce);
   t.true(games[4]["gameOver"]);
 });
@@ -866,6 +867,7 @@ test("Vérifier la validité d'un mouvement", t => {
       gameOver : false
     }
   }
+  emitData = [];
   t.false(Server.validateMove(io, clients, games, 1, socket, [16,12])); // sélectionner pion de l'adversaire
   t.false(Server.validateMove(io, clients, games, 1, socket, [8,12])); // sélectionner case vide
   t.false(Server.validateMove(io, clients, games, 1, socket, [2,14])); // sélectionner un pion
@@ -980,31 +982,25 @@ test('Jouer un tour', t => {
   }
   Server.__set__('validateMove', sinon.spy());
   Server.__set__('makeBestMove', sinon.spy());
-  Server.__set__('play', sinon.spy());
   t.false(Server.play(io, clients, games, 1, socket, [2,14]));
   t.false(Server.__get__('validateMove').called);
   t.false(Server.__get__('makeBestMove').called);
-  t.false(Server.__get__('play').called);
+  Server.__get__('validateMove').resetHistory();
+  Server.__get__('makeBestMove').resetHistory();
   t.false(Server.play(io, clients, games, 2, socket, [8,12]));
   t.true(Server.__get__('validateMove').calledOnce);
   t.false(Server.__get__('makeBestMove').called);
-  t.false(Server.__get__('play').called);
   Server.__get__('validateMove').resetHistory();
   Server.__get__('makeBestMove').resetHistory();
-  Server.__get__('play').resetHistory();
   t.true(Server.play(io, clients, games, 3));
-  // clock.tick(500);
   t.false(Server.__get__('validateMove').called);
-  // t.true(Server.__get__('makeBestMove').calledOnce); // impossible a tester à cause du setTimeout ?
-  t.false(Server.__get__('play').called);
+  t.true(Server.__get__('makeBestMove').calledOnce);
   t.is(games[3]["Time"],500);
   Server.__get__('validateMove').resetHistory();
   Server.__get__('makeBestMove').resetHistory();
-  Server.__get__('play').resetHistory();
   t.true(Server.play(io, clients, games, 4));
   t.false(Server.__get__('validateMove').called);
-  // t.true(Server.__get__('makeBestMove').calledOnce); // impossible a tester à cause du setTimeout ?
-  // t.true(Server.__get__('play').calledOnce); // impossible a tester à cause du setTimeout ?
+  t.true(Server.__get__('makeBestMove').calledOnce);
 });
 
 test('Effectuer le déplacement d\'un pion', t => {
