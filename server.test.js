@@ -29,6 +29,7 @@ var winningBoard = [ // tous les joueurs ont gagné
       [false,false,false,false,false,false,false,false,false,false,false,false,  1  ,false,false,false,false,false,false,false,false,false,false,false,false] ]
 
 Server.__set__('console.log', () => {}); // supprime tout affichage dans la console
+Server.__set__('setTimeout', (f,t) => {f()}); // pour ne pas attendre
 
 var emitData = []; // pour mémoriser les messages émis par le serveur
 
@@ -57,12 +58,6 @@ var clients = {
   23 : {
     number : 0
   }
-}
-
-// var clock = sinon.useFakeTimers();
-var timedOut;
-function setTimeout(f,t) { // pour ne pas attendre
-  timedOut = f;
 }
 
 test('Echapper les caractères HTML', t => {
@@ -816,7 +811,7 @@ test('Calculer le meilleur coup à jouer', t => {
   t.is(games[3]["PLAYERS"][1]["score"],1);
   t.not(games[3]["history"][1],false);
   t.true(games[3]["Time"] >= 500);
-  t.true(games[3]["isIaPlaying"]);
+  t.false(games[3]["isIaPlaying"]);
   Server.__set__('move', Server.move);
   Server.__get__('sendScore').resetHistory();
   t.true(Server.makeBestMove(games,4));
