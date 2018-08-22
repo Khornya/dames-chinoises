@@ -50,6 +50,7 @@ app.post('/game', function(request, response) { // en cas re requête post sur l
     var ordi4 = escapeHtml(request.body.ordi4);
     var ordi5 = escapeHtml(request.body.ordi5);
     var ordi6 = escapeHtml(request.body.ordi6);
+    var level = escapeHtml(request.body.level);
     // on effectue les tests sur les données du formulaire
     var players = [player1,player2,player3,player4,player5,player6];
     var userRegex = new RegExp("^[a-zA-Z0-9_-]{2,10}$");
@@ -93,6 +94,7 @@ app.post('/game', function(request, response) { // en cas re requête post sur l
         ordi4: ordi4,
         ordi5: ordi5,
         ordi6: ordi6,
+        level: level,
         role: "host",
         gameId: gameId
       });
@@ -435,9 +437,9 @@ function getJumps(games, gameId, cells , endCell, oldPath) {
         index_c = 2*pivotCol-col;
         if (contains(oldPath,[index_r, index_c])) continue ; // éviter de tourner rond
         if (isOnGameBoard([index_r, index_c]) && games[gameId]["gameBoard"][index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
-          if(! isMovingBackward(games[gameId]["playedColor"], [row,col], [index_r,index_c]) &&
-               ! sameTraject(games, gameId, oldPath.concat([[row,col], [index_r, index_c]])))
-            games[gameId]["reachableCells"].push([index_r, index_c])
+          if (oldPath[0] && ! (isMovingBackward(games[gameId]["playedColor"], oldPath[0], [index_r,index_c])))
+            if (! sameTraject(games, gameId, oldPath.concat([[row,col], [index_r, index_c]])))
+              games[gameId]["reachableCells"].push([index_r, index_c])
           if (index_r==endCell[0] && index_c==endCell[1]) {
             games[gameId]["path"].push(oldPath.concat([[row,col], [index_r, index_c]]));
           }
@@ -531,8 +533,8 @@ function makeBestMove(games, gameId) {
           count+=1
           x = games[gameId]["reachableCells"][k][0];  y = games[gameId]["reachableCells"][k][1];  // (x, y) cellule accesible a partir de (i, j)
           weight  = 10* (xDirection*(x-i)+yDirection*(y-j));                                // main direction, selon les option xDirection, et yDirection
-          weight += 10* (Math.pow((i-x0), 2) + Math.pow((j-y0), 2)/3);    // max distance from depart
-          weight -= 10* (Math.pow((x-x0), 2) + Math.pow((y-y0), 2)/3);    // min distance de la case accesible à la pointe (ds le meilleur cas val=0
+          weight += 10* (Math.pow((i-x0), 2) + (Math.pow((j-y0), 2)/3));    // max distance from depart
+          weight -= 10* (Math.pow((x-x0), 2) + (Math.pow((y-y0), 2)/3));    // min distance de la case accesible à la pointe (ds le meilleur cas val=0
           // le code suivant pour rester sur la ligne droite entre le home et l'oppossé
           weight += 15* (Math.pow(axis*i+j+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier le spions les plus éloignés
           weight -= 15* (Math.pow(axis*x+y+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier les positions les plus proches
