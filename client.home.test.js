@@ -68,7 +68,7 @@ test('Désactiver / réactiver un joueur joué par l\'IA',t => {
 
 test('Afficher les couleurs pour chaque joueur', t => {
   document.getElementById("mode").options[document.getElementById("mode").selectedIndex].value = "2"; // on sélectionne le mode 2 joueurs
-  document.getElementById('1').checked = true; // on sélectionne le mode 1 couleur
+  document.getElementById('colors1').checked = true; // on sélectionne le mode 1 couleur
   Client.updateColors();
   t.is(document.getElementById('player1colors').innerHTML,"<img class=\"imagetag\" src=\"images/pion1.png\">");
   t.is(document.getElementById('player2colors').innerHTML,"<img class=\"imagetag\" src=\"images/pion2.png\">");
@@ -76,7 +76,7 @@ test('Afficher les couleurs pour chaque joueur', t => {
   t.is(document.getElementById('player4colors').innerHTML,'');
   t.is(document.getElementById('player5colors').innerHTML,'');
   t.is(document.getElementById('player6colors').innerHTML,'');
-  document.getElementById('2').checked = true; // on sélectionne le mode 2 couleurs
+  document.getElementById('colors2').checked = true; // on sélectionne le mode 2 couleurs
   Client.updateColors();
   t.is(document.getElementById('player1colors').innerHTML,"<img class=\"imagetag\" src=\"images/pion1.png\"><img class=\"imagetag\" src=\"images/pion3.png\">");
   t.is(document.getElementById('player2colors').innerHTML,"<img class=\"imagetag\" src=\"images/pion2.png\"><img class=\"imagetag\" src=\"images/pion4.png\">");
@@ -84,7 +84,7 @@ test('Afficher les couleurs pour chaque joueur', t => {
   t.is(document.getElementById('player4colors').innerHTML,'');
   t.is(document.getElementById('player5colors').innerHTML,'');
   t.is(document.getElementById('player6colors').innerHTML,'');
-  document.getElementById('3').checked = true; // on sélectionne le mode 3 couleurs
+  document.getElementById('colors3').checked = true; // on sélectionne le mode 3 couleurs
   Client.updateColors();
   t.is(document.getElementById('player1colors').innerHTML,"<img class=\"imagetag\" src=\"images/pion1.png\"><img class=\"imagetag\" src=\"images/pion3.png\"><img class=\"imagetag\" src=\"images/pion5.png\">");
   t.is(document.getElementById('player2colors').innerHTML,"<img class=\"imagetag\" src=\"images/pion2.png\"><img class=\"imagetag\" src=\"images/pion4.png\"><img class=\"imagetag\" src=\"images/pion6.png\">");
@@ -93,7 +93,7 @@ test('Afficher les couleurs pour chaque joueur', t => {
   t.is(document.getElementById('player5colors').innerHTML,'');
   t.is(document.getElementById('player6colors').innerHTML,'');
   document.getElementById("mode").options[document.getElementById("mode").selectedIndex].value = "3"; // on sélectionne le mode 3 joueurs
-  document.getElementById('2').checked = true; // on sélectionne le mode 2 couleurs
+  document.getElementById('colors2').checked = true; // on sélectionne le mode 2 couleurs
   Client.updateColors();
   t.is(document.getElementById('player1colors').innerHTML,"<img class=\"imagetag\" src=\"images/pion1.png\"><img class=\"imagetag\" src=\"images/pion3.png\">");
   t.is(document.getElementById('player2colors').innerHTML,"<img class=\"imagetag\" src=\"images/pion4.png\"><img class=\"imagetag\" src=\"images/pion5.png\">");
@@ -102,7 +102,7 @@ test('Afficher les couleurs pour chaque joueur', t => {
   t.is(document.getElementById('player5colors').innerHTML,'');
   t.is(document.getElementById('player6colors').innerHTML,'');
   document.getElementById("mode").options[document.getElementById("mode").selectedIndex].value = "4"; // on sélectionne le mode 4 joueurs
-  document.getElementById('1').checked = true; // on sélectionne le mode 1 couleur
+  document.getElementById('colors1').checked = true; // on sélectionne le mode 1 couleur
   Client.updateColors();
   t.is(document.getElementById('player1colors').innerHTML, "<img class=\"imagetag\" src=\"images/pion1.png\">");
   t.is(document.getElementById('player2colors').innerHTML, "<img class=\"imagetag\" src=\"images/pion2.png\">");
@@ -117,9 +117,9 @@ test('Afficher les options en fonctions du nombre de joueurs', t => {
   document.getElementById("mode").options[document.getElementById("mode").selectedIndex].value = "2"; // on sélectionne le mode 2 joueurs
   Client.updateChoices();
   t.is(document.getElementById("color_choice").style.display, '');
-  t.true(document.getElementById(1).checked);
-  t.false(document.getElementById(2).checked);
-  t.false(document.getElementById(3).checked);
+  t.true(document.getElementById('colors1').checked);
+  t.false(document.getElementById('colors2').checked);
+  t.false(document.getElementById('colors3').checked);
   t.is(document.getElementById('player1').style.display, '');
   t.is(document.getElementById('player2').style.display, 'inline');
   t.is(document.getElementById("ordi2").style.display, 'inline');
@@ -139,9 +139,9 @@ test('Afficher les options en fonctions du nombre de joueurs', t => {
   document.getElementById("mode").options[document.getElementById("mode").selectedIndex].value = "3"; // on sélectionne le mode 3 joueurs
   Client.updateChoices();
   t.is(document.getElementById("color_choice").style.display, 'none');
-  t.false(document.getElementById(1).checked);
-  t.true(document.getElementById(2).checked);
-  t.false(document.getElementById(3).checked);
+  t.false(document.getElementById('colors1').checked);
+  t.true(document.getElementById('colors2').checked);
+  t.false(document.getElementById('colors3').checked);
   t.is(document.getElementById('player1').style.display, '');
   t.is(document.getElementById('player2').style.display, 'inline');
   t.is(document.getElementById("ordi2").style.display, 'inline');

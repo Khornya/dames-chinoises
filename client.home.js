@@ -27,7 +27,7 @@
     var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
     document.getElementById("color_choice").style.display = colorChoices[mode]['display']; // on affiche ou on masque le choix du nombre de couleurs
     for (var i=1; i<=3; i++) { // on coche une case par défaut
-      document.getElementById(i).checked = (i === colorChoices[mode].default) ? true : false
+      document.getElementById('colors'+i).checked = (i === colorChoices[mode].default) ? true : false
     }
     var iaLevel = document.getElementById('level_choice');
     var displayIaLevel = false;
@@ -57,7 +57,7 @@
     var list = document.getElementById("mode"); // on récupère le menu déroulant
     var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
     for (var numColors = 1; numColors <= 3; numColors++) {   // on récupère le nombre de couleurs
-      if (document.getElementById(numColors).checked) break;
+      if (document.getElementById('colors'+numColors).checked) break;
     }
     var colors = { // attribution des couleurs à chaque joueur
       1: { // pour un joueur
