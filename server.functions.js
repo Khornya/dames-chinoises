@@ -212,7 +212,7 @@ function makeBestMove(io, games, gameId) {
   if (!games[gameId]["isPlayedByIa"][games[gameId]["player"]]) return;
   if (games[gameId]["gameOver"]) return;       // Isover
   games[gameId]["isIaPlaying"] = true;
-  var i, j, k;             // var pour itération
+  var i, j, k, l;             // var pour itération
   var maxWeight=-99, selectedMove; // meilleur poid et chemin depart arrivé correspondant
   var x, y, x0, y0, weight=0, n;
   var xDirection , yDirection, axis, axis0;         // géométrie
@@ -234,11 +234,23 @@ function makeBestMove(io, games, gameId) {
           count+=1
           x = games[gameId]["reachableCells"][k][0];  y = games[gameId]["reachableCells"][k][1];  // (x, y) cellule accesible a partir de (i, j)
           weight  = 10* (xDirection*(x-i)+yDirection*(y-j));                                // main direction, selon les option xDirection, et yDirection
-          weight += 10* (Math.pow((i-x0), 2) + (Math.pow((j-y0), 2)/3));    // max distance from depart
-          weight -= 10* (Math.pow((x-x0), 2) + (Math.pow((y-y0), 2)/3));    // min distance de la case accesible à la pointe (ds le meilleur cas val=0
-          // le code suivant pour rester sur la ligne droite entre le home et l'oppossé
-          weight += 15* (Math.pow(axis*i+j+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier le spions les plus éloignés
-          weight -= 15* (Math.pow(axis*x+y+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier les positions les plus proches
+          if (games[gameId]["isPlayedByIa"][games[gameId]["player"]]===1)                    // niveau 1
+              weight += Math.floor(Math.random()*1000)%30;                                   // random
+          if (games[gameId]["isPlayedByIa"][games[gameId]["player"]]===2) {                  // sinon autre facteur
+            weight += 10* (Math.pow((i-x0), 2) + (Math.pow((j-y0), 2)/3));    // max distance from depart
+            weight -= 10* (Math.pow((x-x0), 2) + (Math.pow((y-y0), 2)/3));    // min distance de la case accesible à la pointe (ds le meilleur cas val=0
+            // le code suivant pour rester sur la ligne droite entre le home et l'oppossé
+            weight += 15* (Math.pow(axis*i+j+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier le pions les plus éloignés
+            weight -= 15* (Math.pow(axis*x+y+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier les positions les plus proches
+            for (l=0; l<3; l++) {                                                   // derniers pions
+              var a = TRIANGLES_COORDS[games[gameId]["playedColor"]-1][l][0];
+              var b = TRIANGLES_COORDS[games[gameId]["playedColor"]-1][l][1];          
+              if (i===a && j===b){ 
+                weight+= 4*games[gameId]["PLAYERS"][games[gameId]["player"]].score;
+              }
+            }
+          }
+              
           if (weight > maxWeight) {                                                      // compare
             maxWeight = weight;
             selectedMove = [[i, j], x, y];
@@ -274,7 +286,6 @@ function makeBestMove(io, games, gameId) {
   setTimeout(function() { io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] }); }, games[gameId]["Time"]);
   games[gameId]["startCell"] = 0;
 }
-
 function validateMove(io, clients, games, gameId, socket, cell) {
   var player = games[gameId]["player"];
   if (player !== clients[socket.id]["number"] || games[gameId]["isIaPlaying"]) {
