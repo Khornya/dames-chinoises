@@ -13,6 +13,8 @@ app.use(bodyParser.json());
 app.set('views', './views'); // dossier pour les templates html
 app.set('view engine', 'pug'); // configuration du moteur d'affichage des templates
 
+var mysql = require('mysql'); // on requiert le module mysql
+
 app.post('/game', function(request, response) { // en cas re requête post sur la page de jeu
   if (typeof(request.body.inputNewGameForm) !== 'undefined' && typeof(request.body.inputJoinGameForm) !== 'undefined') { // on redirige si aucune variable n'est transmise par formulaire
     response.redirect('/');
@@ -134,7 +136,6 @@ app.get('/score',function(request,response){ // en cas de requête get sur la pa
   }
 });
 
-var mysql = require('mysql'); // on requiert le module mysql
 var dbConfig = { // on configure la base de données
   host     : 'us-cdbr-iron-east-05.cleardb.net',
   user     : 'bb4e923f5faaa9',
@@ -144,27 +145,6 @@ var dbConfig = { // on configure la base de données
 };
 
 var connection; // variable pour la connexion à la base de données
-
-function handleDisconnect() { // fonction pour se reconnecter en cas de déconnexion - https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
-  connection = mysql.createConnection(dbConfig); // Recreate the connection, since
-                                                  // the old one cannot be reused.
-
-  connection.connect(function(error) {              // The server is either down
-    if(error) {                                     // or restarting (takes a while sometimes).
-      console.log('error when connecting to db:', error);
-      setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
-    }                                     // to avoid a hot loop, and to allow our node script to
-  });                                     // process asynchronous requests in the meantime.
-                                          // If you're also serving http, display a 503 error.
-  connection.on('error', function(error) {
-    console.log('db error', error);
-    if(error.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
-      handleDisconnect();                         // lost due to either server restart, or a
-    } else {                                      // connnection idle timeout (the wait_timeout
-      throw error;                                  // server variable configures this)
-    }
-  });
-}
 
 handleDisconnect(); // on invoque la fonction de reconnexion
 
@@ -300,3 +280,23 @@ io.on('connection', function (socket) {
     }
   });
 });
+
+function handleDisconnect() { // fonction pour se reconnecter à la BDD en cas de déconnexion - https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
+  connection = mysql.createConnection(dbConfig); // Recreate the connection, since the old one cannot be reused.
+
+  connection.connect(function(error) { // The server is either down or restarting (takes a while sometimes).
+    if(error) {
+      console.log('error when connecting to db:', error);
+      setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect, to avoid a hot loop, and to allow our node script to process asynchronous requests in the meantime. If you're also serving http, display a 503 error.
+    }
+  });
+
+  connection.on('error', function(error) {
+    console.log('db error', error);
+    if(error.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually lost due to either server restart, or a connnection idle timeout (the wait_timeout server variable configures this)
+      handleDisconnect();
+    } else {
+      throw error;
+    }
+  });
+}
