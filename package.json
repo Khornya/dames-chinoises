@@ -1,19 +1,20 @@
 {
-  "name": "websockets-socket.io",
+  "name": "Hop-hop-hop",
   "version": "1.0.0",
   "engines": {
     "node": "9.11.1",
     "npm": "5.6.0"
   },
-  "description": "",
+  "description": "Dames chinoises en ligne",
   "main": "home.js",
   "scripts": {
     "start": "node server.js",
-    "test": "ava \"*.test.js\" --verbose",
+    "test": "ava \"./tests/*.test.js\" --verbose",
     "watch:test": "npm run test -- --watch",
     "cover": "nyc npm run test",
     "check-coverage": "nyc check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
-    "ui-test": "testcafe chrome tests.js"
+    "selenium": "java -jar ./helpers/selenium-server-standalone-3.5.3.jar",
+    "ui-test": "./node_modules/.bin/wdio ./helpers/wdio.conf.js"
   },
   "ava": {
     "require": [
@@ -39,14 +40,18 @@
     "pug": "^2.0.3",
     "regex": "^0.1.1",
     "rewire": "^4.0.1",
+    "selenium-standalone": "^6.15.1",
     "sinon": "^6.1.4",
     "socket.io": "^1.7.4",
+    "wdio-mocha-framework": "^0.6.2",
+    "webdriverio": "^4.13.2",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
     "ava": "^0.25.0",
     "browser-env": "^3.2.5",
-    "testcafe": "^0.21.1",
-    "window": "^4.2.5"
+    "chromedriver": "^2.41.0",
+    "wdio-chromedriver-service": "^0.1.3",
+    "wdio-selenium-standalone-service": "0.0.10"
   }
 }
