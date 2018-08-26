@@ -1,18 +1,18 @@
 var assert = require('assert');
 
 describe('Bouton "Voir plus / Voir moins"', function() {
-  it('should toggle text', function () {
-    browser.url('http://localhost:8000');
+  it('devrait afficher / masquer le texte', function () {
+    browser.url('http://localhost:8000')
     browser.click('#seeMoreButton')
-    assert.equal(browser.getCssProperty('#seeMoreDiv','display').value, 'block');
+    assert.equal(browser.getCssProperty('#seeMoreDiv','display').value, 'block')
     browser.click('#seeMoreButton')
-    assert.equal(browser.getCssProperty('#seeMoreDiv','display').value, 'none');
+    assert.equal(browser.getCssProperty('#seeMoreDiv','display').value, 'none')
   });
 });
 
 describe('Partie complète 2 joueurs 1 couleur', function() {
   it('devrait jouer une partie', () =>{
-    browser.url('http://localhost:8000');
+    browser.url('http://localhost:8000')
     browser.setValue('#player1', 'TestUser1')
     browser.click('#JOUER')
     var gameId = browser.getAttribute('#gameId', 'value')
@@ -33,152 +33,114 @@ describe('Partie complète 2 joueurs 1 couleur', function() {
       currentTab = (currentTab === '')? 'User2' : ''
     }
   });
+  it('devrait recommencer une partie', () => {
+    browser.click('#restartButton')
+    browser.switchTab('')
+    browser.click('#restartButton')
+    assert.equal(browser.getHTML('#board'), '<section id="board"><div id="line0" class="line"><div class="cell" line="0" column="12"><img alt="pion" src="images/pion1.png"></div></div><div id="line1" class="line"><div class="cell" line="1" column="11"><img alt="pion" src="images/pion1.png"></div><div class="cell" line="1" column="13"><img alt="pion" src="images/pion1.png"></div></div><div id="line2" class="line"><div class="cell" line="2" column="10"><img alt="pion" src="images/pion1.png"></div><div class="cell" line="2" column="12"><img alt="pion" src="images/pion1.png"></div><div class="cell" line="2" column="14"><img alt="pion" src="images/pion1.png"></div></div><div id="line3" class="line"><div class="cell" line="3" column="9"><img alt="pion" src="images/pion1.png"></div><div class="cell" line="3" column="11"><img alt="pion" src="images/pion1.png"></div><div class="cell" line="3" column="13"><img alt="pion" src="images/pion1.png"></div><div class="cell" line="3" column="15"><img alt="pion" src="images/pion1.png"></div></div><div id="line4" class="line"><div class="cell" line="4" column="0"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="4" column="2"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="4" column="4"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="4" column="6"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="4" column="8"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="4" column="10"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="4" column="12"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="4" column="14"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="4" column="16"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="4" column="18"><img alt="pion" src="images/pion5.png"></div><div class="cell" line="4" column="20"><img alt="pion" src="images/pion5.png"></div><div class="cell" line="4" column="22"><img alt="pion" src="images/pion5.png"></div><div class="cell" line="4" column="24"><img alt="pion" src="images/pion5.png"></div></div><div id="line5" class="line"><div class="cell" line="5" column="1"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="5" column="3"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="5" column="5"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="5" column="7"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="5" column="9"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="5" column="11"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="5" column="13"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="5" column="15"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="5" column="17"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="5" column="19"><img alt="pion" src="images/pion5.png"></div><div class="cell" line="5" column="21"><img alt="pion" src="images/pion5.png"></div><div class="cell" line="5" column="23"><img alt="pion" src="images/pion5.png"></div></div><div id="line6" class="line"><div class="cell" line="6" column="2"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="6" column="4"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="6" column="6"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="6" column="8"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="6" column="10"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="6" column="12"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="6" column="14"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="6" column="16"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="6" column="18"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="6" column="20"><img alt="pion" src="images/pion5.png"></div><div class="cell" line="6" column="22"><img alt="pion" src="images/pion5.png"></div></div><div id="line7" class="line"><div class="cell" line="7" column="3"><img alt="pion" src="images/pion3.png"></div><div class="cell" line="7" column="5"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="7" column="7"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="7" column="9"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="7" column="11"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="7" column="13"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="7" column="15"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="7" column="17"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="7" column="19"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="7" column="21"><img alt="pion" src="images/pion5.png"></div></div><div id="line8" class="line"><div class="cell" line="8" column="4"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="8" column="6"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="8" column="8"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="8" column="10"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="8" column="12"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="8" column="14"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="8" column="16"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="8" column="18"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="8" column="20"><img alt="pion" src="images/pion-1.png"></div></div><div id="line9" class="line"><div class="cell" line="9" column="3"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="9" column="5"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="9" column="7"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="9" column="9"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="9" column="11"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="9" column="13"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="9" column="15"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="9" column="17"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="9" column="19"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="9" column="21"><img alt="pion" src="images/pion4.png"></div></div><div id="line10" class="line"><div class="cell" line="10" column="2"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="10" column="4"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="10" column="6"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="10" column="8"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="10" column="10"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="10" column="12"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="10" column="14"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="10" column="16"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="10" column="18"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="10" column="20"><img alt="pion" src="images/pion4.png"></div><div class="cell" line="10" column="22"><img alt="pion" src="images/pion4.png"></div></div><div id="line11" class="line"><div class="cell" line="11" column="1"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="11" column="3"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="11" column="5"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="11" column="7"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="11" column="9"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="11" column="11"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="11" column="13"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="11" column="15"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="11" column="17"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="11" column="19"><img alt="pion" src="images/pion4.png"></div><div class="cell" line="11" column="21"><img alt="pion" src="images/pion4.png"></div><div class="cell" line="11" column="23"><img alt="pion" src="images/pion4.png"></div></div><div id="line12" class="line"><div class="cell" line="12" column="0"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="12" column="2"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="12" column="4"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="12" column="6"><img alt="pion" src="images/pion6.png"></div><div class="cell" line="12" column="8"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="12" column="10"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="12" column="12"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="12" column="14"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="12" column="16"><img alt="pion" src="images/pion-1.png"></div><div class="cell" line="12" column="18"><img alt="pion" src="images/pion4.png"></div><div class="cell" line="12" column="20"><img alt="pion" src="images/pion4.png"></div><div class="cell" line="12" column="22"><img alt="pion" src="images/pion4.png"></div><div class="cell" line="12" column="24"><img alt="pion" src="images/pion4.png"></div></div><div id="line13" class="line"><div class="cell" line="13" column="9"><img alt="pion" src="images/pion2.png"></div><div class="cell" line="13" column="11"><img alt="pion" src="images/pion2.png"></div><div class="cell" line="13" column="13"><img alt="pion" src="images/pion2.png"></div><div class="cell" line="13" column="15"><img alt="pion" src="images/pion2.png"></div></div><div id="line14" class="line"><div class="cell" line="14" column="10"><img alt="pion" src="images/pion2.png"></div><div class="cell" line="14" column="12"><img alt="pion" src="images/pion2.png"></div><div class="cell" line="14" column="14"><img alt="pion" src="images/pion2.png"></div></div><div id="line15" class="line"><div class="cell" line="15" column="11"><img alt="pion" src="images/pion2.png"></div><div class="cell" line="15" column="13"><img alt="pion" src="images/pion2.png"></div></div><div id="line16" class="line"><div class="cell" line="16" column="12"><img alt="pion" src="images/pion2.png"></div></div></section>')
+  });
 });
 
-// import { Selector } from 'testcafe';
-// import { ClientFunction } from 'testcafe';
-// import { Role } from 'testcafe';
-//
-// const getLocation = ClientFunction(() => document.location.href);
-//
-// var gameId;
-//
-// const hostUser = Role('http://localhost:8000', async t => {
-//   await t
-//     .typeText('#player1', 'TestUser1')
-//     .click('#JOUER');
-//     gameId = await Selector('#gameId').value
-// });
-//
-// const guestUser = Role('http://localhost:8000', async t => {
-//   await t
-//     .typeText('#player', 'TestUser2')
-//     .typeText('#roomID', gameId)
-//     .click('#REJOINDRE')
-// });
-//
-// fixture `Page d'accueil`
-//   .page `http://localhost:8000`;
-//
-// test('Bouton "Voir plus / Voir moins"', async t => {
-//   await t
-//       .click('#seeMoreButton')
-//       .expect(Selector('#seeMoreDiv').getStyleProperty('display')).eql('block');
-//   await t
-//       .click('#seeMoreButton')
-//       .expect(Selector('#seeMoreDiv').getStyleProperty('display')).eql('none');
-// });
-//
-// test('Choix du nombre de couleurs', async t => {
-//   await t
-//     .click('input#colors2')
-//     .expect(Selector('#player1colors').childElementCount).eql(2)
-//     .expect(Selector('#player1colors').child(0).getAttribute('src')).eql('images/pion1.png')
-//     .expect(Selector('#player1colors').child(1).getAttribute('src')).eql('images/pion3.png')
-//     .expect(Selector('#player2colors').childElementCount).eql(2)
-//     .expect(Selector('#player2colors').child(0).getAttribute('src')).eql('images/pion2.png')
-//     .expect(Selector('#player2colors').child(1).getAttribute('src')).eql('images/pion4.png')
-//   await t
-//     .click('#colors3')
-//     .expect(Selector('#player1colors').childElementCount).eql(3)
-//     .expect(Selector('#player1colors').child(0).getAttribute('src')).eql('images/pion1.png')
-//     .expect(Selector('#player1colors').child(1).getAttribute('src')).eql('images/pion3.png')
-//     .expect(Selector('#player1colors').child(2).getAttribute('src')).eql('images/pion5.png')
-//     .expect(Selector('#player2colors').childElementCount).eql(3)
-//     .expect(Selector('#player2colors').child(0).getAttribute('src')).eql('images/pion2.png')
-//     .expect(Selector('#player2colors').child(1).getAttribute('src')).eql('images/pion4.png')
-//     .expect(Selector('#player2colors').child(2).getAttribute('src')).eql('images/pion6.png')
-//   await t
-//     .click('#colors1')
-//     .expect(Selector('#player1colors').childElementCount).eql(1)
-//     .expect(Selector('#player1colors').child(0).getAttribute('src')).eql('images/pion1.png')
-//     .expect(Selector('#player2colors').childElementCount).eql(1)
-//     .expect(Selector('#player2colors').child(0).getAttribute('src')).eql('images/pion2.png')
-// });
-//
-// test('Choix du nombre de joueurs', async t => {
-//   await t
-//     // 3 joueurs
-//     .click('#mode')
-//     .click(Selector('#mode').find('option').withText('3 joueurs'))
-//     .expect(Selector('#player1').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player2').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player3').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player4').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player5').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player6').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#color_choice').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player1colors').childElementCount).eql(2)
-//     .expect(Selector('#player1colors').child(0).getAttribute('src')).eql('images/pion1.png')
-//     .expect(Selector('#player1colors').child(1).getAttribute('src')).eql('images/pion3.png')
-//     .expect(Selector('#player2colors').childElementCount).eql(2)
-//     .expect(Selector('#player2colors').child(0).getAttribute('src')).eql('images/pion4.png')
-//     .expect(Selector('#player2colors').child(1).getAttribute('src')).eql('images/pion5.png')
-//     .expect(Selector('#player3colors').childElementCount).eql(2)
-//     .expect(Selector('#player3colors').child(0).getAttribute('src')).eql('images/pion2.png')
-//     .expect(Selector('#player3colors').child(1).getAttribute('src')).eql('images/pion6.png')
-//     // 4 joueurs
-//     .click('#mode')
-//     .click(Selector('#mode').find('option').withText('4 joueurs'))
-//     .expect(Selector('#player1').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player2').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player3').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player4').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player5').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player6').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#color_choice').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player1colors').childElementCount).eql(1)
-//     .expect(Selector('#player1colors').child(0).getAttribute('src')).eql('images/pion1.png')
-//     .expect(Selector('#player2colors').childElementCount).eql(1)
-//     .expect(Selector('#player2colors').child(0).getAttribute('src')).eql('images/pion2.png')
-//     .expect(Selector('#player3colors').childElementCount).eql(1)
-//     .expect(Selector('#player3colors').child(0).getAttribute('src')).eql('images/pion3.png')
-//     .expect(Selector('#player4colors').childElementCount).eql(1)
-//     .expect(Selector('#player4colors').child(0).getAttribute('src')).eql('images/pion4.png')
-//     // 6 joueurs
-//     .click('#mode')
-//     .click(Selector('#mode').find('option').withText('6 joueurs'))
-//     .expect(Selector('#player1').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player2').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player3').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player4').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player5').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player6').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#color_choice').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player1colors').childElementCount).eql(1)
-//     .expect(Selector('#player1colors').child(0).getAttribute('src')).eql('images/pion1.png')
-//     .expect(Selector('#player2colors').childElementCount).eql(1)
-//     .expect(Selector('#player2colors').child(0).getAttribute('src')).eql('images/pion3.png')
-//     .expect(Selector('#player3colors').childElementCount).eql(1)
-//     .expect(Selector('#player3colors').child(0).getAttribute('src')).eql('images/pion6.png')
-//     .expect(Selector('#player4colors').childElementCount).eql(1)
-//     .expect(Selector('#player4colors').child(0).getAttribute('src')).eql('images/pion2.png')
-//     .expect(Selector('#player5colors').childElementCount).eql(1)
-//     .expect(Selector('#player5colors').child(0).getAttribute('src')).eql('images/pion4.png')
-//     .expect(Selector('#player6colors').childElementCount).eql(1)
-//     .expect(Selector('#player6colors').child(0).getAttribute('src')).eql('images/pion5.png')
-//     // 2 joueurs
-//     .click('#mode')
-//     .click(Selector('#mode').find('option').withText('2 joueurs'))
-//     .expect(Selector('#player1').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player2').getStyleProperty('display')).eql('inline-block')
-//     .expect(Selector('#player3').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player4').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player5').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#player6').getStyleProperty('display')).eql('none')
-//     .expect(Selector('#color_choice').getStyleProperty('display')).eql('inline')
-//     .expect(Selector('#player1colors').childElementCount).eql(1)
-//     .expect(Selector('#player1colors').child(0).getAttribute('src')).eql('images/pion1.png')
-//     .expect(Selector('#player2colors').childElementCount).eql(1)
-//     .expect(Selector('#player2colors').child(0).getAttribute('src')).eql('images/pion2.png')
-// });
-//
-// test('Vérifier le formulaire pour créer une partie', async t => {
-//   await t
-//     .typeText(Selector('#player1'),'Joe')
-//     .typeText(Selector('#player2'),'Joe')
-//     .click('#JOUER')
-//     .expect(Selector('#player1colors').nextSibling('.tooltip').getStyleProperty('display')).eql('inline-block')
+describe('Choix du nombre de couleurs', function() {
+  it('devrait changer les couleurs pour chaque joueur', () =>{
+    browser.url('http://localhost:8000');
+    browser.click('#colors2')
+    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"><img class="imagetag" src="images/pion3.png"></span>')
+    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"><img class="imagetag" src="images/pion4.png"></span>')
+    browser.click('#colors3')
+    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"><img class="imagetag" src="images/pion3.png"><img class="imagetag" src="images/pion5.png"></span>')
+    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"><img class="imagetag" src="images/pion4.png"><img class="imagetag" src="images/pion6.png"></span>')
+    browser.click('#colors1')
+    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
+    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"></span>')
+  });
+});
+
+describe('Choix du nombre de joueurs', function() {
+  it('devrait montrer 2 joueurs par défaut', () => {
+    browser.url('http://localhost:8000')
+    assert.equal(browser.isSelected('option[value="2"]'), true)
+    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player3','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player4','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player5','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player6','display').value, 'none')
+    assert.equal(browser.getCssProperty('#color_choice','display').value, 'inline')
+    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
+    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"></span>')
+  });
+  it('devrait changer les champs disponibles', () => {
+    browser.url('http://localhost:8000')
+    var menu = $('#mode')
+    menu.selectByIndex(1)
+    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player3','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player4','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player5','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player6','display').value, 'none')
+    assert.equal(browser.getCssProperty('#color_choice','display').value, 'none')
+    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"><img class="imagetag" src="images/pion3.png"></span>')
+    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion4.png"><img class="imagetag" src="images/pion5.png"></span>')
+    assert.equal(browser.getHTML('#player3colors'), '<span id="player3colors"><img class="imagetag" src="images/pion2.png"><img class="imagetag" src="images/pion6.png"></span>')
+    menu.selectByIndex(2)
+    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player3','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player4','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player5','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player6','display').value, 'none')
+    assert.equal(browser.getCssProperty('#color_choice','display').value, 'none')
+    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
+    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"></span>')
+    assert.equal(browser.getHTML('#player3colors'), '<span id="player3colors"><img class="imagetag" src="images/pion3.png"></span>')
+    assert.equal(browser.getHTML('#player4colors'), '<span id="player4colors"><img class="imagetag" src="images/pion4.png"></span>')
+    menu.selectByIndex(3)
+    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player3','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player4','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player5','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player6','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#color_choice','display').value, 'none')
+    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
+    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion3.png"></span>')
+    assert.equal(browser.getHTML('#player3colors'), '<span id="player3colors"><img class="imagetag" src="images/pion6.png"></span>')
+    assert.equal(browser.getHTML('#player4colors'), '<span id="player4colors"><img class="imagetag" src="images/pion2.png"></span>')
+    assert.equal(browser.getHTML('#player5colors'), '<span id="player5colors"><img class="imagetag" src="images/pion4.png"></span>')
+    assert.equal(browser.getHTML('#player6colors'), '<span id="player6colors"><img class="imagetag" src="images/pion5.png"></span>')
+    menu.selectByIndex(0)
+    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
+    assert.equal(browser.getCssProperty('#player3','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player4','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player5','display').value, 'none')
+    assert.equal(browser.getCssProperty('#player6','display').value, 'none')
+    assert.equal(browser.getCssProperty('#color_choice','display').value, 'inline')
+    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
+    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"></span>')
+  });
+});
+
+describe('Vérifier le formulaire pour créer une partie', function () {
+  it('devrait afficher un tooltip si 2 joueurs ont le même nom', () => {
+    browser.url('http://localhost:8000')
+    browser.setValue('#player1', 'Joe')
+    browser.setValue('#player2', 'Joe')
+    browser.click('#JOUER')
+    assert.equal(browser.getCssProperty('#player1colors + .tooltip', 'display').value, 'inline-block')
+    assert.equal(browser.getCssProperty("//input[@id='player2']", 'display').value, 'inline-block')
+    assert.equal(browser.getText('#player1colors + .tooltip'), 'Ce nom est déjà pris')
+    // assert.equal(browser.getText('#player2colors + .tooltip'), 'Ce nom est déjà pris')
+  });
+});
+
+describe('Vérifier le formulaire pour rejoindre une partie', function () {
+
+});
+
+// .expect(Selector('#player1colors').nextSibling('.tooltip').getStyleProperty('display')).eql('inline-block')
 //     .expect(Selector('#player1colors').nextSibling('.tooltip').innerText).eql("Ce nom est déjà pris")
 //     .expect(Selector('#player2colors').nextSibling('.tooltip').getStyleProperty('display')).eql('inline-block')
 //     .expect(Selector('#player2colors').nextSibling('.tooltip').innerText).eql("Ce nom est déjà pris")
@@ -199,17 +161,25 @@ describe('Partie complète 2 joueurs 1 couleur', function() {
 //     .click('#JOUER')
 //     .expect(getLocation()).contains('localhost:8000/game')
 // });
-//
-// test('Vérifier le formulaire pour rejoindre une partie', async t => {
-//   await t
-//     .navigateTo('http://localhost:8000')
-// });
-//
-// test.only('Jouer une partie à deux', async t => {
-//   await t
-//     .useRole(hostUser)
-//     .useRole(guestUser)
-// });
+
+describe('Partie à 3 IA', function() {
+  it('devrait lancer une partie aevc 3 IA', () => {
+    browser.url('http://localhost:8000')
+    browser.execute(() =>{
+      var checkbox = document.createElement('input');
+      document.getElementById('player1').parentNode.insertBefore(checkbox, document.getElementById('player1colors').nextSibling);
+      checkbox.outerHTML = '<input id="ordi1" type="checkbox" name="ordi1" value="Ordinateur" onclick="Client.disablePlayer(1)" style="display: inline;">'
+    })
+    var menu = $('#mode')
+    menu.selectByIndex(1)
+    browser.click('#ordi1')
+    browser.click('#ordi2')
+    browser.click('#ordi3')
+    browser.click('#JOUER')
+    browser.click('#level2')
+    browser.waitForVisible('#modal', 1000000);
+  });
+});
 
 // var clicks = { // coordonnées des cases à cliquer
 //   2: { // nombre de joueurs
