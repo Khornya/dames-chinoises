@@ -388,3 +388,138 @@ function play (io, clients, games, gameId, socket, cell) {
   games[gameId]["Time"] = 500;
   return true;
 }
+
+
+
+
+// root function pour minmax algorithme 
+// la profondeur choisie est 3 on peut en faire un paramètre pour les tests.
+function negmax(io, games, gameId) {
+  if (!games[gameId]["isPlayedByIa"][games[gameId]["player"]]) return;
+  if (games[gameId]["gameOver"]) return;       // Isover
+  games[gameId]["isIaPlaying"] = 2;
+  var i, j, k;             // var pour itération
+  var depth=3;             // profondeur
+  var selectedMove = [];
+  var bestmove=-9999;
+  var players= [[],[]];
+  var color, score, liste;
+  console.log("I'm the negmax algo, i'm thinking...for player: "+games[gameId]["player"]);
+  // set in players agent color and adverser color // minmax for multiplayer
+  for (var i=0; i< games[gameId]["COLORS"][games[gameId]["player"]].length; i++) {
+    color = games[gameId]["COLORS"][games[gameId]["player"]][i];
+    players[0].push(color);
+    var n =  (color%2 ? color+1 : color-1);
+    players[1].push(n);
+  }
+  for( i = 0; i<17; i++) {                              // parcourt du plateau
+    for (j=0 ; j<25; j++) {
+      if(games[gameId]["COLORS"][games[gameId]["player"]].indexOf(games[gameId]["gameBoard"][i][j])>-1) {       // si pion de l'IA
+        color =games[gameId]["gameBoard"][i][j];                        // fait semblant qu'on va le déplacer
+        games[gameId]["playedColor"]= color
+        games[gameId]["gameBoard"][i][j]=-1;                           //  (i, j) cellule depart
+        getPath(games, gameId, [i,j], [-1,-1]);           // set in reachableCells all reachable cell
+        liste = games[gameId]["reachableCells"];          // créer une copie //l'utilisation des variables globales avec récursion change leur valeur 
+        for(k=0; k< liste.length; k++){    // pour chaque coup possible simule le mouvement
+          x = liste[k][0];  y = liste[k][1];            // (x, y) cellule accesible a partir de (i, j)
+          games[gameId]["gameBoard"][x][y] = color;                    // simule le mouvement
+          score = alphabeta(io, games, gameId, depth-1, -10000, 10000, 1, players);
+          games[gameId]["gameBoard"][x][y] = -1                                 // anulle le mouvement
+          if (score >= bestmove){
+            bestmove = score ;
+            selectedMove = [[i, j] , x, y];
+          }
+        }
+        games[gameId]["gameBoard"][i][j]= color;    // annuler le coup
+         
+      }
+    }
+  }
+  games[gameId]["playedColor"] = games[gameId]["gameBoard"][selectedMove[0][0]][selectedMove[0][1]];              // ici on valide le meilleur choix
+  games[gameId]["gameBoard"][selectedMove[0][0]][selectedMove[0][1]]=-1;
+  path = getPath(games, gameId, selectedMove[0], [selectedMove[1],selectedMove[2]]);
+  games[gameId]["history"][games[gameId]["player"]] = path;
+  games[gameId]["Time"] += 500*(path.length-1);
+  move(games, gameId, path, games[gameId]["playedColor"]);
+  setTimeout(function() {
+    io.sockets.in(gameId).emit('move', { path : path, playedColor: games[gameId]["playedColor"] });
+    games[gameId]["isIaPlaying"] = false;
+  }, games[gameId]["Time"]);
+  games[gameId]["PLAYERS"][games[gameId]["player"]].score += 1;
+  if (hasWon(games, gameId, games[gameId]["playedColor"])) {
+    games[gameId]["gameOver"] = true;
+    setTimeout(function() {
+      io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"], score: games[gameId]["PLAYERS"][games[gameId]["player"]].score });
+    }, games[gameId]["Time"]);
+    sendScore(games, gameId, games[gameId]["PLAYERS"][games[gameId]["player"]], (error,data) => { // factoriser
+      if (error) console.log('Echec de l\'envoi des scores à la BDD');
+      else console.log('Envoi des scores à la BDD :', data);
+    });
+    return true; // pourquoi pas juste return ?
+  }
+  games[gameId]["player"] = (games[gameId]["player"]+1) % games[gameId]["numPlayers"];
+  setTimeout(function() { io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] }); }, games[gameId]["Time"]);
+  games[gameId]["startCell"] = 0;
+}
+
+
+
+// function negmax avec alpha beta coupure
+function alphabeta(io, games, gameId, depth, alpha, beta, isMin, players) {
+  var i, j, k;             // var pour itération
+  var x, y;
+  var color, score=-10000;
+  var liste;
+  if (games[gameId]["gameOver"] || depth == 0)
+    return (isMin%2? 1: -1) * evaluate(games[gameId]["gameBoard"], players);
+  for( i = 0; i<17; i++) {                    // parcourt du plateau
+    for (j=0 ; j<25; j++) {
+      if(players[isMin].indexOf(games[gameId]["gameBoard"][i][j])>-1) {  // si pion du joueur
+        color=games[gameId]["gameBoard"][i][j];                          // on crée des copie car les variables globale change de valeur avec récursion
+        games[gameId]["playedColor"]=color;  
+        games[gameId]["gameBoard"][i][j]=-1;
+        getPath(games, gameId, [i,j], [-1,-1]);           // set in reachableCells all reachable cell
+        liste = games[gameId]["reachableCells"];          // créer une copie
+        for(k=0; k< liste.length; k++){    // pour chaque coup possible simule le mouvement ;
+          x = liste[k][0];  y = liste[k][1];            // (x, y) cellule accesible a partir de (i, j)
+          games[gameId]["gameBoard"][x][y] = color;                    // simule le mouvement     
+          score = Math.max(score, -alphabeta(io, games, gameId, depth - 1, -beta, -alpha, +!isMin, players)); 
+          games[gameId]["gameBoard"][x][y] = -1;   // annuler le coup;
+          alpha = Math.max(alpha, score)
+          // purning
+          if (alpha >= beta)
+            break;
+        }
+        games[gameId]["gameBoard"][i][j] = color; // rétablir le pion a sa position initaile
+      }
+    }
+  }
+  return alpha;
+} 
+
+
+// fonction d'evaluation; = ∑ di - ∑ dj // di est la distance d'un pion de l'adverasaire du trangle opposée, 
+// di est la distance d'un pion de l'agent du trangle opposée,
+// une situation avantageuse si les distances de l'agent sont les plus petites  et de l'adversaire les plus grandes 
+function evaluate(M, players) {
+  var i, j, n, color;
+  var value=0;
+  for( i = 0; i<17; i++) {                  
+    for (j=0 ; j<25; j++) {
+      if(players[0].indexOf(M[i][j])>-1) {
+        color = M[i][j];
+        n =  (color%2 ? color : color-2);
+        x0= TRIANGLES_COORDS[n][0][0] ;y0= TRIANGLES_COORDS[n][0][1]  // (x0, y0) pointe du triangle opposé // on souhaite diminuer au max la distance
+        value -= (Math.pow((i-x0), 2) + (Math.pow((j-y0), 2)/3));  // on souhaite diminuer au max la distance
+      }
+      if(players[1].indexOf(M[i][j])>-1) {
+        color = M[i][j];
+        n =  (color%2 ? color : color-2);
+        x0= TRIANGLES_COORDS[n][0][0] ;y0= TRIANGLES_COORDS[n][0][1];               
+        value += Math.pow((i-x0), 2) + (Math.pow((j-y0), 2)/3);
+      } 
+    }
+  }
+  return value;
+} 
+ 
