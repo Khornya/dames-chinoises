@@ -1,4 +1,4 @@
-13:10:36.258 INFO [GridLauncherV3.launch] - Selenium build info: version: '3.12.0', revision: '7c6e0b3'
-13:10:36.260 INFO [GridLauncherV3$1.launch] - Launching a standalone Selenium Server on port 4444
-2018-08-26 13:10:37.332:INFO::main: Logging initialized @1666ms to org.seleniumhq.jetty9.util.log.StdErrLog
-13:10:38.241 ERROR [SeleniumServer.boot] - Port 4444 is busy, please choose a free port and specify it using -port option
+16:05:04.792 INFO [GridLauncherV3.launch] - Selenium build info: version: '3.12.0', revision: '7c6e0b3'
+16:05:04.795 INFO [GridLauncherV3$1.launch] - Launching a standalone Selenium Server on port 4444
+2018-08-26 16:05:05.643:INFO::main: Logging initialized @2815ms to org.seleniumhq.jetty9.util.log.StdErrLog
+16:05:06.815 ERROR [SeleniumServer.boot] - Port 4444 is busy, please choose a free port and specify it using -port option

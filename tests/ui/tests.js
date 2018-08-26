@@ -129,6 +129,7 @@ describe('Vérifier le formulaire pour créer une partie', function () {
     browser.setValue('#player1', 'Joe')
     browser.setValue('#player2', 'Joe')
     browser.click('#JOUER')
+    browser.debug()
     assert.equal(browser.getCssProperty('#player1colors + .tooltip', 'display').value, 'inline-block')
     assert.equal(browser.getCssProperty("//input[@id='player2']", 'display').value, 'inline-block')
     assert.equal(browser.getText('#player1colors + .tooltip'), 'Ce nom est déjà pris')
@@ -162,21 +163,27 @@ describe('Vérifier le formulaire pour rejoindre une partie', function () {
 //     .expect(getLocation()).contains('localhost:8000/game')
 // });
 
-describe('Partie à 3 IA', function() {
+describe.only('Partie à 3 IA', function() {
   it('devrait lancer une partie aevc 3 IA', () => {
     browser.url('http://localhost:8000')
-    browser.execute(() =>{
+    browser.execute(() => {
       var checkbox = document.createElement('input');
       document.getElementById('player1').parentNode.insertBefore(checkbox, document.getElementById('player1colors').nextSibling);
       checkbox.outerHTML = '<input id="ordi1" type="checkbox" name="ordi1" value="Ordinateur" onclick="Client.disablePlayer(1)" style="display: inline;">'
+      var level = document.createElement('input');
+      var label = document.createElement('label');
+      document.getElementById('level_choice').appendChild(level);
+      document.getElementById('level_choice').appendChild(label);
+      level.outerHTML = '<input id="level3" type="radio" name="level" value="3" onclick="">';
+      label.outerHTML = '<label for="level3" onclick="">Test</label>';
     })
     var menu = $('#mode')
     menu.selectByIndex(1)
     browser.click('#ordi1')
     browser.click('#ordi2')
     browser.click('#ordi3')
+    browser.click('#level3')
     browser.click('#JOUER')
-    browser.click('#level2')
     browser.waitForVisible('#modal', 1000000);
   });
 });
