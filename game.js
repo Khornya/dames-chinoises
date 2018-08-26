@@ -31,13 +31,13 @@ if (role === "host") { // si le joueur est host
   if (level === 3) {
     isPlayedByIa = {
       2: { // deux joueurs
-        1: [,], // une couleur
-        2: [,], // deux couleurs
-        3: [,] // trois couleurs
+        1: [1,2], // une couleur
+        2: [1,2], // deux couleurs
+        3: [1,2] // trois couleurs
       },
-      3: { 2: [,,] }, // trois joueurs deux couleurs
-      4: { 1: [,,,] }, // quatre joueurs une couleur
-      6: { 1: [,,,,,] } // six joueurs une couleur
+      3: { 2: [2,2,2] }, // trois joueurs deux couleurs
+      4: { 1: [1,2,1,2] }, // quatre joueurs une couleur
+      6: { 1: [2,2,2,2,2,2] } // six joueurs une couleur
     }[numPlayers][numColors];
   }
   else {
