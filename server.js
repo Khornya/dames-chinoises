@@ -136,11 +136,17 @@ app.get('/score',function(request,response){ // en cas de requête get sur la pa
   }
 });
 
-var dbConfig = { // on configure la base de données
+var dbConfig = (process.env.NODE_ENV === 'production') ? { // on configure la base de données
   host     : 'us-cdbr-iron-east-05.cleardb.net',
   user     : 'bb4e923f5faaa9',
   password : '382b4542',
   database : 'heroku_703605cd7a769b9',
+  dateStrings: 'date'
+} : {
+  host: 'localhost',
+  user: 'hophophop',
+  password: 'hophophop',
+  database : 'dames_chinoises',
   dateStrings: 'date'
 };
 
