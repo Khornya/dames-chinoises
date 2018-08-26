@@ -124,7 +124,7 @@
           return true;
         }
         else { // sinon pour le formulaire de création on vérifie si le champs et vide, que le nom n'est pas pris et que je joueur va jouer
-          if (player.value === '' || (id[6] !== '1' && document.getElementById("ordi"+id[6]).checked) || // A ENLEVER JOUEUR 1 PAS IA
+          if (player.value === '' || (id[6] !== '1' && document.getElementById("ordi"+id[6]).checked) || (id[6] === '1' && typeof(document.getElementById("ordi"+id[6])) !== undefined) || 
              ((player === player1 || player.value != player1.value) &&
               (player === player2 || player.value != player2.value || player2.style.display == 'none') &&
               (player === player3 || player.value != player3.value || player3.style.display == 'none') &&

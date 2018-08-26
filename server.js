@@ -206,7 +206,7 @@ io.on('connection', function (socket) {
       number: 0,
       name: data["player"]
     };
-    if (games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) { // partie complète
+    if (games[data["gameId"]]["numHumanPlayers"] === 0 || games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) { // partie complète
       var PLAYERS = games[data["gameId"]]["PLAYERS"];
       for (i=2; i<=games[data["gameId"]]["numPlayers"]; i++) {
         if (!games[data["gameId"]]["isPlayedByIa"][i-1]) {
@@ -219,6 +219,9 @@ io.on('connection', function (socket) {
       delete games[data["gameId"]]["PLAYERS"];
       Server.init(games, data["gameId"]);
       io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]);
+      if (numHumanPlayers === 0) {
+        Server.play(io, clients, games, data["gameId"])
+      }
     }
   });
   socket.on('join game', function (data) {
