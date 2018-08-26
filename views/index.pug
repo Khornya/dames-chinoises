@@ -52,37 +52,37 @@ html
             div
               input#player1(type="text" name="player1" placeholder="Joueur 1")
               span#player1colors
-              span.tooltip
+              span#player1tooltip.tooltip
             div
               input#player2(type="text" name="player2" placeholder="Joueur 2")
               span#player2colors
               input#ordi2(type="checkbox" name="ordi2" value="Ordinateur" onclick="Client.disablePlayer(2)")
               label(for="ordi2" onclick="Client.disablePlayer(2)") IA
-              span.tooltip
+              span#player2tooltip.tooltip
             div
               input#player3(type="text" name="player3" placeholder="Joueur 3")
               span#player3colors
               input#ordi3(type="checkbox" name="ordi3" value="Ordinateur" onclick="Client.disablePlayer(3)")
               label(for="ordi3" onclick="Client.disablePlayer(3)") IA
-              span.tooltip
+              span#player3tooltip.tooltip
             div
               input#player4(type="text" name="player4" placeholder="Joueur 4")
               span#player4colors
               input#ordi4(type="checkbox" name="ordi4" value="Ordinateur" onclick="Client.disablePlayer(4)")
               label(for="ordi4" onclick="Client.disablePlayer(4)") IA
-              span.tooltip
+              span#player4tooltip.tooltip
             div
               input#player5(type="text" name="player5" placeholder="Joueur 5")
               span#player5colors
               input#ordi5(type="checkbox" name="ordi5" value="Ordinateur" onclick="Client.disablePlayer(5)")
               label(for="ordi5" onclick="Client.disablePlayer(5)") IA
-              span.tooltip
+              span#player5tooltip.tooltip
             div
               input#player6(type="text" name="player6" placeholder="Joueur 6")
               span#player6colors
               input#ordi6(type="checkbox" name="ordi6" value="Ordinateur" onclick="Client.disablePlayer(6)")
               label(for="ordi6" onclick="Client.disablePlayer(6)") IA
-              span.tooltip
+              span#player6tooltip.tooltip
             span#color_choice
               | Nombre de couleurs :
               input#colors1(type="radio" name="numColors" value="1" onclick="Client.updateColors()" checked="")
@@ -104,11 +104,11 @@ html
           form#joinGameForm(name="joinGameForm" action="game" target="_self" method="POST")
             div
               input#player(type="text" name="player" placeholder="Nom")
-              span.tooltip
+              span#playertooltip.tooltip
               br
             div
               input#roomID(type="text" name="roomID" placeholder="N° de partie")
-              span.tooltip
+              span#roomIDtooltip.tooltip
               br
             input#inputJoinGameForm(style="display:none" name="inputJoinGameForm" value="inputJoinGameForm")
             input#REJOINDRE(type="submit" name="REJOINDRE" value="REJOINDRE")

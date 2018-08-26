@@ -48,7 +48,8 @@ exports.config = {
         'chromeOptions': {
             'args': ['disable-infobars']
         }
-    }],
+    }
+  ],
     //
     // ===================
     // Test Configurations
