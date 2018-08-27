@@ -161,7 +161,7 @@ server.listen(PORT);
 app.get('/', function(request, response) {
   connection.query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 10', function(error, rows, fields) {
     if (error) throw error;
-    response.render('index', {
+    response.render('home', {
       score1: rows[0],
       score2: rows[1],
       score3: rows[2],
