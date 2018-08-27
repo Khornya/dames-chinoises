@@ -5,7 +5,7 @@ exports.config = {
   key: '1Bqxw29yPnwHEvH4udTd',
 
   specs: [
-      './tests/ui/*.js'
+      './tests/ui/home.test.js'
   ],
 
   framework: 'mocha',
@@ -20,17 +20,30 @@ exports.config = {
   },
 
   capabilities: [{
-    browser: 'chrome',
+    browserName: 'chrome',
+    'browser_version': '64.0',
     'browserstack.local': true,
+    'browserstack.console': 'verbose'
   },{
-    browser: 'firefox',
+    browserName: 'firefox',
+    'browser_version': '58.0',
     'browserstack.local': true,
+    'browserstack.console': 'verbose'
   },{
-    browser: 'internet explorer',
+    browserName: 'internet explorer',
+    'browser_version': '11.0',
     'browserstack.local': true,
+    'browserstack.console': 'verbose'
   },{
-    browser: 'safari',
+    browserName: 'safari',
+    'browser_version': '11.0',
     'browserstack.local': true,
+    'browserstack.console': 'verbose'
+  },{
+    browserName: 'edge',
+    'browser_version': '16.0',
+    'browserstack.local': true,
+    'browserstack.console': 'verbose'
   }],
 
   maxInstances: 10,

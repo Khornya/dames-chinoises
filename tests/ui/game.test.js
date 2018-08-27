@@ -12,16 +12,6 @@ function setTestLevel() {
   label.outerHTML = '<label for="level0" onclick="">Test</label>';
 }
 
-describe('Bouton "Voir plus / Voir moins"', function() {
-  it('devrait afficher / masquer le texte', function () {
-    browser.url('http://localhost:8000')
-    browser.click('#seeMoreButton')
-    assert.equal(browser.getCssProperty('#seeMoreDiv','display').value, 'block')
-    browser.click('#seeMoreButton')
-    assert.equal(browser.getCssProperty('#seeMoreDiv','display').value, 'none')
-  });
-});
-
 describe('Partie complète 2 joueurs 1 couleur', function() {
   it('devrait jouer une partie', () =>{
     browser.url('http://localhost:8000')
@@ -53,149 +43,8 @@ describe('Partie complète 2 joueurs 1 couleur', function() {
   });
 });
 
-describe('Choix du nombre de couleurs', function() {
-  it('devrait changer les couleurs pour chaque joueur', () =>{
-    browser.url('http://localhost:8000');
-    browser.click('#colors2')
-    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"><img class="imagetag" src="images/pion3.png"></span>')
-    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"><img class="imagetag" src="images/pion4.png"></span>')
-    browser.click('#colors3')
-    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"><img class="imagetag" src="images/pion3.png"><img class="imagetag" src="images/pion5.png"></span>')
-    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"><img class="imagetag" src="images/pion4.png"><img class="imagetag" src="images/pion6.png"></span>')
-    browser.click('#colors1')
-    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
-    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"></span>')
-  });
-});
-
-describe('Choix du nombre de joueurs', function() {
-  it('devrait montrer 2 joueurs par défaut', () => {
-    browser.url('http://localhost:8000')
-    assert.equal(browser.isSelected('option[value="2"]'), true)
-    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player3','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player4','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player5','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player6','display').value, 'none')
-    assert.equal(browser.getCssProperty('#color_choice','display').value, 'inline')
-    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
-    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"></span>')
-  });
-  it('devrait changer les champs disponibles', () => {
-    browser.url('http://localhost:8000')
-    var menu = $('#mode')
-    menu.selectByIndex(1)
-    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player3','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player4','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player5','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player6','display').value, 'none')
-    assert.equal(browser.getCssProperty('#color_choice','display').value, 'none')
-    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"><img class="imagetag" src="images/pion3.png"></span>')
-    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion4.png"><img class="imagetag" src="images/pion5.png"></span>')
-    assert.equal(browser.getHTML('#player3colors'), '<span id="player3colors"><img class="imagetag" src="images/pion2.png"><img class="imagetag" src="images/pion6.png"></span>')
-    menu.selectByIndex(2)
-    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player3','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player4','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player5','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player6','display').value, 'none')
-    assert.equal(browser.getCssProperty('#color_choice','display').value, 'none')
-    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
-    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"></span>')
-    assert.equal(browser.getHTML('#player3colors'), '<span id="player3colors"><img class="imagetag" src="images/pion3.png"></span>')
-    assert.equal(browser.getHTML('#player4colors'), '<span id="player4colors"><img class="imagetag" src="images/pion4.png"></span>')
-    menu.selectByIndex(3)
-    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player3','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player4','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player5','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player6','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#color_choice','display').value, 'none')
-    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
-    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion3.png"></span>')
-    assert.equal(browser.getHTML('#player3colors'), '<span id="player3colors"><img class="imagetag" src="images/pion6.png"></span>')
-    assert.equal(browser.getHTML('#player4colors'), '<span id="player4colors"><img class="imagetag" src="images/pion2.png"></span>')
-    assert.equal(browser.getHTML('#player5colors'), '<span id="player5colors"><img class="imagetag" src="images/pion4.png"></span>')
-    assert.equal(browser.getHTML('#player6colors'), '<span id="player6colors"><img class="imagetag" src="images/pion5.png"></span>')
-    menu.selectByIndex(0)
-    assert.equal(browser.getCssProperty('#player1','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player2','display').value, 'inline-block')
-    assert.equal(browser.getCssProperty('#player3','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player4','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player5','display').value, 'none')
-    assert.equal(browser.getCssProperty('#player6','display').value, 'none')
-    assert.equal(browser.getCssProperty('#color_choice','display').value, 'inline')
-    assert.equal(browser.getHTML('#player1colors'), '<span id="player1colors"><img class="imagetag" src="images/pion1.png"></span>')
-    assert.equal(browser.getHTML('#player2colors'), '<span id="player2colors"><img class="imagetag" src="images/pion2.png"></span>')
-  });
-});
-
-describe('Vérifier le formulaire pour créer une partie', function () {
-  it('devrait afficher un tooltip si 2 joueurs ont le même nom', () => {
-    browser.url('http://localhost:8000')
-    var menu = $('#mode')
-    browser.setValue('#player1', 'Joe')
-    browser.setValue('#player2', 'Joe')
-    browser.click('#JOUER')
-    assert.equal(browser.getUrl(), 'http://localhost:8000/')
-    assert.equal(browser.getCssProperty('#player2tooltip', 'display').value, 'inline-block')
-    assert.equal(browser.getText('#player2tooltip'), 'Ce nom est déjà pris')
-    menu.selectByIndex(1)
-    browser.setValue('#player3', 'Joe')
-    browser.click('#JOUER')
-    assert.equal(browser.getUrl(), 'http://localhost:8000/')
-    assert.equal(browser.getCssProperty('#player3tooltip', 'display').value, 'inline-block')
-    assert.equal(browser.getText('#player3tooltip'), 'Ce nom est déjà pris')
-    browser.setValue('#player2', 'John')
-    menu.selectByIndex(0)
-    browser.click('#JOUER')
-    assert.equal(browser.getUrl(), 'http://localhost:8000/game')
-    assert.equal(browser.getValue('#role'),'host')
-    // problème : affiche 'ce nom est déjà pris' sur la page de jeu
-  });
-  it('devrait afficher un tooltip si un nom ne remplit pas les critères', () => {
-    browser.url('http://localhost:8000')
-    var menu = $('#mode')
-    browser.setValue('#player1', 'Joe-Jack-John')
-    browser.click('#JOUER')
-    assert.equal(browser.getUrl(), 'http://localhost:8000/')
-    assert.equal(browser.getCssProperty('#player1tooltip', 'display').value, 'inline-block')
-    assert.equal(browser.getText('#player1tooltip'), 'Le nom doit comprendre :\n- 2 à 10 caractères alphanumériques\nou des tirets')
-    browser.setValue('#player1', 'Joe')
-    browser.click('#JOUER')
-    assert.equal(browser.getUrl(), 'http://localhost:8000/game')
-    assert.equal(browser.getValue('#role'),'host')
-  });
-});
-
-describe('Vérifier le formulaire pour rejoindre une partie', function () {
-  it('devrait afficher un tooltip si le nom ne remplit pas les critères', () => {
-    browser.url('http://localhost:8000')
-    browser.setValue('#player', 'Joe-Jack-John')
-    browser.click('#REJOINDRE')
-    assert.equal(browser.getUrl(), 'http://localhost:8000/')
-    assert.equal(browser.getCssProperty('#playertooltip', 'display').value, 'inline-block')
-    assert.equal(browser.getText('#playertooltip'), 'Le nom doit comprendre :\n- 2 à 10 caractères alphanumériques\nou des tirets')
-    browser.setValue('#player', 'Joe')
-    assert.equal(browser.getCssProperty('#playertooltip', 'display').value, 'none')
-  });
-  it('devrait afficher un tooltip si le numéro de partie ne remplit pas les critères', () => {
-    browser.url('http://localhost:8000')
-    browser.setValue('#roomID', '999999')
-    browser.click('#REJOINDRE')
-    assert.equal(browser.getUrl(), 'http://localhost:8000/')
-    assert.equal(browser.getCssProperty('#roomIDtooltip', 'display').value, 'inline-block')
-    assert.equal(browser.getText('#roomIDtooltip'), 'Le game ID doit être compris entre 0 et 100000')
-  });
-});
-
-describe('Parties entre IA', function() {
-  it.only('devrait lancer une partie avec 2 IA 1 couleur', () => {
+describe.skip('Parties entre IA', function() {
+  it('devrait lancer une partie avec 2 IA 1 couleur', () => {
     browser.url('http://localhost:8000')
     browser.execute(setTestLevel)
     browser.click('#ordi1')
@@ -266,11 +115,3 @@ describe('Parties entre IA', function() {
     browser.waitForVisible('#modal', 1000000);
   });
 });
-
-// var clicks = { // coordonnées des cases à cliquer
-//   2: { // nombre de joueurs
-//     1: // nombre de couleurs
-//       [[3,13],[4,14],[14,12],[12,14],[3,15],[5,13],[13,15],[11,13],[2,10],[6,14],[14,10],[10,14],[1,11],[7,13],[13,13],[11,11],[7,13],[8,14],[16,12],[10,10],[5,13],[5,11],[11,13],[1,11],[3,9],[9,11],[15,13],[3,9],[0,12],[6,10],[13,9],[3,15],[6,10],[7,11],[10,10],[0,12],[2,12],[14,12],[14,14],[2,10],[2,14],[12,12],[12,14],[2,12],[3,11],[4,10],[13,11],[3,13],[1,13],[9,13],[10,14],[2,14],[9,13],[10,12],[11,11],[1,13],[9,11],[15,13],[15,11],[3,11]],
-//     2: [[3,13],[4,14],[14,12],[12,14],[3,15],[5,13],[13,15],[11,13],[2,10],[6,14],[14,10],[10,14],[1,11],[7,13],[13,13],[11,11],[7,13],[8,14],[16,12],[10,10],[5,13],[5,11],[11,13],[1,11],[3,9],[9,11],[15,13],[3,9],[0,12],[6,10],[13,9],[3,15],[6,10],[7,11],[10,10],[0,12],[2,12],[14,12],[14,14],[2,10],[2,14],[12,12],[12,14],[2,12],[3,11],[4,10],[13,11],[3,13],[1,13],[9,13],[10,14],[2,14],[9,13],[10,12],[11,11],[1,13],[9,11],[15,13],[15,11],[3,11],[4,4],[6,6],[10,22],[10,18],[4,0],[8,16],[12,24],[12,8],[6,4],[6,8],[11,19],[7,7],[4,2],[6,4],[11,23],[9,13],[5,3],[9,15],[11,21],[11,17],[6,6],[12,24],[12,18],[10,8],[6,2],[10,14],[9,21],[5,9],[6,4],[6,16],[9,13],[9,9],[5,1],[9,21],[10,8],[6,4],[9,15],[11,21],[12,8],[6,2],[4,6],[12,18],[10,20],[4,6],[10,14],[10,22],[5,9],[5,1],[6,16],[10,20],[12,20],[12,16],[7,3],[7,5],[10,18],[10,6],[7,5],[9,15],[12,16],[8,4],[4,10],[12,10],[12,22],[4,2],[8,16],[8,20],[5,1],[4,0],[5,5],[9,17],[7,7],[5,1],[6,14],[6,16],[10,6],[6,6],[4,14],[10,8],[9,9],[5,5],[9,15],[9,19],[11,17],[11,15],[9,21],[11,23],[11,15],[7,3],[9,17],[11,19],[6,6],[4,4],[6,8],[7,9],[6,2],[5,3],[7,9],[13,15],[8,4],[6,2],[5,11],[13,11]]
-//   }
-// }
