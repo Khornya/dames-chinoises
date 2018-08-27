@@ -32,8 +32,8 @@
     return div;
   }
 
-  function restart(option) { // fonction pour redémarrer une partie
-    if (option) { // si une partie est déjà en cours
+  function restart(isGameRunning) { // fonction pour redémarrer une partie
+    if (isGameRunning) { // si une partie est déjà en cours
       document.getElementById('modal').style.display = "none"; // on cache le modal
       socket.emit('restart request'); // on envoie un message "restart request" au serveur
     }

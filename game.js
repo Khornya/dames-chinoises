@@ -159,7 +159,7 @@ else if (role === "guest"){ // si le joueur est invité
         PLAYERS[i].createFrame();
       }
       player=0; // on inialise le tour au joueur 1
-      Client.restart(0); // on démarre la partie
+      Client.restart(false); // on démarre la partie
     });
     socket.on('player disconnecting', function (data) { // si on recoit un message "player disconnecting"
       console.log('player disconnecting :', data); // permet de vérifier les données envoyées sur la console

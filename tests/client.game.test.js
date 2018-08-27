@@ -51,12 +51,12 @@ test('Redémarrer une partie', t => {
   document.write(pug.renderFile('./views/game.pug', {})); // écrit la page de jeu dans la simulation du DOM
   document.getElementById('leftPanel').innerHTML = '<div class="playerInfo" id="player1"><p class="playerName" style="text-decoration: none;">Joueur 1</p><span class="playerColors"><img class="imagetag" alt="color" src="images/pion1.png"></span></div><div class="playerInfo" id="player2"><p class="playerName" style="text-decoration: underline;">Ordinateur</p><span class="playerColors"><img class="imagetag" alt="color" src="images/pion2.png"></span></div>'
   Client.__set__('player', 0);
-  Client.restart(0);
+  Client.restart(false);
   t.is(document.querySelectorAll('.playerInfo')[0].firstChild.style.textDecoration,'underline');
   t.is(document.querySelectorAll('.playerInfo')[1].firstChild.style.textDecoration,'none');
   document.getElementById('leftPanel').innerHTML = '<div class="playerInfo" id="player1"><p class="playerName" style="text-decoration: none;">Joueur 1</p><span class="playerColors"><img class="imagetag" alt="color" src="images/pion1.png"></span></div><div class="playerInfo" id="player2"><p class="playerName" style="text-decoration: underline;">Ordinateur</p><span class="playerColors"><img class="imagetag" alt="color" src="images/pion2.png"></span></div>';
   document.getElementById('modal').style.display = 'block';
-  Client.restart(1);
+  Client.restart(true);
   t.is(document.getElementById('modal').style.display, 'none');
   t.deepEqual(emitData, [['restart request', undefined]]);
 });
