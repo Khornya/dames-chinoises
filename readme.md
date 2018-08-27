@@ -16,4 +16,4 @@ Pour lancer les tests d'interface utilisateur :
 - dans un 2nd terminal, lancer le serveur Selenium avec `npm run selenium`
 - dans un 3e terminal lancer les tests avec `npm run ui-test`
 
-![picture](images/Browserstack-logo.svg)
+[![picture](images/Browserstack-logo.svg)](http://www.browserstack.com)
