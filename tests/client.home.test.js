@@ -116,12 +116,12 @@ test('Afficher les options en fonctions du nombre de joueurs', t => {
   document.write(pug.renderFile('./views/home.pug', {})); // écrit la page d'accueil dans la simulation du DOM
   document.getElementById("mode").options[document.getElementById("mode").selectedIndex].value = "2"; // on sélectionne le mode 2 joueurs
   Client.updateChoices();
-  t.is(document.getElementById("color_choice").style.display, '');
+  t.is(document.getElementById("color_choice").style.display, 'inline');
   t.true(document.getElementById('colors1').checked);
   t.false(document.getElementById('colors2').checked);
   t.false(document.getElementById('colors3').checked);
   t.is(document.getElementById('player1').style.display, '');
-  t.is(document.getElementById('player2').style.display, 'inline');
+  t.is(document.getElementById('player2').style.display, 'inline-block');
   t.is(document.getElementById("ordi2").style.display, 'inline');
   t.is(document.getElementById("ordi2").nextSibling.style.display, 'inline');
   t.is(document.getElementById('player3').style.display, 'none');
@@ -143,10 +143,10 @@ test('Afficher les options en fonctions du nombre de joueurs', t => {
   t.true(document.getElementById('colors2').checked);
   t.false(document.getElementById('colors3').checked);
   t.is(document.getElementById('player1').style.display, '');
-  t.is(document.getElementById('player2').style.display, 'inline');
+  t.is(document.getElementById('player2').style.display, 'inline-block');
   t.is(document.getElementById("ordi2").style.display, 'inline');
   t.is(document.getElementById("ordi2").nextSibling.style.display, 'inline');
-  t.is(document.getElementById('player3').style.display, 'inline');
+  t.is(document.getElementById('player3').style.display, 'inline-block');
   t.is(document.getElementById("ordi3").style.display, 'inline');
   t.is(document.getElementById("ordi3").nextSibling.style.display, 'inline');
   t.is(document.getElementById('player4').style.display, 'none');
