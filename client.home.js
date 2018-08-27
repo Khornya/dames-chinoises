@@ -15,8 +15,8 @@
 
   function updateChoices() { // fonction déclenchée quand on change le nombre de joueurs
     var colorChoices = { // un dictionnaire qui indique pour chaque nombre de joueurs s'il faut afficher le choix du nombre de couleurs, et quelle valeur doit être cochée par défaut
-      1: { display: '', default: 1 },
-      2: { display: '', default: 1 },
+      1: { display: 'inline', default: 1 },
+      2: { display: 'inline', default: 1 },
       3: { display: 'none', default: 2 },
       4: { display: 'none', default: 1 },
       6: { display: 'none', default: 1 }
@@ -32,7 +32,7 @@
     var iaLevel = document.getElementById('level_choice');
     var displayIaLevel = false;
     for (var i = 2; i <= mode; i++) { // pour chaque joueur
-      document.getElementById("player"+i).style.display = 'inline'; // on affiche le champ du nom du joueur
+      document.getElementById("player"+i).style.display = 'inline-block'; // on affiche le champ du nom du joueur
       checkbox = document.getElementById("ordi"+i); // on récupère la case IA associée
       if (checkbox.checked) displayIaLevel = true; // si au moins une case est cochée, on change la valeur de displayIaLevel
       checkbox.style.display = 'inline'; // on affiche la case à cocher
@@ -124,7 +124,7 @@
           return true;
         }
         else { // sinon pour le formulaire de création on vérifie si le champs et vide, que le nom n'est pas pris et que je joueur va jouer
-          if (player.value === '' || (id[6] !== '1' && document.getElementById("ordi"+id[6]).checked) || (id[6] === '1' && typeof(document.getElementById("ordi"+id[6])) !== undefined) || 
+          if (player.value === '' || (id[6] !== '1' && document.getElementById("ordi"+id[6]).checked) || (id[6] === '1' && typeof(document.getElementById("ordi"+id[6])) !== undefined) ||
              ((player === player1 || player.value != player1.value) &&
               (player === player2 || player.value != player2.value || player2.style.display == 'none') &&
               (player === player3 || player.value != player3.value || player3.style.display == 'none') &&

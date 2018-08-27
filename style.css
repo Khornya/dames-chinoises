@@ -69,10 +69,11 @@ input[type=submit] {
 }
 
 input[type=text] {
-  color: #777;
+    color: #777;
     border-radius: 4px;
     padding: 5px 8px;
     margin: 5px 5px 10px 0px;
+    display: inline-block;
 }
 
 section
