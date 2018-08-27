@@ -41,9 +41,9 @@ app.post('/game', function(request, response) { // en cas re requête post sur l
     var defaultRegex = new RegExp("^Joueur [1-6]$");
     var namesFormatCheck = true;
     var namesDuplicatesCheck = true;
-    for (var i=0; i<players.length; i++) {
+    for (var i=0; i<numPlayers-1; i++) {
       if (! (userRegex.test(players[i]) || defaultRegex.test(players[i]))) namesFormatCheck = false;
-      for (var j=0; j<players.length; j++) {
+      for (var j=0; j<numPlayers-1; j++) {
         if (i === j) continue;
         if (players[i] === players[j]) namesDuplicatesCheck = false;
       }
