@@ -3,7 +3,7 @@ var pug = require('pug');
 
 var Client = require('../client.home.js'); // le fichier contenant les fonctions à tester
 
-document.write(pug.renderFile('./views/index.pug', {})); // écrit la page d'accueil dans la simulation du DOM
+document.write(pug.renderFile('./views/home.pug', {})); // écrit la page d'accueil dans la simulation du DOM
 
 test('Afficher / masquer le texte', t => {
   t.is(document.getElementById('seeMoreDiv').style.display, 'none');
@@ -113,7 +113,7 @@ test('Afficher les couleurs pour chaque joueur', t => {
 });
 
 test('Afficher les options en fonctions du nombre de joueurs', t => {
-  document.write(pug.renderFile('./views/index.pug', {})); // écrit la page d'accueil dans la simulation du DOM
+  document.write(pug.renderFile('./views/home.pug', {})); // écrit la page d'accueil dans la simulation du DOM
   document.getElementById("mode").options[document.getElementById("mode").selectedIndex].value = "2"; // on sélectionne le mode 2 joueurs
   Client.updateChoices();
   t.is(document.getElementById("color_choice").style.display, '');
@@ -173,7 +173,7 @@ test('Afficher les options en fonctions du nombre de joueurs', t => {
 
 test('Vérifier le nom d\'un joueur', t => {
   var tooltip;
-  document.write(pug.renderFile('./views/index.pug', {})); // écrit la page d'accueil dans la simulation du DOM
+  document.write(pug.renderFile('./views/home.pug', {})); // écrit la page d'accueil dans la simulation du DOM
   document.getElementById("mode").options[document.getElementById("mode").selectedIndex].value = "3"; // on sélectionne le mode 3 joueurs
   tooltip = Client.getTooltip(document.getElementById('player3'));
   t.true(Client.checkPlayer('player3'));
@@ -226,7 +226,7 @@ test('Vérifier le nom d\'un joueur', t => {
 });
 
 test('Vérifier un numéro de partie', t => {
-  document.write(pug.renderFile('./views/index.pug', {})); // écrit la page d'accueil dans la simulation du DOM
+  document.write(pug.renderFile('./views/home.pug', {})); // écrit la page d'accueil dans la simulation du DOM
   var tooltip = Client.getTooltip(document.getElementById('roomID'));
   document.getElementById('roomID').value = 100000;
   t.true(Client.checkJoinGameForm['roomID']('roomID'));
