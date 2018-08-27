@@ -28,7 +28,7 @@ if (role === "host") { // si le joueur est host
     6: { 1: [[1],[3],[6],[2],[4],[5]] } // six joueurs une couleur
   }[numPlayers][numColors];
   isPlayedByIa = Shared.initArray(numPlayers, 0, false); // on initialise l'array qui permet de savoir quel joueur est joué par l'IA
-  if (level === 3) {
+  if (level === 0) {
     isPlayedByIa = {
       2: { // deux joueurs
         1: [1,2], // une couleur
