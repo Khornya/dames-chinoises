@@ -9,23 +9,28 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 
 body {
     background: #f0f0f0;
-    font-family: 'Source Sans Pro';
+    font-family: 'Arial';
     font-weight: 300;
     color: #777;
     line-height: 1.65em;
-    font-size: 13pt;
+    font-size: 12pt;
     transform: scale(0.9);
   }
 
-h1{
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #888;
+h1 {
+    font-family: 'MusicWarrior';
+    font-size: 16pt;
+    color: #0b6cce;
     padding: 10px 0px;
   }
 
-@font-face
-{
+header h1 {
+  color: #777;
+  padding-left: 10px;
+  padding-top: 15px;
+}
+
+@font-face {
   font-family: 'MusicWarrior';
   src: url('fonts/MusicWarrior.eot');
   src: url('fonts/MusicWarrior.eot?#iefix') format('embedded-opentype'),
@@ -36,20 +41,18 @@ h1{
   font-style: normal;
 }
 
-caption
-{
+caption {
   text-align: center;
 }
 
-header
-{
+header {
   display: flex;
   flex-wrap: wrap;
 }
 
-header h1
-{
-  font-family: 'MusicWarrior';
+footer {
+  width: 900px;
+  margin: auto;
 }
 
 select {
@@ -57,10 +60,15 @@ select {
     border-radius: 4px;
     padding: 5px 0px;
     margin: 5px 0px;
+    border-color: #66ccff;
+}
+
+select option {
+  background-color: #66ccff;
 }
 
 input[type=submit] {
-    background-color: #888;
+    background-color: #0b6cce;
     border: none;
     color: white;
     padding: 5px 20px;
@@ -76,13 +84,11 @@ input[type=text] {
     display: inline-block;
 }
 
-section
-{
+section {
   padding: 10px 0px;
 }
 
-#mainWrapper
-{
+#mainWrapper {
   width: 900px;
   margin: auto;
   background-color: white;
@@ -92,26 +98,22 @@ section
   margin-top: 50px;
 }
 
-#game
-{
+#game {
   width:60%;
 }
 
-#container
-{
+#container {
   display: flex;
   align-content: space-between;
 }
 
-#gameZone
-{
+#gameZone {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-#board
-{
+#board {
   display: flex;
   flex-direction: column;
   background-image: url(images/board.png);
@@ -121,8 +123,7 @@ section
   min-width: 650px;
 }
 
-.line
-{
+.line {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -130,44 +131,35 @@ section
   margin-bottom: 1px;
 }
 
-#line0
-{
+#line0 {
   margin-top: 37px;
 }
 
-#line16
-{
+#line16 {
   margin-bottom: 37px;
 }
 
-.cell
-{
+.cell {
   margin-left: 3px;
   margin-right: 3px;
   height: 25px;
 }
 
-.cell > img
-{
+.cell > img {
   height: 25px;
   align-items: center;
 }
 
-.playerInfo
-{
-  /*display: flex;*/
-  /*border: 1px solid black;*/
+.playerInfo {
   padding: 0 10px 0 10px;
   margin: 10px;
 }
 
-.playerName
-{
+.playerName {
   margin: 5px 0 0 0;
 }
 
-.imagetag
-{
+.imagetag {
   height: 10px;
 }
 
@@ -204,6 +196,11 @@ section
 
 #muteButton {
   height: 30px;
+}
+
+#seeMoreButton {
+  background-color: #66ccff;
+  font-size: 10pt;
 }
 
 .modal {
@@ -246,7 +243,7 @@ section
     background-color: #888;
     border: none;
     color: white;
-    padding: 10px 21px;
+    padding: 5px 10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;

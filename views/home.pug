@@ -38,7 +38,7 @@ html
               | - Il est interdit de jouer le coup inverse du dernier coup.
               br
               | - Un pion peut être déplacé dans tous les triangles de départ tant que la case n’est pas occupée.
-            button#seeMoreButton(onclick="Client.seeMore()") Voir plus
+            button#seeMoreButton.button(onclick="Client.seeMore()") Voir plus
       #container
         section#game
           h1 Jouer une partie
@@ -113,7 +113,6 @@ html
             input#inputJoinGameForm(style="display:none" name="inputJoinGameForm" value="inputJoinGameForm")
             input#REJOINDRE(type="submit" name="REJOINDRE" value="REJOINDRE")
         include includes/high-scores.pug
-      footer(clear:both="")
-        a(href="mailto:contact@hophophop.fr") Nous contacter
+    include includes/footer.pug
     script(src="client.home.js")
     script(src="home.js")

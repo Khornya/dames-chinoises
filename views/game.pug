@@ -60,9 +60,7 @@ html
             | Un saut en arrière n’est autorisé que si la case finale est située en avant de la case de départ.
             | Il est interdit de jouer le coup inverse du dernier coup.
             | Un pion peut être déplacé dans tous les triangles de départ tant que la case n’est pas occupée.
-      footer
-        button#pass(style="position:absolute;transition: .5s ease;left: 202px;top: 198px;display:none") pass
-        a(href="mailto:contact@hophophop.fr") Nous contacter
+    include includes/footer.pug
     script(src="/socket.io/socket.io.js")
     script(src="shared.js")
     script(src="client.game.js")
