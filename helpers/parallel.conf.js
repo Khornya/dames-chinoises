@@ -5,7 +5,8 @@ exports.config = {
   key: '1Bqxw29yPnwHEvH4udTd',
 
   specs: [
-      './tests/ui/home.test.js'
+      './tests/ui/home.test.js',
+      './tests/ui/game.test.js'
   ],
 
   framework: 'mocha',
