@@ -6,7 +6,6 @@ var http = require('http'); // requiert le module http
 var server = http.Server(app); // crée le serveur
 var io = require('socket.io')(server); // invoque une instance de socket.io liée au serveur
 
-
 var bodyParser = require("body-parser"); // configure express pour utiliser body-parser comme intermédiaire
 app.use(bodyParser.urlencoded({ extended: false })); // on configure body-parser (voir site pug)
 app.use(bodyParser.json());
@@ -15,7 +14,7 @@ app.set('view engine', 'pug'); // configuration du moteur d'affichage des templa
 
 var mysql = require('mysql'); // on requiert le module mysql
 
-app.post('/game', function(request, response) { // en cas re requête post sur la page de jeu
+app.post('/game', function(request, response) { // en cas de requête POST sur la page de jeu
   if (typeof(request.body.inputNewGameForm) !== 'undefined' && typeof(request.body.inputJoinGameForm) !== 'undefined') { // on redirige si aucune variable n'est transmise par formulaire
     response.redirect('/');
   }
@@ -116,7 +115,7 @@ app.post('/game', function(request, response) { // en cas re requête post sur l
   }
 });
 
-app.get('/score',function(request,response){ // en cas de requête get sur la page de scores
+app.get('/score',function(request,response){ // en cas de requête GET sur la page de scores
   if (Object.keys(request.query).length === 0 && request.query.constructor === Object) { // on redirige si aucune variable n'est transmise
     response.redirect('/');
   }
@@ -136,13 +135,14 @@ app.get('/score',function(request,response){ // en cas de requête get sur la pa
   }
 });
 
-var dbConfig = (process.env.NODE_ENV === 'production') ? { // on configure la base de données
+/** configuration de la base de données */
+var dbConfig = (process.env.NODE_ENV === 'production') ? { // distante
   host     : 'us-cdbr-iron-east-05.cleardb.net',
   user     : 'bb4e923f5faaa9',
   password : '382b4542',
   database : 'heroku_703605cd7a769b9',
   dateStrings: 'date'
-} : {
+} : { // locale
   host: 'localhost',
   user: 'hophophop',
   password: 'hophophop',
@@ -150,7 +150,8 @@ var dbConfig = (process.env.NODE_ENV === 'production') ? { // on configure la ba
   dateStrings: 'date'
 };
 
-var connection; // variable pour la connexion à la base de données
+/** connexion à la base de données */
+var connection;
 
 handleDisconnect(); // on invoque la fonction de reconnexion
 
@@ -158,10 +159,10 @@ var PORT = (process.env.PORT || 8000);
 
 server.listen(PORT);
 
-app.get('/', function(request, response) {
-  connection.query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 10', function(error, rows, fields) {
+app.get('/', function(request, response) { // en cas de requête GET surla page d'accueil
+  connection.query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 10', function(error, rows, fields) { // on récupère les meilleurs scores dans la BDD
     if (error) throw error;
-    response.render('home', {
+    response.render('home', { // on les affiche sur la page d'accueil
       score1: rows[0],
       score2: rows[1],
       score3: rows[2],
@@ -176,24 +177,26 @@ app.get('/', function(request, response) {
   });
 });
 
-app.get('/game', function (request, response) {
-  response.redirect('/');
+app.get('/game', function (request, response) { // en cas de requête GET surla page de jeu
+  response.redirect('/'); // on redirige vers la page d'accueil
 });
 
-app.use(express.static(__dirname));
+app.use(express.static(__dirname)); // pour pouvoir utiliser les fichiers statiques
 
+/** Les données des différentes parties en cours */
 var games = {};
 
+/** Les données des différents utilisateurs actuellement connectés */
 var clients = {};
 
-io.on('connection', function (socket) {
-  socket.on('create game', function (data) {
+io.on('connection', function (socket) { // déclaration des fonctions de callback
+  socket.on('create game', function (data) { // en cas de message 'create game' reçu
     console.log("create game : ", data);
     var numHumanPlayers = 0;
-    for (var i=0, max=data["isPlayedByIa"].length; i<max; i++){
+    for (var i=0, max=data["isPlayedByIa"].length; i<max; i++){ // compte le nombre de joueurs non-IA
       if (!data["isPlayedByIa"][i]) numHumanPlayers++;
     }
-    games[data["gameId"]] = {
+    games[data["gameId"]] = { // crée les données de la partie
       numPlayers: data["numPlayers"],
       numColors: data["numColors"],
       COLORS: data["COLORS"],
@@ -205,14 +208,13 @@ io.on('connection', function (socket) {
       isIaPlaying: false,
       restartCount: 0
     };
-    // Join the Room and wait for the players
-    socket.join(data["gameId"].toString());
-    clients[this.id] = {
+    socket.join(data["gameId"].toString()); // rejoint la partie et attend les autres joueurs
+    clients[this.id] = { // crée les données de l'utilisateur
       gameId: data["gameId"],
       number: 0,
       name: data["player"]
     };
-    if (games[data["gameId"]]["numHumanPlayers"] === 0 || games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) { // partie complète
+    if (games[data["gameId"]]["numHumanPlayers"] === 0 || games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) { // si la partie est complète
       var PLAYERS = games[data["gameId"]]["PLAYERS"];
       for (i=2; i<=games[data["gameId"]]["numPlayers"]; i++) {
         if (!games[data["gameId"]]["isPlayedByIa"][i-1]) {
@@ -222,70 +224,70 @@ io.on('connection', function (socket) {
           games[data["gameId"]]["player"+i] = "Ordinateur";
         }
       }
-      delete games[data["gameId"]]["PLAYERS"];
-      Server.init(games, data["gameId"]);
-      io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]);
-      if (numHumanPlayers === 0) {
-        Server.play(io, clients, games, data["gameId"])
+      delete games[data["gameId"]]["PLAYERS"]; // supprime l'array PLAYERS
+      Server.init(games, data["gameId"]); // initialise la partie
+      io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]); // avertit les joueurs que la partie peut commencer
+      if (numHumanPlayers === 0) { // si uniquement des IA
+        Server.play(io, clients, games, data["gameId"]) // fait jouer la 1ère IA
       }
     }
   });
-  socket.on('join game', function (data) {
+  socket.on('join game', function (data) { // en cas de message 'join game' reçu
     console.log('join game : ', data);
-    if (data["player"] !== '' && Server.contains(games[data["gameId"]]["PLAYERS"], data["player"]) || data["player"] === (games[data["gameId"]]["player1"])) {
-      socket.emit('name error', { name: data["player"] });
+    if (data["player"] !== '' && Server.contains(games[data["gameId"]]["PLAYERS"], data["player"]) || data["player"] === (games[data["gameId"]]["player1"])) { // si le nom est déjà pris
+      socket.emit('name error', { name: data["player"] }); // demande un nouveau nom au joueur
       return;
     }
-    socket.join(data["gameId"].toString());
-    games[data["gameId"]]['remaining'] -= 1;
-    games[data["gameId"]]["PLAYERS"].push(data["player"]);
+    socket.join(data["gameId"].toString()); // rejoint la partie
+    games[data["gameId"]]['remaining'] -= 1; // nombre de places libres
+    games[data["gameId"]]["PLAYERS"].push(data["player"]); // ajoute le joueur à la liste
     var n = games[data["gameId"]]["PLAYERS"].length;
-    clients[this.id] = {
+    clients[this.id] = { // crée les données de l'utilisateur
       gameId: data["gameId"],
       number: n,
       name: data["player"]
     };
-    games[data["gameId"]]["player"+(n+1)] = (data["player"] !== '')? data["player"] : "Joueur" + (n+1);
-    if (games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) {
+    games[data["gameId"]]["player"+(n+1)] = (data["player"] !== '')? data["player"] : "Joueur" + (n+1); // détermine le nom du joueur
+    if (games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) { // si la partie est complète
       var PLAYERS = games[data["gameId"]]["PLAYERS"];
       for (i=2; i<=games[data["gameId"]]["numPlayers"]; i++) {
         if (!games[data["gameId"]]["isPlayedByIa"][i-1]) {
           // games[data["gameId"]]["player"+i] = (typeof(PLAYERS[0]) !== 'undefined' && PLAYERS[0] !== '')? PLAYERS.shift() : "Joueur " + i;
         }
-        else {
+        else { // attribue les noms des IA
           games[data["gameId"]]["player"+i] = "Ordinateur";
         }
       }
-      delete games[data["gameId"]]["PLAYERS"];
-      Server.init(games, data["gameId"]);
-      io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]);
+      delete games[data["gameId"]]["PLAYERS"]; // supprime l'array PLAYERS
+      Server.init(games, data["gameId"]); // initialise la partie
+      io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]); // avertit les joueurs que la partie peut commencer
     }
   });
-  socket.on('move request', function (data) {
+  socket.on('move request', function (data) { // en cas de message 'move request' reçu
     console.log('move request : ', data);
     Server.play(io, clients, games, clients[this.id]["gameId"], this, data["cell"]);
-  });
-  socket.on('disconnecting', function (reason) {
-    if (Server.contains(Object.keys(clients), this.id)) {
-      io.sockets.in(clients[this.id]["gameId"]).emit('player disconnecting', clients[this.id]);
-      if (!games[clients[this.id]["gameId"]]["gameOver"]) {
-        games[clients[this.id]["gameId"]]["gameOver"] = true;
-        io.sockets.in(clients[this.id]["gameId"]).emit('end game', {});
+  }); // joue le coup demandé
+  socket.on('disconnecting', function (reason) { // en cas de message 'disconnecting' reçu
+    if (Server.contains(Object.keys(clients), this.id)) { // si l'utilisateur est enregistré
+      io.sockets.in(clients[this.id]["gameId"]).emit('player disconnecting', clients[this.id]); // avertit les autres joueurs que le joueur a été déconnecté
+      if (!games[clients[this.id]["gameId"]]["gameOver"]) { // si la partie n'est pas finie
+        games[clients[this.id]["gameId"]]["gameOver"] = true; // la termine
+        io.sockets.in(clients[this.id]["gameId"]).emit('end game', {}); // avertit les joueurs de la fin de la partie
       }
     }
   });
-  socket.on('disconnect', function (reason) {
-    if (Server.contains(Object.keys(clients), this.id) && !Server.contains(Object.keys(io.sockets.adapter.rooms), clients[this.id]["gameId"].toString())) {
+  socket.on('disconnect', function (reason) { // en cas de message 'disconnect' reçu
+    if (Server.contains(Object.keys(clients), this.id) && !Server.contains(Object.keys(io.sockets.adapter.rooms), clients[this.id]["gameId"].toString())) { // s'il n'y a plus aucun joueur dans la partie
       console.log('deleting game ', clients[this.id]["gameId"]);
-      delete games[clients[this.id]["gameId"]];
+      delete games[clients[this.id]["gameId"]]; // supprime la partie
     }
-});
-  socket.on('restart request', function () {
-    games[clients[this.id]["gameId"]]["restartCount"] += 1;
-    if (games[clients[this.id]["gameId"]]["restartCount"] === games[clients[this.id]["gameId"]]["numHumanPlayers"]) {
-      Server.restart(games, clients[this.id]["gameId"], 1); // à revoir, plus d'option 1 pour restart ?
+  });
+  socket.on('restart request', function () { // en cas de message 'restart request'
+    games[clients[this.id]["gameId"]]["restartCount"] += 1; // compte le nombre de requêtes
+    if (games[clients[this.id]["gameId"]]["restartCount"] === games[clients[this.id]["gameId"]]["numHumanPlayers"]) { // si tous les joueurs veulent recommencer
+      Server.restart(games, clients[this.id]["gameId"], 1); // redémarre la partie (à revoir, plus d'option 1 pour restart ?)
       console.log('restarting : ', clients[this.id]["gameId"]);
-      io.sockets.in(clients[this.id]["gameId"]).emit('restart game', {});
+      io.sockets.in(clients[this.id]["gameId"]).emit('restart game', {}); // avertit les joueurs de la nouvelle partie
     }
   });
 });
