@@ -1,4 +1,32 @@
-(function(exports){
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client.home.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client.home.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function(exports){
   /**
    * @module Client
    */
@@ -23,14 +51,14 @@
   /**
    * @function updateChoices
    * @description déclenchée quand on change le nombre de joueurs
-   * <ul>
-   *  <li> appelle :
-        <ul>
-          <li> [updateColors]{@link module:Client~updateColors}
-          <li> [deactivateTooltips]{@link module:Client~deactivateTooltips}
-        </ul>
-   *  <li> appelée par :
-   *  <li> globales :
+   * &lt;ul>
+   *  &lt;li> appelle :
+        &lt;ul>
+          &lt;li> [updateColors]{@link module:Client~updateColors}
+          &lt;li> [deactivateTooltips]{@link module:Client~deactivateTooltips}
+        &lt;/ul>
+   *  &lt;li> appelée par :
+   *  &lt;li> globales :
    * @return {undefined}
    */
   function updateChoices() {
@@ -46,19 +74,19 @@
     var list = document.getElementById("mode"); // on récupère le menu déroulant
     var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
     document.getElementById("color_choice").style.display = colorChoices[mode]['display']; // on affiche ou on masque le choix du nombre de couleurs
-    for (var i=1; i<=3; i++) { // on coche une case par défaut
+    for (var i=1; i&lt;=3; i++) { // on coche une case par défaut
       document.getElementById('colors'+i).checked = (i === colorChoices[mode].default) ? true : false
     }
     var iaLevel = document.getElementById('level_choice');
     var displayIaLevel = false;
-    for (var i = 2; i <= mode; i++) { // pour chaque joueur
+    for (var i = 2; i &lt;= mode; i++) { // pour chaque joueur
       document.getElementById("player"+i).style.display = 'inline-block'; // on affiche le champ du nom du joueur
       checkbox = document.getElementById("ordi"+i); // on récupère la case IA associée
       if (checkbox.checked) displayIaLevel = true; // si au moins une case est cochée, on change la valeur de displayIaLevel
       checkbox.style.display = 'inline'; // on affiche la case à cocher
       checkbox.nextSibling.style.display = 'inline'; // on affiche le label de la case à cocherr
     }
-    for (var i = mode+1; i <= 6; i++) { // pour chaque joueur qui ne joue pas
+    for (var i = mode+1; i &lt;= 6; i++) { // pour chaque joueur qui ne joue pas
       document.getElementById("player"+i).style.display = 'none'; // masque le champ
       checkbox = document.getElementById("ordi"+i); // récupère la case IA associée à ce joueur
       checkbox.style.display = 'none'; // masque la case à cocher
@@ -67,7 +95,7 @@
     iaLevel.style.display = displayIaLevel ? 'block' : 'none';
     updateColors(); // on met à jour les couleurs pour chaque joueur
     for (var i in checkNewGameForm) { // pour chaque fonction de vérification sur le contenu du formulaire
-      if (document.getElementById(i).value != '' && parseInt(i[6]) <= mode) { // on ne vérifie que si quelque chose a été saisi et si le joueur va jouer
+      if (document.getElementById(i).value != '' &amp;&amp; parseInt(i[6]) &lt;= mode) { // on ne vérifie que si quelque chose a été saisi et si le joueur va jouer
         checkNewGameForm[i](i); // on vérifie le contenu du formulaire
       }
     }
@@ -76,18 +104,18 @@
   /**
    * @function updateColors
    * @description actualise les pastilles de couleur pour chaque joueur - déclenchée quand on change le nombre de joueurs
-   * <ul>
-   *  <li> appelle :
-   *  <li> appelée par :
-        <ul>
-          <li> [updateChoices]{@link module:Client~updateChoices}
-   *  <li> globales :
+   * &lt;ul>
+   *  &lt;li> appelle :
+   *  &lt;li> appelée par :
+        &lt;ul>
+          &lt;li> [updateChoices]{@link module:Client~updateChoices}
+   *  &lt;li> globales :
    * @return {undefined}
    */
   function updateColors() { // met à jour l'affichage des couleurs à droite du nom des joueurs
     var list = document.getElementById("mode"); // on récupère le menu déroulant
     var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
-    for (var numColors = 1; numColors <= 3; numColors++) {   // on récupère le nombre de couleurs
+    for (var numColors = 1; numColors &lt;= 3; numColors++) {   // on récupère le nombre de couleurs
       if (document.getElementById('colors'+numColors).checked) break;
     }
     var colors = { // attribution des couleurs à chaque joueur
@@ -105,14 +133,14 @@
       4: { 1: [[1],[2],[3],[4]] }, // pour quatre joueurs une couleur obligée
       6: { 1: [[1],[3],[6],[2],[4],[5]] } // pour six joueurs une couleur obligée
     }[mode][numColors]; // on retourne pour chaque joueur la liste des couleurs
-    for (var n=1; n<=mode; n++) { // pour chaque joueur qui joue
+    for (var n=1; n&lt;=mode; n++) { // pour chaque joueur qui joue
       var code = '';
-      for (var i=0, max = colors[n-1].length; i < max; i++) { // pour chaque couleur on affiche les images correspondantes
-        code += "<img class=\"imagetag\" src=\"images/pion" + colors[n-1][i] + ".png\">";
+      for (var i=0, max = colors[n-1].length; i &lt; max; i++) { // pour chaque couleur on affiche les images correspondantes
+        code += "&lt;img class=\"imagetag\" src=\"images/pion" + colors[n-1][i] + ".png\">";
       }
       document.getElementById('player'+n+'colors').innerHTML = code;
     }
-    for (var n=mode+1; n<=6; n++) { // on efface les couleurs des joueurs qui ne jouent pas
+    for (var n=mode+1; n&lt;=6; n++) { // on efface les couleurs des joueurs qui ne jouent pas
       document.getElementById('player'+n+'colors').innerHTML = '';
     }
   }
@@ -120,7 +148,7 @@
   function deactivateTooltips() { // Fonction de désactivation de l'affichage des "tooltips"
       var tooltips = document.querySelectorAll('.tooltip'), // on sélectionne tous les éléments de la classe tooltip
           tooltipsLength = tooltips.length;
-      for (var i = 0; i < tooltipsLength; i++) {
+      for (var i = 0; i &lt; tooltipsLength; i++) {
           tooltips[i].style.display = 'none'; // on les masque tous
       }
   }
@@ -155,12 +183,12 @@
           return true;
         }
         else { // sinon pour le formulaire de création on vérifie si le champs et vide, que le nom n'est pas pris et que je joueur va jouer
-          if (player.value === '' || (id[6] !== '1' && document.getElementById("ordi"+id[6]).checked) || (id[6] === '1' && typeof(document.getElementById("ordi"+id[6])) !== undefined) ||
-             ((player === player1 || player.value != player1.value) &&
-              (player === player2 || player.value != player2.value || player2.style.display == 'none') &&
-              (player === player3 || player.value != player3.value || player3.style.display == 'none') &&
-              (player === player4 || player.value != player4.value || player4.style.display == 'none') &&
-              (player === player5 || player.value != player5.value || player5.style.display == 'none') &&
+          if (player.value === '' || (id[6] !== '1' &amp;&amp; document.getElementById("ordi"+id[6]).checked) || (id[6] === '1' &amp;&amp; typeof(document.getElementById("ordi"+id[6])) !== undefined) ||
+             ((player === player1 || player.value != player1.value) &amp;&amp;
+              (player === player2 || player.value != player2.value || player2.style.display == 'none') &amp;&amp;
+              (player === player3 || player.value != player3.value || player3.style.display == 'none') &amp;&amp;
+              (player === player4 || player.value != player4.value || player4.style.display == 'none') &amp;&amp;
+              (player === player5 || player.value != player5.value || player5.style.display == 'none') &amp;&amp;
               (player === player6 || player.value != player6.value || player6.style.display == 'none')) ) {
             player.className = 'correct'; // on valide
             tooltip.style.display = 'none'; // on cache le tooltip
@@ -176,7 +204,7 @@
       }
       else { // si la regex n'est pas validée
           player.className = 'incorrect';
-          tooltip.innerHTML = 'Le nom doit comprendre :<br>- 2 à 10 caractères alphanumériques<br>ou des tirets'; // on change le texte du tooltip
+          tooltip.innerHTML = 'Le nom doit comprendre :&lt;br>- 2 à 10 caractères alphanumériques&lt;br>ou des tirets'; // on change le texte du tooltip
           tooltip.style.display = 'inline-block'; // on affiche le tooltip
           return false;
       }
@@ -190,7 +218,7 @@
     var input = document.getElementById('roomID'); // on récupère le numéro saisi
     var tooltip = getTooltip(input); // on récupère le tooltip
     var regex = new RegExp("^[0-9]{1,6}$", "g"); // on définit la regex correspondante
-    if (regex.test(input.value) && input.value <= 100000) { // si la regex est validée et que la valeur est inférieure à 100000
+    if (regex.test(input.value) &amp;&amp; input.value &lt;= 100000) { // si la regex est validée et que la valeur est inférieure à 100000
       input.className = 'correct'; // on valide
       tooltip.style.display = 'none'; // on cache le tooltip
       return true;
@@ -218,7 +246,7 @@
     var displayIaLevel = false;
     var list = document.getElementById("mode"); // on récupère le menu déroulant
     var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
-    for (var i=2; i<=mode; i++) {
+    for (var i=2; i&lt;=mode; i++) {
       checkbox = document.getElementById("ordi"+i);
       if (checkbox.checked) displayIaLevel = true;
     }
@@ -236,3 +264,26 @@
   exports.checkJoinGameForm = checkJoinGameForm;
 
 }(typeof exports === 'undefined' ? this.Client = {} : exports));
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li></ul><h3>Global</h3><ul><li><a href="global.html#handleDisconnect">handleDisconnect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Aug 29 2018 02:26:57 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

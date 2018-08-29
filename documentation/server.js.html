@@ -1,4 +1,32 @@
-var Server = require('./server.functions.js');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: server.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: server.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var Server = require('./server.functions.js');
 
 var express = require('express'); // requiert le framework express
 var app = express(); // invoque une instance d'express
@@ -16,18 +44,18 @@ app.set('view engine', 'pug'); // configuration du moteur d'affichage des templa
 var mysql = require('mysql'); // on requiert le module mysql
 
 app.post('/game', function(request, response) { // en cas re requête post sur la page de jeu
-  if (typeof(request.body.inputNewGameForm) !== 'undefined' && typeof(request.body.inputJoinGameForm) !== 'undefined') { // on redirige si aucune variable n'est transmise par formulaire
+  if (typeof(request.body.inputNewGameForm) !== 'undefined' &amp;&amp; typeof(request.body.inputJoinGameForm) !== 'undefined') { // on redirige si aucune variable n'est transmise par formulaire
     response.redirect('/');
   }
   else if (typeof(request.body.inputNewGameForm) !== 'undefined') { // sinon si c'est le foormulaire de création de partie qui est rempli on récupère les données du formulaire
     var numColors = Server.escapeHtml(request.body.numColors);
     var numPlayers = Server.escapeHtml(request.body.numPlayers);
-    var player1 = (typeof(request.body.player1) !== 'undefined' && request.body.player1 !== '')? Server.escapeHtml(request.body.player1) : "Joueur 1";
-    var player2 = (typeof(request.body.player2) !== 'undefined' && request.body.player2 !== '')? Server.escapeHtml(request.body.player2) : "Joueur 2";
-    var player3 = (typeof(request.body.player3) !== 'undefined' && request.body.player3 !== '')? Server.escapeHtml(request.body.player3) : "Joueur 3";
-    var player4 = (typeof(request.body.player4) !== 'undefined' && request.body.player4 !== '')? Server.escapeHtml(request.body.player4) : "Joueur 4";
-    var player5 = (typeof(request.body.player5) !== 'undefined' && request.body.player5 !== '')? Server.escapeHtml(request.body.player5) : "Joueur 5";
-    var player6 = (typeof(request.body.player6) !== 'undefined' && request.body.player6 !== '')? Server.escapeHtml(request.body.player6) : "Joueur 6";
+    var player1 = (typeof(request.body.player1) !== 'undefined' &amp;&amp; request.body.player1 !== '')? Server.escapeHtml(request.body.player1) : "Joueur 1";
+    var player2 = (typeof(request.body.player2) !== 'undefined' &amp;&amp; request.body.player2 !== '')? Server.escapeHtml(request.body.player2) : "Joueur 2";
+    var player3 = (typeof(request.body.player3) !== 'undefined' &amp;&amp; request.body.player3 !== '')? Server.escapeHtml(request.body.player3) : "Joueur 3";
+    var player4 = (typeof(request.body.player4) !== 'undefined' &amp;&amp; request.body.player4 !== '')? Server.escapeHtml(request.body.player4) : "Joueur 4";
+    var player5 = (typeof(request.body.player5) !== 'undefined' &amp;&amp; request.body.player5 !== '')? Server.escapeHtml(request.body.player5) : "Joueur 5";
+    var player6 = (typeof(request.body.player6) !== 'undefined' &amp;&amp; request.body.player6 !== '')? Server.escapeHtml(request.body.player6) : "Joueur 6";
     var ordi1 = Server.escapeHtml(request.body.ordi1);
     var ordi2 = Server.escapeHtml(request.body.ordi2);
     var ordi3 = Server.escapeHtml(request.body.ordi3);
@@ -41,24 +69,24 @@ app.post('/game', function(request, response) { // en cas re requête post sur l
     var defaultRegex = new RegExp("^Joueur [1-6]$");
     var namesFormatCheck = true;
     var namesDuplicatesCheck = true;
-    for (var i=0; i<numPlayers-1; i++) {
+    for (var i=0; i&lt;numPlayers-1; i++) {
       if (! (userRegex.test(players[i]) || defaultRegex.test(players[i]))) namesFormatCheck = false;
-      for (var j=0; j<numPlayers-1; j++) {
+      for (var j=0; j&lt;numPlayers-1; j++) {
         if (i === j) continue;
         if (players[i] === players[j]) namesDuplicatesCheck = false;
       }
     }
-    if (numColors < 1 || numColors > 3) {
-      response.send("<p>Vous devez choisir entre une et trois couleurs</p>");
+    if (numColors &lt; 1 || numColors > 3) {
+      response.send("&lt;p>Vous devez choisir entre une et trois couleurs&lt;/p>");
     }
-    else if (numPlayers === 3 && numColors !== 2 || numPlayers === 4 && numColors !== 1 || numPlayers === 6 && numColors !== 1 || numPlayers === 5 || numPlayers < 2 || numPlayers > 6) {
-      response.send("<p>Ce mode de jeu n'est pas disponible</p>");
+    else if (numPlayers === 3 &amp;&amp; numColors !== 2 || numPlayers === 4 &amp;&amp; numColors !== 1 || numPlayers === 6 &amp;&amp; numColors !== 1 || numPlayers === 5 || numPlayers &lt; 2 || numPlayers > 6) {
+      response.send("&lt;p>Ce mode de jeu n'est pas disponible&lt;/p>");
     }
     else if (!namesFormatCheck) {
-      response.send("<p>Nom incorrect</p>");
+      response.send("&lt;p>Nom incorrect&lt;/p>");
     }
     else if (!namesDuplicatesCheck) {
-      response.send("<p>Nom déjà pris</p>");
+      response.send("&lt;p>Nom déjà pris&lt;/p>");
     }
     else {
       // on crée une salle unique avec Socket.IO
@@ -89,18 +117,18 @@ app.post('/game', function(request, response) { // en cas re requête post sur l
     var player = Server.escapeHtml(request.body.player);
     var gameIdRegex = new RegExp("[0-9]{1-6}");
     var nameRegex = new RegExp("^[a-zA-Z0-9_-]{2,10}$");
-    if (gameIdRegex.test(gameId) || gameId < 0 || gameId > 100000) {
-      response.send("<p>N° de partie incorrect</p>");
+    if (gameIdRegex.test(gameId) || gameId &lt; 0 || gameId > 100000) {
+      response.send("&lt;p>N° de partie incorrect&lt;/p>");
     }
-    else if (!nameRegex.test(player) && player !== '') {
-      response.send("<p>Nom incorrect</p>");
+    else if (!nameRegex.test(player) &amp;&amp; player !== '') {
+      response.send("&lt;p>Nom incorrect&lt;/p>");
     }
     else {
       if (!Server.contains(Object.keys(games), gameId)) {
-        response.send("<p>Cette partie n'existe pas.</p>");
+        response.send("&lt;p>Cette partie n'existe pas.&lt;/p>");
       }
       else if (games[gameId]['remaining'] === 0) {
-        response.send("<p>Cette partie est déjà complète.</p>");
+        response.send("&lt;p>Cette partie est déjà complète.&lt;/p>");
       }
       else {
         response.render('game', {
@@ -112,12 +140,12 @@ app.post('/game', function(request, response) { // en cas re requête post sur l
     }
   }
   else {
-    response.send("<p>Vous devez remplir un des deux formulaires</p>");
+    response.send("&lt;p>Vous devez remplir un des deux formulaires&lt;/p>");
   }
 });
 
 app.get('/score',function(request,response){ // en cas de requête get sur la page de scores
-  if (Object.keys(request.query).length === 0 && request.query.constructor === Object) { // on redirige si aucune variable n'est transmise
+  if (Object.keys(request.query).length === 0 &amp;&amp; request.query.constructor === Object) { // on redirige si aucune variable n'est transmise
     response.redirect('/');
   }
   else { // sinon on récupère les valeurs
@@ -190,7 +218,7 @@ io.on('connection', function (socket) {
   socket.on('create game', function (data) {
     console.log("create game : ", data);
     var numHumanPlayers = 0;
-    for (var i=0, max=data["isPlayedByIa"].length; i<max; i++){
+    for (var i=0, max=data["isPlayedByIa"].length; i&lt;max; i++){
       if (!data["isPlayedByIa"][i]) numHumanPlayers++;
     }
     games[data["gameId"]] = {
@@ -214,9 +242,9 @@ io.on('connection', function (socket) {
     };
     if (games[data["gameId"]]["numHumanPlayers"] === 0 || games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) { // partie complète
       var PLAYERS = games[data["gameId"]]["PLAYERS"];
-      for (i=2; i<=games[data["gameId"]]["numPlayers"]; i++) {
+      for (i=2; i&lt;=games[data["gameId"]]["numPlayers"]; i++) {
         if (!games[data["gameId"]]["isPlayedByIa"][i-1]) {
-          // games[data["gameId"]]["player"+i] = (typeof(PLAYERS[0]) !== 'undefined' && PLAYERS[0] !== '')? PLAYERS.shift() : "Joueur " + i;
+          // games[data["gameId"]]["player"+i] = (typeof(PLAYERS[0]) !== 'undefined' &amp;&amp; PLAYERS[0] !== '')? PLAYERS.shift() : "Joueur " + i;
         }
         else { // si joué par l'IA
           games[data["gameId"]]["player"+i] = "Ordinateur";
@@ -232,7 +260,7 @@ io.on('connection', function (socket) {
   });
   socket.on('join game', function (data) {
     console.log('join game : ', data);
-    if (data["player"] !== '' && Server.contains(games[data["gameId"]]["PLAYERS"], data["player"]) || data["player"] === (games[data["gameId"]]["player1"])) {
+    if (data["player"] !== '' &amp;&amp; Server.contains(games[data["gameId"]]["PLAYERS"], data["player"]) || data["player"] === (games[data["gameId"]]["player1"])) {
       socket.emit('name error', { name: data["player"] });
       return;
     }
@@ -248,9 +276,9 @@ io.on('connection', function (socket) {
     games[data["gameId"]]["player"+(n+1)] = (data["player"] !== '')? data["player"] : "Joueur" + (n+1);
     if (games[data["gameId"]]["PLAYERS"].length + 1 === games[data["gameId"]]["numHumanPlayers"]) {
       var PLAYERS = games[data["gameId"]]["PLAYERS"];
-      for (i=2; i<=games[data["gameId"]]["numPlayers"]; i++) {
+      for (i=2; i&lt;=games[data["gameId"]]["numPlayers"]; i++) {
         if (!games[data["gameId"]]["isPlayedByIa"][i-1]) {
-          // games[data["gameId"]]["player"+i] = (typeof(PLAYERS[0]) !== 'undefined' && PLAYERS[0] !== '')? PLAYERS.shift() : "Joueur " + i;
+          // games[data["gameId"]]["player"+i] = (typeof(PLAYERS[0]) !== 'undefined' &amp;&amp; PLAYERS[0] !== '')? PLAYERS.shift() : "Joueur " + i;
         }
         else {
           games[data["gameId"]]["player"+i] = "Ordinateur";
@@ -275,7 +303,7 @@ io.on('connection', function (socket) {
     }
   });
   socket.on('disconnect', function (reason) {
-    if (Server.contains(Object.keys(clients), this.id) && !Server.contains(Object.keys(io.sockets.adapter.rooms), clients[this.id]["gameId"].toString())) {
+    if (Server.contains(Object.keys(clients), this.id) &amp;&amp; !Server.contains(Object.keys(io.sockets.adapter.rooms), clients[this.id]["gameId"].toString())) {
       console.log('deleting game ', clients[this.id]["gameId"]);
       delete games[clients[this.id]["gameId"]];
     }
@@ -312,3 +340,26 @@ function handleDisconnect() {
     }
   });
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li></ul><h3>Global</h3><ul><li><a href="global.html#handleDisconnect">handleDisconnect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Aug 29 2018 02:26:57 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
