@@ -10,7 +10,8 @@ exports.config = {
     //
     specs: [
         './tests/ui/home.test.js',
-        './tests/ui/game.test.js'
+        './tests/ui/game.test.js',
+        './tests/ui/ia.test.js'
     ],
     // Patterns to exclude.
     exclude: [

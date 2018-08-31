@@ -903,10 +903,10 @@ test("Vérifier la validité d'un mouvement", t => {
   t.true(games[4]["gameOver"]);
   t.deepEqual(emitData, [
     ['game error', {
-      message: 'please click on your own pieces',
+      message: 'Veuillez cliquer sur vos propres pions',
       sound: 'fail' }],
     ['game error', {
-      message: 'please click on your own pieces',
+      message: 'Veuillez cliquer sur vos propres pions',
       sound: 'fail' }],
     ['select', { cell: [2,14] }],
     ['deselect', {
@@ -918,7 +918,7 @@ test("Vérifier la validité d'un mouvement", t => {
     ['new turn', { player: 1 }],
     ['select', { cell: [4,12] }],
     ['game error', {
-      message: 'You can\'t go back!',
+      message: 'Vous ne pouvez pas revenir en arrière',
       sound: 'fail' }],
     ['move', {
       path: [[4,12],[4,10]],
@@ -926,17 +926,17 @@ test("Vérifier la validité d'un mouvement", t => {
     ['new turn', { player: 1 }],
     ['select', { cell: [4,10] }],
     ['game error', {
-      message: 'You can\'t replay the last move',
+      message: 'Vous ne pouvez pas refaire le même mouvement',
       sound: 'fail' }],
     ['deselect', {
       cell: [4,10],
       color: 1 }],
     ['select', { cell: [0,12] }],
     ['game error', {
-      message: 'Invalid move!',
+      message: 'Mouvement impossible',
       sound: 'fail' }],
     ['game error', {
-      message: 'Cell not empty!',
+      message: 'Cette case est déjà occupée !',
       sound: 'fail' }],
     ['select', { cell: [12,10] }],
     ['move', {
