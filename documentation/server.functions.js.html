@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: server.functions.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: server.functions.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @module Server
  * @requires module:Shared
  * @requires http
@@ -39,10 +67,10 @@ var TRIANGLES_COORDS = [
 
 /**
  * @description initialise une partie
- * <ul>
- *  <li> appelle : [Server.restart]{@link module:Server~restart}
- *  <li> appelée par : server.js
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : [Server.restart]{@link module:Server~restart}
+ *  &lt;li> appelée par : server.js
+ *  &lt;li> globales : -
  * @example
  * Server.init(games, "12314") // -> initialise toutes les variables de la partie 12314
  * @param {Object} games - Le dictionnaire contenant toutes les données des parties
@@ -51,7 +79,7 @@ var TRIANGLES_COORDS = [
  */
 function init(games, gameId) {
   games[gameId]["PLAYERS"] = [];
-  for (var n=1; n<=games[gameId]["numPlayers"]; n++) {
+  for (var n=1; n&lt;=games[gameId]["numPlayers"]; n++) {
     games[gameId]["PLAYERS"].push({ // crée la liste des joueurs
       name: games[gameId]["player"+n],
       score: 0,
@@ -65,18 +93,18 @@ function init(games, gameId) {
 
 /**
  * @description recommence une partie
- * <ul>
- *  <li> appelle :
- *    <ul>
- *      <li> [Shared.initGameBoard]{@link module:Shared~initGameBoard}
- *      <li> [Shared.initArray]{@link module:Shared~initArray}
- *    </ul>
- *  <li> appelée par :
- *    <ul>
- *      <li> [Server.init]{@link module:Server~init}
- *      <li> server.js
- *    </ul>
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle :
+ *    &lt;ul>
+ *      &lt;li> [Shared.initGameBoard]{@link module:Shared~initGameBoard}
+ *      &lt;li> [Shared.initArray]{@link module:Shared~initArray}
+ *    &lt;/ul>
+ *  &lt;li> appelée par :
+ *    &lt;ul>
+ *      &lt;li> [Server.init]{@link module:Server~init}
+ *      &lt;li> server.js
+ *    &lt;/ul>
+ *  &lt;li> globales : -
  * @example
  * Server.restart(games, "12314") // -> réinitialise les variables de la partie 12314
  * @param {Object} games - Le dictionnaire contenant toutes les données des parties
@@ -85,7 +113,7 @@ function init(games, gameId) {
  */
 function restart(games, gameId) {
   games[gameId]["gameBoard"] = Shared.initGameBoard(); // initialise la matrice représentant le plateau de jeu
-  for (var n=0; n < games[gameId]["numPlayers"]; n++) { // remet les scores à 0
+  for (var n=0; n &lt; games[gameId]["numPlayers"]; n++) { // remet les scores à 0
     games[gameId]["PLAYERS"][n].score = 0;
   }
   games[gameId]["player"] = 0;
@@ -98,15 +126,15 @@ function restart(games, gameId) {
 
 /**
  * @description permet de savoir si un joueur essaie de déplacer un pion vers l'arrière (vers son triangle de départ)
- * <ul>
- *  <li> appelle : -
- *  <li> appelée par :
- *    <ul>
- *      <li> [Server.getPath]{@link module:Server~getPath}
- *      <li> [Server.getJumps]{@link module:Server~getJumps}
- *      <li> [Server.validateMove]{@link module:Server~validateMove}
- *    </ul>
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : -
+ *  &lt;li> appelée par :
+ *    &lt;ul>
+ *      &lt;li> [Server.getPath]{@link module:Server~getPath}
+ *      &lt;li> [Server.getJumps]{@link module:Server~getJumps}
+ *      &lt;li> [Server.validateMove]{@link module:Server~validateMove}
+ *    &lt;/ul>
+ *  &lt;li> globales : -
  * @example
  * Server.isMovingBackward(1,[8,12],[7,11]) // -> true
  * Server.isMovingBackward(4,[8,12],[8,10]) // -> false
@@ -117,25 +145,25 @@ function restart(games, gameId) {
  */
 function isMovingBackward(color, startCell, endCell) {
   // remplacer par switch ?
-  if (color===1)  return endCell[0] - startCell[0] < 0;
+  if (color===1)  return endCell[0] - startCell[0] &lt; 0;
   if (color===2)  return endCell[0] - startCell[0] > 0;
-  if (color===3) return endCell[1] + endCell[0] - startCell[1] - startCell[0] < 0;
+  if (color===3) return endCell[1] + endCell[0] - startCell[1] - startCell[0] &lt; 0;
   if (color===4) return endCell[1] + endCell[0] - startCell[1] - startCell[0] > 0;
   if (color===5) return endCell[1] - endCell[0] - startCell[1] + startCell[0] > 0;
-  if (color===6) return endCell[1] - endCell[0] - startCell[1] + startCell[0] < 0;
+  if (color===6) return endCell[1] - endCell[0] - startCell[1] + startCell[0] &lt; 0;
 }
 
 /**
  * @description permet de savoir si le joueur dont c'est le tour essaie de refaire son dernier déplacement à l'envers
- * <ul>
- *  <li> appelle : -
- *  <li> appelée par :
- *    <ul>
- *      <li> [Server.getPath]{@link module:Server~getPath}
- *      <li> [Server.getJumps]{@link module:Server~getJumps}
- *      <li> [Server.validateMove]{@link module:Server~validateMove}
- *    </ul>
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : -
+ *  &lt;li> appelée par :
+ *    &lt;ul>
+ *      &lt;li> [Server.getPath]{@link module:Server~getPath}
+ *      &lt;li> [Server.getJumps]{@link module:Server~getJumps}
+ *      &lt;li> [Server.validateMove]{@link module:Server~validateMove}
+ *    &lt;/ul>
+ *  &lt;li> globales : -
  * @example
  * Server.sameTraject(games, "12314", [[8,12],[8,14],[10,14]]) // -> true si le dernier déplacement de ce joueur était [[10,14],[8,14],[8,12]], false sinon
  * @param {Object} games - Le dictionnaire contenant toutes les données des parties
@@ -159,22 +187,22 @@ function sameTraject(games, gameId, path) { // utile ? myArray.reverse()
 
 /**
  * @description calcule le chemin nécessaire pour relier deux cases
- * <ul>
- *  <li> appelle :
- *    <ul>
- *      <li> [Server.isOnGameBoard]{@link module:Server~isOnGameBoard}
- *      <li> [Server.isMovingBackward]{@link module:Server~isMovingBackward}
- *      <li> [Server.sameTraject]{@link module:Server~sameTraject}
- *      <li> [Server.getJumps]{@link module:Server~getJumps}
- *    </ul>
- *  <li> appelée par :
- *    <ul>
- *      <li> [Server.makeBestMove]{@link module:Server~makeBestMove}
- *      <li> [Server.validateMove]{@link module:Server~validateMove}
- *      <li> [Server.negmax]{@link module:Server~negmax}
- *      <li> [Server.alphabeta]{@link module:Server~alphabeta}
- *    </ul>
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle :
+ *    &lt;ul>
+ *      &lt;li> [Server.isOnGameBoard]{@link module:Server~isOnGameBoard}
+ *      &lt;li> [Server.isMovingBackward]{@link module:Server~isMovingBackward}
+ *      &lt;li> [Server.sameTraject]{@link module:Server~sameTraject}
+ *      &lt;li> [Server.getJumps]{@link module:Server~getJumps}
+ *    &lt;/ul>
+ *  &lt;li> appelée par :
+ *    &lt;ul>
+ *      &lt;li> [Server.makeBestMove]{@link module:Server~makeBestMove}
+ *      &lt;li> [Server.validateMove]{@link module:Server~validateMove}
+ *      &lt;li> [Server.negmax]{@link module:Server~negmax}
+ *      &lt;li> [Server.alphabeta]{@link module:Server~alphabeta}
+ *    &lt;/ul>
+ *  &lt;li> globales : -
  * @example
  * // partie 12314 : position des pions
  * // [4,12], [5,9], [6,14], [7,9], [11,11], [15,13], [8,12]
@@ -193,19 +221,19 @@ function getPath(games, gameId, startCell, endCell) {
   var row = startCell[0];
   var col = startCell[1];
   var i, j;
-  for (i =row-1; i <= row+1; i++)  {               // add mouvement adjaçant
-    for (j=col-2; j<= col+2; j++) {
-       if ((i!=row || j!=col) && isOnGameBoard([i,j]) && games[gameId]["gameBoard"][i][j]== -1){
-         if(! isMovingBackward(games[gameId]["playedColor"], [row,col], [i,j]) &&
+  for (i =row-1; i &lt;= row+1; i++)  {               // add mouvement adjaçant
+    for (j=col-2; j&lt;= col+2; j++) {
+       if ((i!=row || j!=col) &amp;&amp; isOnGameBoard([i,j]) &amp;&amp; games[gameId]["gameBoard"][i][j]== -1){
+         if(! isMovingBackward(games[gameId]["playedColor"], [row,col], [i,j]) &amp;&amp;
                ! sameTraject(games, gameId, [startCell, [i,j]]))
             games[gameId]["reachableCells"].push([i,j]);                    // used by IA
-         if (i==endCell[0] && j==endCell[1]) return ([startCell,[i,j]]);
+         if (i==endCell[0] &amp;&amp; j==endCell[1]) return ([startCell,[i,j]]);
        }
     }
   }
   getJumps(games, gameId, [startCell], endCell, []) ;
   if(games[gameId]["path"].length>0) {
-    var path = games[gameId]["path"].reduce(function (a, b) { return a.length < b.length ? a : b; });
+    var path = games[gameId]["path"].reduce(function (a, b) { return a.length &lt; b.length ? a : b; });
     return path;
   }
   else return false;
@@ -213,16 +241,16 @@ function getPath(games, gameId, startCell, endCell) {
 
 /**
  * @description calcule les sauts nécessaires pour relier deux cases
- * <ul>
- *  <li> appelle :
- *    <ul>
- *      <li> [Server.isOnGameBoard]{@link module:Server~isOnGameBoard}
- *      <li> [Server.isMovingBackward]{@link module:Server~isMovingBackward}
- *      <li> [Server.sameTraject]{@link module:Server~sameTraject}
- *      <li> [Server.contains]{@link module:Server~contains}
- *    </ul>
- *  <li> appelée par : [Server.getPath]{@link module:Server~getPath}
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle :
+ *    &lt;ul>
+ *      &lt;li> [Server.isOnGameBoard]{@link module:Server~isOnGameBoard}
+ *      &lt;li> [Server.isMovingBackward]{@link module:Server~isMovingBackward}
+ *      &lt;li> [Server.sameTraject]{@link module:Server~sameTraject}
+ *      &lt;li> [Server.contains]{@link module:Server~contains}
+ *    &lt;/ul>
+ *  &lt;li> appelée par : [Server.getPath]{@link module:Server~getPath}
+ *  &lt;li> globales : -
  * @example
  * // partie 12314 : position des pions
  * // [8,12], [6,12], [7,11], [7,13], [8,10], [8,14], [9,11], [9,13], [10,12]
@@ -236,26 +264,26 @@ function getPath(games, gameId, startCell, endCell) {
  * @param {Int[][]}  cells - Les coordonnées des cases de départ potentielles
  * @param {Int[]} endCell - Les coordonnées de la case d'arrivée
  * @param {Int[][]} oldPath - Le chemin déjà parcouru
- * @return {undefined} modifie <i>games</i>[<i>gameId</i>]["path"]
+ * @return {undefined} modifie &lt;i>games&lt;/i>[&lt;i>gameId&lt;/i>]["path"]
  */
 function getJumps(games, gameId, cells , endCell, oldPath) {
-  if (cells.length<1) return false;
+  if (cells.length&lt;1) return false;
   var i, j, k;
   var pivotRow , pivotCol;
   var n, index;
   var access_cell = []
   var row = cells[0][0]; var col = cells[0][1];
   // chercher saut sur ligne + diagonal 6 directions :
-  for (i=-1; i<2; i++) {     // i in [-1, 0, 1]
-    for (j=-1; j<2; j+=2) {  // j in [-1, 1]
+  for (i=-1; i&lt;2; i++) {     // i in [-1, 0, 1]
+    for (j=-1; j&lt;2; j+=2) {  // j in [-1, 1]
       pivotRow = row+i;
       pivotCol = col+j;
-      while (isOnGameBoard([pivotRow, pivotCol]) && games[gameId]["gameBoard"][pivotRow][pivotCol] < 1) { // avancer jusqu'a case occupée
+      while (isOnGameBoard([pivotRow, pivotCol]) &amp;&amp; games[gameId]["gameBoard"][pivotRow][pivotCol] &lt; 1) { // avancer jusqu'a case occupée
         pivotRow += i;
         pivotCol += j;
       }
       n=0;
-      for (k=1; k< j*(pivotCol-col); k+=1) {
+      for (k=1; k&lt; j*(pivotCol-col); k+=1) {
         if (!isOnGameBoard([pivotRow+i*k, pivotCol+j*k])) break;
         if (games[gameId]["gameBoard"][pivotRow+i*k][pivotCol+j*k] > 0) n+=1; // si un autre pion sur le chemin break
       }
@@ -263,11 +291,11 @@ function getJumps(games, gameId, cells , endCell, oldPath) {
         index_r = 2*pivotRow-row;   //(quand i=0; , pivotRow=row ; 2*row-row=row (on reste sur la même la ligne)
         index_c = 2*pivotCol-col;
         if (contains(oldPath,[index_r, index_c])) continue ; // éviter de tourner rond
-        if (isOnGameBoard([index_r, index_c]) && games[gameId]["gameBoard"][index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
-          if (oldPath[0] && ! (isMovingBackward(games[gameId]["playedColor"], oldPath[0], [index_r,index_c])))
+        if (isOnGameBoard([index_r, index_c]) &amp;&amp; games[gameId]["gameBoard"][index_r][index_c] === -1) { // si la case en asymétrie est vide valide:
+          if (oldPath[0] &amp;&amp; ! (isMovingBackward(games[gameId]["playedColor"], oldPath[0], [index_r,index_c])))
             if (! sameTraject(games, gameId, oldPath.concat([[row,col], [index_r, index_c]])))
               games[gameId]["reachableCells"].push([index_r, index_c])
-          if (index_r==endCell[0] && index_c==endCell[1]) {
+          if (index_r==endCell[0] &amp;&amp; index_c==endCell[1]) {
             games[gameId]["path"].push(oldPath.concat([[row,col], [index_r, index_c]]));
           }
           else access_cell.push([index_r, index_c]);
@@ -281,14 +309,14 @@ function getJumps(games, gameId, cells , endCell, oldPath) {
 
 /**
  * @description permet de savoir si un joueur a gagné avec son dernier mouvement
- * <ul>
- *  <li> appelle : -
- *  <li> appelée par :
- *    <ul>
- *      <li> [Server.makeBestMove]{@link module:Server~makeBestMove}
- *      <li> [Server.validateMove]{@link module:Server~validateMove}
- *      <li> [Server.negmax]{@link module:Server~negmax}
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : -
+ *  &lt;li> appelée par :
+ *    &lt;ul>
+ *      &lt;li> [Server.makeBestMove]{@link module:Server~makeBestMove}
+ *      &lt;li> [Server.validateMove]{@link module:Server~validateMove}
+ *      &lt;li> [Server.negmax]{@link module:Server~negmax}
+ *  &lt;li> globales : -
  * @example
  * // games[12314][gameState] = [[false,true,true],[true,false,true]]
  * Server.hasWon(games, "12314", 1) // -> true si tous les pions orange sont dans leur triangle d'arrivée, false sinon
@@ -301,12 +329,12 @@ function getJumps(games, gameId, cells , endCell, oldPath) {
 function hasWon(games, gameId, color) {
   var row, col;
   var n =  (color%2 ? color : color-2);
-  for (var i=0; i<10; i++) {
+  for (var i=0; i&lt;10; i++) {
     row = TRIANGLES_COORDS[n][i][0];
     col = TRIANGLES_COORDS[n][i][1];
     if (games[gameId]["gameBoard"][row][col] != color) return false;
   }
-  for (n=0; n< games[gameId]["COLORS"][games[gameId]["player"]].length; n++) {
+  for (n=0; n&lt; games[gameId]["COLORS"][games[gameId]["player"]].length; n++) {
     if (games[gameId]["COLORS"][games[gameId]["player"]][n] === color)
       games[gameId]["gameState"][games[gameId]["player"]][n]=true;
   }
@@ -315,13 +343,13 @@ function hasWon(games, gameId, color) {
 
 /**
  * @description permet de savoir si une case est sur le plateau de jeu (utilisée par l'IA)
- * <ul>
- *  <li> appelle : -
- *  <li> appelée par :
- *    <ul>
- *      <li> [Server.getPath]{@link module:Server~getPath}
- *      <li> [Server.getJumps]{@link module:Server~getJumps}
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : -
+ *  &lt;li> appelée par :
+ *    &lt;ul>
+ *      &lt;li> [Server.getPath]{@link module:Server~getPath}
+ *      &lt;li> [Server.getJumps]{@link module:Server~getJumps}
+ *  &lt;li> globales : -
  * @example
  * Server.isOnGameBoard([-1,12]) // -> false
  * Server.isOnGameBoard([4,16]) // -> true
@@ -329,15 +357,15 @@ function hasWon(games, gameId, color) {
  * @return {Boolean} true si case est sur le plateau de jeu, false sinon
  */
 function isOnGameBoard(cell) {
-  return (cell[0] > -1 && cell[0] < 17 && cell[1] > -1 && cell[1] < 25);
+  return (cell[0] > -1 &amp;&amp; cell[0] &lt; 17 &amp;&amp; cell[1] > -1 &amp;&amp; cell[1] &lt; 25);
 }
 
 /**
  * @description permet de savoir si un Array contient un certain élément
- * <ul>
- *  <li> appelle : -
- *  <li> appelée par : [Server.getJumps]{@link module:Server~getJumps}
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : -
+ *  &lt;li> appelée par : [Server.getJumps]{@link module:Server~getJumps}
+ *  &lt;li> globales : -
  * @example
  * Server.contains([1,2,3], 2) // -> true
  * Server.contains(['1','2','3'], 2) // -> false
@@ -345,12 +373,12 @@ function isOnGameBoard(cell) {
  * Server.contains([[2,3],[3,5],[4,2]], [1,2]) -> false
  * @param {Array} array - Un Array
  * @param {*} element - Un élément quelconque
- * @return {Boolean} true si <i>array </i> contient <i>element</i>, false sinon
+ * @return {Boolean} true si &lt;i>array &lt;/i> contient &lt;i>element&lt;/i>, false sinon
  */
  function contains(array, element) {
   var i = array.length;
   while (i--) {
-    if (array[i][0]==element[0] && array[i][1] == element[1]) {
+    if (array[i][0]==element[0] &amp;&amp; array[i][1] == element[1]) {
       return true;
     }
   }
@@ -359,14 +387,14 @@ function isOnGameBoard(cell) {
 
 /**
  * @description envoie les données de la partie à la base de données
- * <ul>
- *  <li> appelle : -
- *  <li> appelée par :
- *    <ul>
- *      <li> [Server.makeBestMove]{@link module:Server~makeBestMove}
- *      <li> [Server.validateMove]{@link module:Server~validateMove}
- *      <li> [Server.negmax]{@link module:Server~negmax}
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : -
+ *  &lt;li> appelée par :
+ *    &lt;ul>
+ *      &lt;li> [Server.makeBestMove]{@link module:Server~makeBestMove}
+ *      &lt;li> [Server.validateMove]{@link module:Server~validateMove}
+ *      &lt;li> [Server.negmax]{@link module:Server~negmax}
+ *  &lt;li> globales : -
  * @example
  * Server.sendScore(games, "12314", games[12314]["PLAYERS"][0], (error,data) => {
  * //   if (error) console.log('Echec de l\'envoi des scores à la BDD');
@@ -386,7 +414,7 @@ function sendScore(games, gameId, winner, callback) {
   adversaires.forEach(function(value, index, array) {
     array[index] = encodeURIComponent(value.name);
   })
-  var request = http.get('http://hop-hop-hop.herokuapp.com/score?name=' + name + '&score=' + score + '&adversaire1=' + adversaires[0] + '&adversaire2=' + adversaires[1] + '&adversaire3=' + adversaires[2] + '&adversaire4=' + adversaires[3] + '&adversaire5=' + adversaires[4], function(response) { // crée la requête GET pour la page de scores
+  var request = http.get('http://hop-hop-hop.herokuapp.com/score?name=' + name + '&amp;score=' + score + '&amp;adversaire1=' + adversaires[0] + '&amp;adversaire2=' + adversaires[1] + '&amp;adversaire3=' + adversaires[2] + '&amp;adversaire4=' + adversaires[3] + '&amp;adversaire5=' + adversaires[4], function(response) { // crée la requête GET pour la page de scores
    var data = '';
    response.on('data', function(chunk) { // fonction exécutée chaque fois que des données sont reçues
         data += chunk; // ajoute les données aux données déjà reçues
@@ -403,16 +431,16 @@ function sendScore(games, gameId, winner, callback) {
 
 /**
  * @description fait jouer l'IA
- * <ul>
- *  <li> appelle :
- *    <ul>
- *      <li> [Server.getPath]{@link module:Server~getPath}
- *      <li> [Server.move]{@link module:Server~move}
- *      <li> [Server.hasWon]{@link module:Server~hasWon}
- *      <li> [Server.sendScore]{@link module:Server~sendScore}
- *    </ul>
- *  <li> appelée par : [Server.play]{@link module:Server~play}
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle :
+ *    &lt;ul>
+ *      &lt;li> [Server.getPath]{@link module:Server~getPath}
+ *      &lt;li> [Server.move]{@link module:Server~move}
+ *      &lt;li> [Server.hasWon]{@link module:Server~hasWon}
+ *      &lt;li> [Server.sendScore]{@link module:Server~sendScore}
+ *    &lt;/ul>
+ *  &lt;li> appelée par : [Server.play]{@link module:Server~play}
+ *  &lt;li> globales : -
  * @example
  * Server.makeBestMove(io,games,"12314") // -> l'IA joue
  * @param {Object} io - L'instance de socket.io
@@ -431,18 +459,18 @@ function sendScore(games, gameId, winner, callback) {
   var x, y, x0, y0, weight=0, n;
   var xDirection , yDirection, axis, axis0;         // géométrie
   var count=0;                  // pour avoir une idée sur le nombre d'itération
-  for( i = 0; i<17; i++) {  // parcourt du plateau
-    for (j=0 ; j<25; j++) {
+  for( i = 0; i&lt;17; i++) {  // parcourt du plateau
+    for (j=0 ; j&lt;25; j++) {
       if(games[gameId]["COLORS"][games[gameId]["player"]].indexOf(games[gameId]["gameBoard"][i][j])>-1) {       // si pion de l'IA
         games[gameId]["playedColor"]=games[gameId]["gameBoard"][i][j];                        // fait semblant qu'on va le déplacer
         games[gameId]["gameBoard"][i][j]=-1;                           //  (i, j) cellule depart
         getPath(games, gameId, [i,j], [-1,-1]);           // set in reachableCells all reachable cell
         games[gameId]["gameBoard"][i][j]=games[gameId]["playedColor"];                        // rétablir la valeur initiale
-        for(k=0; k< games[gameId]["reachableCells"].length; k++){       // set weight // compare  (pour toute cellule accesible accorde un poid
+        for(k=0; k&lt; games[gameId]["reachableCells"].length; k++){       // set weight // compare  (pour toute cellule accesible accorde un poid
           n =  (games[gameId]["playedColor"]%2 ? games[gameId]["playedColor"] : games[gameId]["playedColor"]-2);
           x0= TRIANGLES_COORDS[n][0][0] ;y0= TRIANGLES_COORDS[n][0][1]  // (x0, y0) pointe du triangle opposé // on souhaite diminuer au max la distance
           xDirection = (games[gameId]["playedColor"]%2 ? 1: -1) ;               // dans quelle direction vont les x? selon les couleur (1, 3, 5 direction +1, 2, 4, 6 direction -1
-          yDirection = (games[gameId]["playedColor"]%3 ? (games[gameId]["playedColor"]<3 ? 0 : -1) : 1); // dans quelle direction vont les y? selon les couleur (1, 2:aucun effet 3,6: +1 4, 5:-1
+          yDirection = (games[gameId]["playedColor"]%3 ? (games[gameId]["playedColor"]&lt;3 ? 0 : -1) : 1); // dans quelle direction vont les y? selon les couleur (1, 2:aucun effet 3,6: +1 4, 5:-1
           axis = -3*xDirection*yDirection;                            // ce code trouve l'equation de la droite allant de la pointe du home a la pointe de l'opposé
           axis0 = -axis*8-12;
           count+=1
@@ -456,10 +484,10 @@ function sendScore(games, gameId, winner, callback) {
             // le code suivant pour rester sur la ligne droite entre le home et l'oppossé
             weight += 15* (Math.pow(axis*i+j+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier le pions les plus éloignés
             weight -= 15* (Math.pow(axis*x+y+axis0, 2)/(Math.pow(axis, 2)+3));    // privilégier les positions les plus proches
-            for (l=0; l<3; l++) {                                                   // derniers pions
+            for (l=0; l&lt;3; l++) {                                                   // derniers pions
               var a = TRIANGLES_COORDS[games[gameId]["playedColor"]-1][l][0];
               var b = TRIANGLES_COORDS[games[gameId]["playedColor"]-1][l][1];
-              if (i===a && j===b){
+              if (i===a &amp;&amp; j===b){
                 weight+= 4*games[gameId]["PLAYERS"][games[gameId]["player"]].score;
               }
             }
@@ -503,18 +531,18 @@ function sendScore(games, gameId, winner, callback) {
 
 /**
  * @description valide un mouvement et effectue les actions correspondantes
- * <ul>
- *  <li> appelle :
- *    <ul>
- *      <li> [Server.getPath]{@link module:Server~getPath}
- *      <li> [Server.isMovingBackward]{@link module:Server~isMovingBackward}
- *      <li> [Server.sameTraject]{@link module:Server~sameTraject}
- *      <li> [Server.move]{@link module:Server~move}
- *      <li> [Server.hasWon]{@link module:Server~hasWon}
- *      <li> [Server.sendScore]{@link module:Server~sendScore}
- *    </ul>
- *  <li> appelée par : [Server.play]{@link module:Server~play}
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle :
+ *    &lt;ul>
+ *      &lt;li> [Server.getPath]{@link module:Server~getPath}
+ *      &lt;li> [Server.isMovingBackward]{@link module:Server~isMovingBackward}
+ *      &lt;li> [Server.sameTraject]{@link module:Server~sameTraject}
+ *      &lt;li> [Server.move]{@link module:Server~move}
+ *      &lt;li> [Server.hasWon]{@link module:Server~hasWon}
+ *      &lt;li> [Server.sendScore]{@link module:Server~sendScore}
+ *    &lt;/ul>
+ *  &lt;li> appelée par : [Server.play]{@link module:Server~play}
+ *  &lt;li> globales : -
  * @example
  * // clients = {
  * //   23 : {
@@ -584,7 +612,7 @@ function validateMove(io, clients, games, gameId, socket, cell) {
     return false;
   }
   else { // si c'est un second clic
-    if (startCell[0] === row && startCell[1] === col) {  // si le joueur a cliqué sur la case de départ
+    if (startCell[0] === row &amp;&amp; startCell[1] === col) {  // si le joueur a cliqué sur la case de départ
       games[gameId]["gameBoard"][row][col] = playedColor; // remet le pion à sa place
       games[gameId]["startCell"] = 0; // réinitialise la case de départ
       /**
@@ -654,22 +682,22 @@ function validateMove(io, clients, games, gameId, socket, cell) {
 
 /**
  * @description déplace un pion sur le plateau de jeu
- * <ul>
- *  <li> appelle : -
- *  <li> appelée par :
- *    <ul>
- *      <li> [Server.validateMove]{@link module:Server~validateMove}
- *      <li> [Server.makeBestMove]{@link module:Server~makeBestMove}
- *      <li> [Server.negmax]{@link module:Server~negmax}
- *    </ul>
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : -
+ *  &lt;li> appelée par :
+ *    &lt;ul>
+ *      &lt;li> [Server.validateMove]{@link module:Server~validateMove}
+ *      &lt;li> [Server.makeBestMove]{@link module:Server~makeBestMove}
+ *      &lt;li> [Server.negmax]{@link module:Server~negmax}
+ *    &lt;/ul>
+ *  &lt;li> globales : -
  * @example
  * Server.move(games,"12314",[[8,12],[10,14]],1) // -> déplace un pion orange de [8,12] en [10,14]
  * @param {Object} games - Le dictionnaire contenant toutes les données des parties
  * @param {String} gameId - Le numéro de la partie
  * @param {Int[][]} path - Les coordonnées de la case jouée
  * @param {Int} playedColor - Le numéro de la couleur jouée
- * @return {undefined} modifie <i>games</i>[<i>gameId</i>]["gameBoard"]
+ * @return {undefined} modifie &lt;i>games&lt;/i>[&lt;i>gameId&lt;/i>]["gameBoard"]
  */
 function move(games, gameId, path, playedColor) {
   var previous = path[0];
@@ -683,34 +711,34 @@ function move(games, gameId, path, playedColor) {
 
 /**
  * @description échappe les caractères HTML (pour éviter la faille XSS)
- * <ul>
- *  <li> appelle : -
- *  <li> appelée par : server.js
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle : -
+ *  &lt;li> appelée par : server.js
+ *  &lt;li> globales : -
  * @example
- * Server.escapeHtml("<script>") // -> "&ltscript&gt"
+ * Server.escapeHtml("&lt;script>") // -> "&amp;ltscript&amp;gt"
  * @param {String} text - La chaîne à convertir
  * @return {String} La chaîne avec les caractères HTML remplacés
  */
 function escapeHtml(text) {
   if (typeof(text) === 'undefined') return text
   return text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+      .replace(/&amp;/g, "&amp;amp;")
+      .replace(/&lt;/g, "&amp;lt;")
+      .replace(/>/g, "&amp;gt;")
+      .replace(/"/g, "&amp;quot;")
+      .replace(/'/g, "&amp;#039;");
 }
 
 /**
  * @description joue un coup
- * <ul>
- *  <li> appelle :
- *    <ul>
- *      <li> [validateMove]{@link Server~validateMove}
- *      <li> [makeBestMove]{@link Server~makeBestMove}
- *  <li> appelée par : server.js
- *  <li> globales : -
+ * &lt;ul>
+ *  &lt;li> appelle :
+ *    &lt;ul>
+ *      &lt;li> [validateMove]{@link Server~validateMove}
+ *      &lt;li> [makeBestMove]{@link Server~makeBestMove}
+ *  &lt;li> appelée par : server.js
+ *  &lt;li> globales : -
  * @example
  * Server.play(io,clients,games,"12314",socket,[8,12]) // -> un client joue la case [8,12]
  * @param {Object} io - L'instance de socket.io
@@ -747,21 +775,21 @@ function negmax(io, games, gameId) {
   var color, score, liste;
   console.log("I'm the negmax algo, i'm thinking...for player: "+games[gameId]["player"]);
   // set in players agent color and adverser color // minmax for multiplayer
-  for (var i=0; i< games[gameId]["COLORS"][games[gameId]["player"]].length; i++) {
+  for (var i=0; i&lt; games[gameId]["COLORS"][games[gameId]["player"]].length; i++) {
     color = games[gameId]["COLORS"][games[gameId]["player"]][i];
     players[0].push(color);
     var n =  (color%2 ? color+1 : color-1);
     players[1].push(n);
   }
-  for( i = 0; i<17; i++) {                              // parcourt du plateau
-    for (j=0 ; j<25; j++) {
+  for( i = 0; i&lt;17; i++) {                              // parcourt du plateau
+    for (j=0 ; j&lt;25; j++) {
       if(games[gameId]["COLORS"][games[gameId]["player"]].indexOf(games[gameId]["gameBoard"][i][j])>-1) {       // si pion de l'IA
         color =games[gameId]["gameBoard"][i][j];                        // fait semblant qu'on va le déplacer
         games[gameId]["playedColor"]= color
         games[gameId]["gameBoard"][i][j]=-1;                           //  (i, j) cellule depart
         getPath(games, gameId, [i,j], [-1,-1]);           // set in reachableCells all reachable cell
         liste = games[gameId]["reachableCells"];          // créer une copie //l'utilisation des variables globales avec récursion change leur valeur
-        for(k=0; k< liste.length; k++){    // pour chaque coup possible simule le mouvement
+        for(k=0; k&lt; liste.length; k++){    // pour chaque coup possible simule le mouvement
           x = liste[k][0];  y = liste[k][1];            // (x, y) cellule accesible a partir de (i, j)
           games[gameId]["gameBoard"][x][y] = color;                    // simule le mouvement
           score = alphabeta(io, games, gameId, depth-1, -10000, 10000, 1, players);
@@ -810,15 +838,15 @@ function alphabeta(io, games, gameId, depth, alpha, beta, isMin, players) {
   var liste;
   if (games[gameId]["gameOver"] || depth == 0)
     return (isMin%2? 1: -1) * evaluate(games[gameId]["gameBoard"], players);
-  for( i = 0; i<17; i++) {                    // parcourt du plateau
-    for (j=0 ; j<25; j++) {
+  for( i = 0; i&lt;17; i++) {                    // parcourt du plateau
+    for (j=0 ; j&lt;25; j++) {
       if(players[isMin].indexOf(games[gameId]["gameBoard"][i][j])>-1) {  // si pion du joueur
         color=games[gameId]["gameBoard"][i][j];                          // on crée des copie car les variables globale change de valeur avec récursion
         games[gameId]["playedColor"]=color;
         games[gameId]["gameBoard"][i][j]=-1;
         getPath(games, gameId, [i,j], [-1,-1]);           // set in reachableCells all reachable cell
         liste = games[gameId]["reachableCells"];          // créer une copie
-        for(k=0; k< liste.length; k++){    // pour chaque coup possible simule le mouvement ;
+        for(k=0; k&lt; liste.length; k++){    // pour chaque coup possible simule le mouvement ;
           x = liste[k][0];  y = liste[k][1];            // (x, y) cellule accesible a partir de (i, j)
           games[gameId]["gameBoard"][x][y] = color;                    // simule le mouvement
           score = Math.max(score, -alphabeta(io, games, gameId, depth - 1, -beta, -alpha, +!isMin, players));
@@ -841,8 +869,8 @@ une situation avantageuse si les distances de l'agent sont les plus petites  et 
 function evaluate(gameBoard, players) {
   var i, j, n, color;
   var value=0;
-  for( i = 0; i<17; i++) {
-    for (j=0 ; j<25; j++) {
+  for( i = 0; i&lt;17; i++) {
+    for (j=0 ; j&lt;25; j++) {
       if(players[0].indexOf(gameBoard[i][j])>-1) {
         color = gameBoard[i][j];
         n =  (color%2 ? color : color-2);
@@ -859,3 +887,26 @@ function evaluate(gameBoard, players) {
   }
   return value;
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li><li><a href="module-Server.html">Server</a></li><li><a href="module-Shared.html">Shared</a></li></ul><h3>Classes</h3><ul><li><a href="Player.html">Player</a></li><li><a href="Sound.html">Sound</a></li></ul><h3>Events</h3><ul><li><a href="module-Server.html#~event:deselect">deselect</a></li><li><a href="module-Server.html#~event:endgame">end game</a></li><li><a href="module-Server.html#~event:gameerror">game error</a></li><li><a href="global.html#event:moverequest">move request</a></li><li><a href="module-Server.html#~event:newturn">new turn</a></li><li><a href="global.html#event:restartrequest">restart request</a></li><li><a href="module-Server.html#~event:select">select</a></li></ul><h3>Global</h3><ul><li><a href="global.html#clients">clients</a></li><li><a href="global.html#connection">connection</a></li><li><a href="global.html#dbConfig">dbConfig</a></li><li><a href="global.html#games">games</a></li><li><a href="global.html#handleDisconnect">handleDisconnect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Aug 31 2018 15:18:56 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

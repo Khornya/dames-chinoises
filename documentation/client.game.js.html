@@ -1,33 +1,61 @@
-(function(exports){
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: client.game.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: client.game.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function(exports){
 
   /**
    * @function createGameBoard
    * @memberof module:Client
    * @inner
-   * @description crée un plateau de jeu à partir de l'Array <i>matrice</i>
-   * <ul>
-   *  <li> appelle :
-   *    <ul>
-   *      <li> [Shared.initArray]{@link module:Shared~initArray}
-   *      <li> [Client.createCell]{@link module:Client~createCell}
-   *    </ul>
-   *  <li> appelée par : game.js
-   *  <li> globales : -
+   * @description crée un plateau de jeu à partir de l'Array &lt;i>matrice&lt;/i>
+   * &lt;ul>
+   *  &lt;li> appelle :
+   *    &lt;ul>
+   *      &lt;li> [Shared.initArray]{@link module:Shared~initArray}
+   *      &lt;li> [Client.createCell]{@link module:Client~createCell}
+   *    &lt;/ul>
+   *  &lt;li> appelée par : game.js
+   *  &lt;li> globales : -
    * @example
    * Client.createGameBoard() // -> code HTML produit :
-   * // <div id="line0" class="line">
-   * //    <div class="cell" line="0" column="12">
-   * //      <img alt="pion" src="images/pion1.png">
-   * //    </div>
-   * // </div>
-   * // <div id="line1" class="line">
-   * //    <div class="cell" line="1" column="11">
-   * //      <img alt="pion" src="images/pion1.png">
-   * //    </div>
-   * //    <div class="cell" line="1" column="13">
-   * //      <img alt="pion" src="images/pion1.png">
-   * //    </div>
-   * // </div>
+   * // &lt;div id="line0" class="line">
+   * //    &lt;div class="cell" line="0" column="12">
+   * //      &lt;img alt="pion" src="images/pion1.png">
+   * //    &lt;/div>
+   * // &lt;/div>
+   * // &lt;div id="line1" class="line">
+   * //    &lt;div class="cell" line="1" column="11">
+   * //      &lt;img alt="pion" src="images/pion1.png">
+   * //    &lt;/div>
+   * //    &lt;div class="cell" line="1" column="13">
+   * //      &lt;img alt="pion" src="images/pion1.png">
+   * //    &lt;/div>
+   * // &lt;/div>
    * // etc.
    * @return {Array}
    * @param {Array} matrice - la matrice représentant le plateau de jeu
@@ -35,12 +63,12 @@
   function createGameBoard(matrice) {
     var board = Shared.initArray(17,25,false);
     var line, cell;
-    for (var row=0; row<17; row++) { // crée un div pour chaque ligne
+    for (var row=0; row&lt;17; row++) { // crée un div pour chaque ligne
       line = document.createElement('div');
       line.id = 'line'+row;
       line.className = 'line';
       document.getElementById('board').appendChild(line);
-      for (var col=0; col<25; col++) { // crée chaque cellule
+      for (var col=0; col&lt;25; col++) { // crée chaque cellule
         if (matrice[row][col] !== false) {
           cell = createCell([row,col], matrice[row][col]);
           line.appendChild(cell);
@@ -55,18 +83,18 @@
   * @function createCell
   * @memberof module:Client
   * @inner
-  * @description crée une case de coordonnées <i>cell</i> et de couleur <i>color</i>
-  * <ul>
-  *  <li> appelle : -
-  *  <li> appelée par : [Client.createGameBoard]{@link module:Client~createGameBoard}
-  *  <li> globales : -
+  * @description crée une case de coordonnées &lt;i>cell&lt;/i> et de couleur &lt;i>color&lt;/i>
+  * &lt;ul>
+  *  &lt;li> appelle : -
+  *  &lt;li> appelée par : [Client.createGameBoard]{@link module:Client~createGameBoard}
+  *  &lt;li> globales : -
   * @example
-  * Client.createCell([2,10],1) // -> HTML <img> element
+  * Client.createCell([2,10],1) // -> HTML &lt;img> element
   * // code HTML produit :
-  * // <div class="cell" line="2" column="10">
-  * //    <img alt="pion" src="images/pion1.png">
-  * // </div>
-  * @return {HTMLelement} L'ID de l'élément <img> dans le DOM
+  * // &lt;div class="cell" line="2" column="10">
+  * //    &lt;img alt="pion" src="images/pion1.png">
+  * // &lt;/div>
+  * @return {HTMLelement} L'ID de l'élément &lt;img> dans le DOM
   * @param {Array} cell - les coordonnées de la case
   * @param {int} color - la couleur du pion
   */
@@ -75,7 +103,7 @@
     div.classList.add('cell'); // on lui attribue la classe "cell"
     div.setAttribute('line', cell[0]); // on met la valeur des attributs "line" et "column"
     div.setAttribute('column', cell[1]);
-    div.innerHTML = "<img alt='pion' src='images/pion" + color + ".png' />";     // on ajoute l'image de base pour la case
+    div.innerHTML = "&lt;img alt='pion' src='images/pion" + color + ".png' />";     // on ajoute l'image de base pour la case
     div.addEventListener('click', play);     // on ajoute un event "click" qui déclenchera la fonction "play"
     return div;
   }
@@ -85,15 +113,15 @@
    * @memberof module:Client
    * @inner
    * @description redémarre la partie :
-   * <ul><ul>
-   *  <li> réinitialise les frames des joueurs
-   *  <li> si besoin, masque le modal de fin de partie
-   *  <li> si besoin, envoie un message 'restart request' au serveur
-   * </ul></ul>
-   * <ul>
-   *  <li> appelle : [Client.updatePlayerFrames]{@link module:Client~updatePlayerFrames}
-   *  <li> appelée par : game.js
-   *  <li> globales : -
+   * &lt;ul>&lt;ul>
+   *  &lt;li> réinitialise les frames des joueurs
+   *  &lt;li> si besoin, masque le modal de fin de partie
+   *  &lt;li> si besoin, envoie un message 'restart request' au serveur
+   * &lt;/ul>&lt;/ul>
+   * &lt;ul>
+   *  &lt;li> appelle : [Client.updatePlayerFrames]{@link module:Client~updatePlayerFrames}
+   *  &lt;li> appelée par : game.js
+   *  &lt;li> globales : -
    * @example
    * Client.restart(true) // -> masque le modal, réinitialise les frames des joueurs et envoie la requête au serveur
    * @example
@@ -120,10 +148,10 @@
    * @memberof module:Client
    * @inner
    * @description actualise l'affichage du plateau de jeu
-   * <ul>
-   *  <li> appelle : -
-   *  <li> appelée par : game.js
-   *  <li> globales : images
+   * &lt;ul>
+   *  &lt;li> appelle : -
+   *  &lt;li> appelée par : game.js
+   *  &lt;li> globales : images
    * @example
    * var gameBoard = Client.initGameBoard()
    * Client.refreshBoard(gameBoard) // -> réinitialise le plateau de jeu
@@ -131,8 +159,8 @@
    * @param {Array} gameBoard - la matrice représentant le plateau de jeu
    */
   function refreshBoard(gameBoard) {
-    for (var row=0; row<17; row++) { // pour chaque ligne
-      for (var col=0; col<25; col++) { // pour chaque colonne
+    for (var row=0; row&lt;17; row++) { // pour chaque ligne
+      for (var col=0; col&lt;25; col++) { // pour chaque colonne
         if (images[row][col].src !== "images/pion" + gameBoard[row][col] + ".png") // si l'image ne correspond pas
           images[row][col].src = "images/pion" + gameBoard[row][col] + ".png"; // on change l'image
       }
@@ -143,11 +171,11 @@
    * @function move
    * @memberof module:Client
    * @inner
-   * @description déplace un pion de couleur <i>playedColor</i> selon le chemin <i>path</i>
-   * <ul>
-   *  <li> appelle : -
-   *  <li> appelée par : game.js
-   *  <li> globales : gameBoard, images, SOUNDS
+   * @description déplace un pion de couleur &lt;i>playedColor&lt;/i> selon le chemin &lt;i>path&lt;/i>
+   * &lt;ul>
+   *  &lt;li> appelle : -
+   *  &lt;li> appelée par : game.js
+   *  &lt;li> globales : gameBoard, images, SOUNDS
    * @example
    * Client.move([[2,10],[4,12],[4,14]],1) // -> déplace le pion vert de la case [2,10] à la case [4,14] en passant par la case [4,12]
    * @return {undefined}
@@ -176,10 +204,10 @@
    * @memberof module:Client
    * @inner
    * @description affiche la fin de la partie
-   * <ul>
-   *  <li> appelle : -
-   *  <li> appelée par : game.js
-   *  <li> globales : SOUNDS, PLAYERS
+   * &lt;ul>
+   *  &lt;li> appelle : -
+   *  &lt;li> appelée par : game.js
+   *  &lt;li> globales : SOUNDS, PLAYERS
    * @example
    * Client.endGame(1,22) // -> affiche dans le modal que le joueur 2 a gagné en 22 coups
    * @return {undefined}
@@ -263,9 +291,9 @@
       var colors = document.createElement('span'); // on crée un span
       colors.className = 'playerColors'; // on attribue la classe
       var code = '';
-      for (var i=0, max=this.colors.length, color; i<max; i++) { // on ajoute toutes les images des couleurs jouées par le joueur
+      for (var i=0, max=this.colors.length, color; i&lt;max; i++) { // on ajoute toutes les images des couleurs jouées par le joueur
         color = this.colors[i];
-         code += "<img class='imagetag' alt='color' src='images/pion" + color + ".png' />"
+         code += "&lt;img class='imagetag' alt='color' src='images/pion" + color + ".png' />"
       }
       colors.innerHTML = code;
       frame.appendChild(name); // on ajoute tout au document
@@ -280,10 +308,10 @@
    * @memberof module:Client
    * @inner
    * @description envoie un message pour jouer un coup au serveur - se déclenche à chaque clic sur une case du plateau
-   * <ul>
-   *  <li> appelle : -
-   *  <li> appelée par : game.js
-   *  <li> globales : -
+   * &lt;ul>
+   *  &lt;li> appelle : -
+   *  &lt;li> appelée par : game.js
+   *  &lt;li> globales : -
    * @emits move request
    * @example
    * Client.play(event) -> envoie un message 'move request' au serveur avec les coordonnées de la case sur laquelle on a cliqué
@@ -307,17 +335,17 @@
    * @memberof module:Client
    * @inner
    * @description actualise l'affichage des cadres joueurs
-   * <ul>
-   *  <li> appelle : -
-   *  <li> appelée par : game.js, [Client.restart]{@link module:Client~restart}
-   *  <li> globales : -
+   * &lt;ul>
+   *  &lt;li> appelle : -
+   *  &lt;li> appelée par : game.js, [Client.restart]{@link module:Client~restart}
+   *  &lt;li> globales : -
    * @example
    * Client.updatePlayerFrames() -> souligne le nom du joueur dont c'est le tour
    * @return {undefined}
    */
   function updatePlayerFrames() {
     var playerFrames = document.querySelectorAll('.playerInfo'); // récupère tous les cadres
-    for (var i=0, max=playerFrames.length; i<max; i++) { // pour chaque cadre
+    for (var i=0, max=playerFrames.length; i&lt;max; i++) { // pour chaque cadre
       if (playerFrames[i].id === 'player' + (player+1)) { // si le joueur est le joueur dont c'est le tour
         playerFrames[i].firstChild.style.textDecoration = 'underline'; // on souligne son nom
       }
@@ -332,10 +360,10 @@
    * @memberof module:Client
    * @inner
    * @description affiche un message et joue un son
-   * <ul>
-   *  <li> appelle : -
-   *  <li> appelée par : game.js
-   *  <li> globales : -
+   * &lt;ul>
+   *  &lt;li> appelle : -
+   *  &lt;li> appelée par : game.js
+   *  &lt;li> globales : -
    * @example
    * Client.sendMessage('Bravo', SOUNDS.win) -> affiche une alerte indiquant 'Bravo' et joue le son
    * @return {undefined}
@@ -356,7 +384,7 @@
   function Sound(source) { // constructeur pour la classe "Sound"
     /**
      * @memberof Sound
-     * @description l'élement &ltaudio&t correspondant au son
+     * @description l'élement &amp;ltaudio&amp;t correspondant au son
      * @type {HTMLelement}
      */
     this.sound = document.createElement("audio"); // on crée un élément "audio"
@@ -388,3 +416,26 @@
   exports.Sound = Sound;
 
 }(typeof exports === 'undefined' ? this.Client = {} : exports));
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li><li><a href="module-Server.html">Server</a></li><li><a href="module-Shared.html">Shared</a></li></ul><h3>Classes</h3><ul><li><a href="Player.html">Player</a></li><li><a href="Sound.html">Sound</a></li></ul><h3>Events</h3><ul><li><a href="module-Server.html#~event:deselect">deselect</a></li><li><a href="module-Server.html#~event:endgame">end game</a></li><li><a href="module-Server.html#~event:gameerror">game error</a></li><li><a href="global.html#event:moverequest">move request</a></li><li><a href="module-Server.html#~event:newturn">new turn</a></li><li><a href="global.html#event:restartrequest">restart request</a></li><li><a href="module-Server.html#~event:select">select</a></li></ul><h3>Global</h3><ul><li><a href="global.html#clients">clients</a></li><li><a href="global.html#connection">connection</a></li><li><a href="global.html#dbConfig">dbConfig</a></li><li><a href="global.html#games">games</a></li><li><a href="global.html#handleDisconnect">handleDisconnect</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Aug 31 2018 15:18:56 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

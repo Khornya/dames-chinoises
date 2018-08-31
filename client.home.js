@@ -1,11 +1,19 @@
 (function(exports){
+
   /**
    * @module Client
    */
 
   /**
    * @function seeMore
-   * @description affiche le div qui contient les infos sur les dames chinoises
+   * @description affiche / masque le div qui contient les infos sur les dames chinoises
+   * <ul>
+   *  <li> appelle : -
+   *  <li> appelée par : home.js
+   *  <li> globales : -
+   * @example
+   * Client.seeMore() // si le texte supplémentaire est affiché, le masque
+   * @return {undefined}
    */
   function seeMore() {
     var x = document.getElementById("seeMoreDiv"); // on récupère le div #seeMoreDiv
@@ -22,16 +30,18 @@
 
   /**
    * @function updateChoices
-   * @description déclenchée quand on change le nombre de joueurs
+   * @description actualise les choix disponibles - déclenchée quand on change le nombre de joueurs
    * <ul>
    *  <li> appelle :
         <ul>
-          <li> [updateColors]{@link module:Client~updateColors}
-          <li> [deactivateTooltips]{@link module:Client~deactivateTooltips}
+          <li> [Client.updateColors]{@link module:Client~updateColors}
+          <li> [Client.deactivateTooltips]{@link module:Client~deactivateTooltips}
         </ul>
-   *  <li> appelée par :
-   *  <li> globales :
+   *  <li> appelée par : home.js
+   *  <li> globales : -
    * @return {undefined}
+   * @example
+   * Client.updateChoices() // -> si '2 joueurs' est sélectionné, affiche uniquement les champs des joueurs 1 et 2, ainsi que le choix du nombre de couleurs
    */
   function updateChoices() {
     var colorChoices = { // un dictionnaire qui indique pour chaque nombre de joueurs s'il faut afficher le choix du nombre de couleurs, et quelle valeur doit être cochée par défaut
@@ -75,16 +85,16 @@
 
   /**
    * @function updateColors
-   * @description actualise les pastilles de couleur pour chaque joueur - déclenchée quand on change le nombre de joueurs
+   * @description actualise les pastilles de couleur pour chaque joueur - déclenchée quand on change le nombre de joueurs ou le nombre de couleurs
    * <ul>
-   *  <li> appelle :
-   *  <li> appelée par :
-        <ul>
-          <li> [updateChoices]{@link module:Client~updateChoices}
-   *  <li> globales :
+   *  <li> appelle : -
+   *  <li> appelée par : [Client.updateChoices]{@link module:Client~updateChoices}
+   *  <li> globales : -
    * @return {undefined}
+   * @example
+   * Client.updateColors() // -> si '2 joueurs' et '1 couleur' sont sélectionnés, affiche la couleur verte pour le joueur 1 et la couleur orange pour le joueur 2
    */
-  function updateColors() { // met à jour l'affichage des couleurs à droite du nom des joueurs
+  function updateColors() {
     var list = document.getElementById("mode"); // on récupère le menu déroulant
     var mode = parseInt(list.options[list.selectedIndex].value); // on récupère la valeur sélectionnée
     for (var numColors = 1; numColors <= 3; numColors++) {   // on récupère le nombre de couleurs
@@ -117,7 +127,18 @@
     }
   }
 
-  function deactivateTooltips() { // Fonction de désactivation de l'affichage des "tooltips"
+  /**
+   * @function deactivateTooltips
+   * @description masque les tooltips
+   * <ul>
+   *  <li> appelle : -
+   *  <li> appelée par : [Client.updateChoices]{@link module:Client~updateChoices}
+   *  <li> globales : -
+   * @return {undefined}
+   * @example
+   * Client.deactivateTooltips() -> masque tous les tooltips à l'écran
+   */
+  function deactivateTooltips() {
       var tooltips = document.querySelectorAll('.tooltip'), // on sélectionne tous les éléments de la classe tooltip
           tooltipsLength = tooltips.length;
       for (var i = 0; i < tooltipsLength; i++) {
@@ -125,20 +146,66 @@
       }
   }
 
-  function getTooltip(elements) { // on récupére la "tooltip" qui correspond à l'input
-      while (elements = elements.nextSibling) {
-          if (elements.className === 'tooltip') {
-              return elements;
+  /**
+   * @function getTooltip
+   * @description retourne le tooltip correspondant à un élément HTML, ou false si aucun tooltip n'a été trouvé
+   * <ul>
+   *  <li> appelle : -
+   *  <li> appelée par :
+   *    <ul>
+   *      <li> [Client.checkPlayer]{@link module:Client~checkPlayer}
+   *      <li> [Client.checkRoomID]{@link module:Client.checkRoomID}
+   *    </ul>
+   *  <li> globales : -
+   * @param {HTMLelement} element - l'élément HTML dont on veut le tooltip
+   * @return {HTMLelement|Boolean}
+   * @example
+   * Client.getTooltip(document.getElementById('player1')) -> retourne le tooltip du joueur 1
+   */
+  function getTooltip(element) {
+      while (element = element.nextSibling) {
+          if (element.className === 'tooltip') {
+              return element;
           }
       }
       return false;
   }
 
-  // Fonctions de vérification du formulaire, elles renvoient "true" si tout est ok
+  /**
+   * Fonctions de vérification du formulaire pour créer une partie, elles renvoient "true" si tout est ok
+   * @member {Object} checkNewGameForm
+   * @property {Function} player1 - vérifie le nom du joueur 1 (voir [Client.checkPlayer]{@link module:Client~checkPlayer})
+   * @property {Function} player2 - vérifie le nom du joueur 2 (voir [Client.checkPlayer]{@link module:Client~checkPlayer})
+   * @property {Function} player3 - vérifie le nom du joueur 3 (voir [Client.checkPlayer]{@link module:Client~checkPlayer})
+   * @property {Function} player4 - vérifie le nom du joueur 4 (voir [Client.checkPlayer]{@link module:Client~checkPlayer})
+   * @property {Function} player5 - vérifie le nom du joueur 5 (voir [Client.checkPlayer]{@link module:Client~checkPlayer})
+   * @property {Function} player6 - vérifie le nom du joueur 6 (voir [Client.checkPlayer]{@link module:Client~checkPlayer})
+   */
   var checkNewGameForm = {}; // On met toutes nos fonctions pour la création d'une nouvelle partie dans un objet littéral
+  /**
+   * Fonctions de vérification du formulaire pour rejoindre une partie, elles renvoient "true" si tout est ok
+   * @member {Object} checkJoinGameForm
+   * @property {Function} player - vérifie le nom du joueur (voir [Client.checkPlayer]{@link module:Client~checkPlayer})
+   * @property {Function} roomID - vérifie le numéro de partie (voir [Client.checkRoomID]{@link module:Client.checkRoomID})
+   */
   var checkJoinGameForm = {}; // On met toutes nos fonctions pour rejoindre une partie dans un objet littéral
 
-  function checkPlayer(id) { // vérifie le nom d'un joueur
+  /**
+   * @function checkPlayer
+   * @description vérifie le nom d'un joueur
+   * <ul>
+   *  <li> appelle : [Client.getTooltip]{@link module:Client~getTooltip}
+   *  <li> appelée par : home.js
+   *  <li> globales : -
+   * @param {String} id - l'id du joueur
+   * @return {Boolean}
+   * @example
+   * document.getElementById('player1').value = 'John'
+   * Client.checkPlayer('player1') // -> true
+   * document.getElementById('player1').value = 'John-Jack-Joe'
+   * Client.checkPlayer('player1') // -> false
+   */
+  function checkPlayer(id) {
       var player = document.getElementById(id),
           player1 = document.getElementById('player1'),
           player2 = document.getElementById('player2'),
@@ -186,7 +253,23 @@
   checkNewGameForm['player1'] = checkPlayer;
   checkJoinGameForm['player'] = checkNewGameForm['player2'] = checkNewGameForm['player3'] = checkNewGameForm['player4'] = checkNewGameForm['player5'] = checkNewGameForm['player6'] = checkNewGameForm['player1'] ;
 
-  checkJoinGameForm['roomID'] = function () { // fonction pour vérifier le numéro de la salle de jeu saisi pour rejoindre une partie
+  checkJoinGameForm['roomID'] = function ()
+  /**
+   * @function checkRoomID
+   * @memberof module:Client
+   * @description vérifie le numéro de la salle de jeu saisi pour rejoindre une partie (fonction anonyme dans le code, propriété de [Client.checkJoinGameForm]{@link module:Client~checkJoinGameForm})
+   * <ul>
+   *  <li> appelle : [Client.getTooltip]{@link module:Client~getTooltip}
+   *  <li> appelée par : home.js
+   *  <li> globales : -
+   * @return {Boolean}
+   * @example
+   * document.getElementById('roomID').value = '-1'
+   * Client.checkJoinGameForm['roomID']() // -> false
+   * document.getElementById('roomID').value = '74265'
+   * Client.checkJoinGameForm['roomID']() // -> true
+   */
+   {
     var input = document.getElementById('roomID'); // on récupère le numéro saisi
     var tooltip = getTooltip(input); // on récupère le tooltip
     var regex = new RegExp("^[0-9]{1,6}$", "g"); // on définit la regex correspondante
@@ -203,7 +286,20 @@
     }
   };
 
-  function disablePlayer(n) { // fonction pour masquer les champs d'un joueur inactif
+  /**
+   * @function disablePlayer
+   * @description désactive / réactive le champ d'un joueur - déclenchée lors d'un clic sur la case 'IA' correspondante
+   * <ul>
+   *  <li> appelle : -
+   *  <li> appelée par : home.js
+   *  <li> globales : -
+   * @param {Int} n - le numéro du joueur (de 1 à 6)
+   * @return {undefined}
+   * @example
+   * Client.disablePlayer(1) // -> désactive le champ du joueur 1
+   * Client.disablePlayer(1) // -> réactive le champ du joueur 1
+   */
+  function disablePlayer(n) {
     var input = document.getElementById("player"+n); // on récupère le joueur n
     var checkbox = document.getElementById("ordi"+n); // on récupère la checkbox correspondante
     if (checkbox.checked) { // si la checkbox est cochée
