@@ -1786,7 +1786,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.js.html">server.js</a>, <a href="server.js.html#line356">line 356</a>
+        <a href="server.js.html">server.js</a>, <a href="server.js.html#line361">line 361</a>
     </li></ul></dd>
     
 
@@ -1828,6 +1828,269 @@
 
     
         <h3 class="subsection-title">Events</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="event:creategame">create game</h4>
+    
+
+    
+
+
+
+<div class="description">
+    Demande au serveur la création d'une partie
+</div>
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>numPlayers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Le nombre de joueurs</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>numColors</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Le nombre de couleurs par joueur</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>COLORS</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Array.&lt;Int>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La liste des couleurs pour chaque joueur</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Le nom du joueur hôte</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gameId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Le numéro de la partie</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isPlayedByIa</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Boolean></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La liste qui indique quels joueurs seront joués par l'IA</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line46">line 46</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         
             
@@ -1898,6 +2161,177 @@
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="server.js.html">server.js</a>, <a href="server.js.html#line269">line 269</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="event:joingame">join game</h4>
+    
+
+    
+
+
+
+<div class="description">
+    Demande au serveur à rejoindre une partie
+</div>
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Le nom du joueur invité</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gameId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Le numéro de la partie</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line67">line 67</a>
     </li></ul></dd>
     
 
@@ -2318,6 +2752,92 @@
     
 
     
+    <h4 class="name" id="event:restartgame">restart game</h4>
+    
+
+    
+
+
+
+<div class="description">
+    Avertit un client du début de la nouvelle partie
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="server.js.html">server.js</a>, <a href="server.js.html#line348">line 348</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="event:restartrequest">restart request</h4>
     
 
@@ -2420,13 +2940,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li><li><a href="module-Server.html">Server</a></li><li><a href="module-Shared.html">Shared</a></li></ul><h3>Classes</h3><ul><li><a href="Player.html">Player</a></li><li><a href="Sound.html">Sound</a></li></ul><h3>Events</h3><ul><li><a href="module-Server.html#~event:deselect">deselect</a></li><li><a href="module-Server.html#~event:endgame">end game</a></li><li><a href="module-Server.html#~event:gameerror">game error</a></li><li><a href="global.html#event:gamefull">game full</a></li><li><a href="module-Server.html#~event:move">move</a></li><li><a href="global.html#event:moverequest">move request</a></li><li><a href="global.html#event:nameerror">name error</a></li><li><a href="module-Server.html#~event:newturn">new turn</a></li><li><a href="global.html#event:playerdisconnecting">player disconnecting</a></li><li><a href="global.html#event:restartrequest">restart request</a></li><li><a href="module-Server.html#~event:select">select</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li><li><a href="global.html#bodyParser">bodyParser</a></li><li><a href="global.html#clients">clients</a></li><li><a href="global.html#connection">connection</a></li><li><a href="global.html#dbConfig">dbConfig</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#games">games</a></li><li><a href="global.html#handleDisconnect">handleDisconnect</a></li><li><a href="global.html#http">http</a></li><li><a href="global.html#io">io</a></li><li><a href="global.html#mysql">mysql</a></li><li><a href="global.html#numPlayers">numPlayers</a></li><li><a href="global.html#PORT">PORT</a></li><li><a href="global.html#server">server</a></li><li><a href="global.html#Server">Server</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li><li><a href="module-Server.html">Server</a></li><li><a href="module-Shared.html">Shared</a></li></ul><h3>Classes</h3><ul><li><a href="Player.html">Player</a></li><li><a href="Sound.html">Sound</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:creategame">create game</a></li><li><a href="module-Server.html#~event:deselect">deselect</a></li><li><a href="module-Server.html#~event:endgame">end game</a></li><li><a href="module-Server.html#~event:gameerror">game error</a></li><li><a href="global.html#event:gamefull">game full</a></li><li><a href="global.html#event:joingame">join game</a></li><li><a href="module-Server.html#~event:move">move</a></li><li><a href="global.html#event:moverequest">move request</a></li><li><a href="global.html#event:nameerror">name error</a></li><li><a href="module-Server.html#~event:newturn">new turn</a></li><li><a href="global.html#event:playerdisconnecting">player disconnecting</a></li><li><a href="global.html#event:restartgame">restart game</a></li><li><a href="global.html#event:restartrequest">restart request</a></li><li><a href="module-Server.html#~event:select">select</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li><li><a href="global.html#bodyParser">bodyParser</a></li><li><a href="global.html#clients">clients</a></li><li><a href="global.html#connection">connection</a></li><li><a href="global.html#dbConfig">dbConfig</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#games">games</a></li><li><a href="global.html#handleDisconnect">handleDisconnect</a></li><li><a href="global.html#http">http</a></li><li><a href="global.html#io">io</a></li><li><a href="global.html#mysql">mysql</a></li><li><a href="global.html#numPlayers">numPlayers</a></li><li><a href="global.html#PORT">PORT</a></li><li><a href="global.html#server">server</a></li><li><a href="global.html#Server">Server</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Sep 01 2018 10:07:00 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Sep 01 2018 10:24:59 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
