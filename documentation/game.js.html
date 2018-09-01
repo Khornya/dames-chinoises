@@ -30,11 +30,16 @@
 
 /** nombre de joueurs */
 var numPlayers;
-var numColors; // nombre de couleurs
-var level;     // level de l'IA
-var COLORS; // liste des couleurs de chaque joueur
-var gameId = parseInt(document.getElementById("gameId").value,10); // numéro de la partie généré par le serveur
-var role = document.getElementById("role").value; // rôle du joueur - host ou guest
+/** nombre de couleurs */
+var numColors;
+/** niveau de difficulté de l'IA */
+var level;
+/** liste des couleurs de chaque joueur */
+var COLORS;
+/** numéro de la partie, généré par le serveur */
+var gameId = parseInt(document.getElementById("gameId").value,10);
+/** rôle du joueur - host ou guest */
+var role = document.getElementById("role").value;
 
 // ********************************** configuration nombre de joueurs nombre de couleurs ***************************
 
@@ -104,20 +109,24 @@ else if (role === "guest"){ // si le joueur est invité
 
 
   // ******************************************* création du plateau de jeu ****************************************
-
-  var player;  // joueur symbolique
-  var gameBoard; // matrice pour le plateau // A ENLEVER
-  var images; // matrice pour les images
-  var PLAYERS = []; // array pour les instances de la classe Player
-  var isPlayedByIa; // array qui permet de savoir quel joueur est joué par l'IA
-
-  var SOUNDS = { // sons qui seront liés aux events
+  /** numéro du joueur dont c'est le tour */
+  var player;
+  /** matrice pour le plateau de jeu */
+  var gameBoard;
+  /** matrice pour les images */
+  var images;
+  /** Array pour les instances de la classe Player */
+  var PLAYERS = [];
+  /** Array qui permet de savoir quel joueur est joué par l'IA */
+  var isPlayedByIa;
+  /** sons qui seront liés aux events */
+  var SOUNDS = {
     jump : new Client.Sound("sounds/click.mp3"),
     fail : new Client.Sound("sounds/fail.mp3"),
     win : new Client.Sound("sounds/win.mp3")
   }
-
-  var Muted = false; // état du son
+  /** état du son */
+  var Muted = false;
 
   document.getElementById("muteButton").addEventListener('click', function(event) { // si on clique sur le bouton on active ou désactive le son
     Muted = !Muted;
@@ -226,13 +235,13 @@ else if (role === "guest"){ // si le joueur est invité
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li><li><a href="module-Server.html">Server</a></li><li><a href="module-Shared.html">Shared</a></li></ul><h3>Classes</h3><ul><li><a href="Player.html">Player</a></li><li><a href="Sound.html">Sound</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:creategame">create game</a></li><li><a href="module-Server.html#~event:deselect">deselect</a></li><li><a href="module-Server.html#~event:endgame">end game</a></li><li><a href="module-Server.html#~event:gameerror">game error</a></li><li><a href="global.html#event:gamefull">game full</a></li><li><a href="global.html#event:joingame">join game</a></li><li><a href="module-Server.html#~event:move">move</a></li><li><a href="global.html#event:moverequest">move request</a></li><li><a href="global.html#event:nameerror">name error</a></li><li><a href="module-Server.html#~event:newturn">new turn</a></li><li><a href="global.html#event:playerdisconnecting">player disconnecting</a></li><li><a href="global.html#event:restartgame">restart game</a></li><li><a href="global.html#event:restartrequest">restart request</a></li><li><a href="module-Server.html#~event:select">select</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li><li><a href="global.html#bodyParser">bodyParser</a></li><li><a href="global.html#clients">clients</a></li><li><a href="global.html#connection">connection</a></li><li><a href="global.html#dbConfig">dbConfig</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#games">games</a></li><li><a href="global.html#handleDisconnect">handleDisconnect</a></li><li><a href="global.html#http">http</a></li><li><a href="global.html#io">io</a></li><li><a href="global.html#mysql">mysql</a></li><li><a href="global.html#numPlayers">numPlayers</a></li><li><a href="global.html#PORT">PORT</a></li><li><a href="global.html#server">server</a></li><li><a href="global.html#Server">Server</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li><li><a href="module-Server.html">Server</a></li><li><a href="module-Shared.html">Shared</a></li></ul><h3>Classes</h3><ul><li><a href="Player.html">Player</a></li><li><a href="Sound.html">Sound</a></li></ul><h3>Events</h3><ul><li><a href="global.html#event:creategame">create game</a></li><li><a href="module-Server.html#~event:deselect">deselect</a></li><li><a href="module-Server.html#~event:endgame">end game</a></li><li><a href="module-Server.html#~event:gameerror">game error</a></li><li><a href="global.html#event:gamefull">game full</a></li><li><a href="global.html#event:joingame">join game</a></li><li><a href="module-Server.html#~event:move">move</a></li><li><a href="global.html#event:moverequest">move request</a></li><li><a href="global.html#event:nameerror">name error</a></li><li><a href="module-Server.html#~event:newturn">new turn</a></li><li><a href="global.html#event:playerdisconnecting">player disconnecting</a></li><li><a href="global.html#event:restartgame">restart game</a></li><li><a href="global.html#event:restartrequest">restart request</a></li><li><a href="module-Server.html#~event:select">select</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li><li><a href="global.html#bodyParser">bodyParser</a></li><li><a href="global.html#clients">clients</a></li><li><a href="global.html#COLORS">COLORS</a></li><li><a href="global.html#connection">connection</a></li><li><a href="global.html#dbConfig">dbConfig</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#gameBoard">gameBoard</a></li><li><a href="global.html#gameId">gameId</a></li><li><a href="global.html#games">games</a></li><li><a href="global.html#handleDisconnect">handleDisconnect</a></li><li><a href="global.html#http">http</a></li><li><a href="global.html#images">images</a></li><li><a href="global.html#io">io</a></li><li><a href="global.html#isPlayedByIa">isPlayedByIa</a></li><li><a href="global.html#level">level</a></li><li><a href="global.html#Muted">Muted</a></li><li><a href="global.html#mysql">mysql</a></li><li><a href="global.html#numColors">numColors</a></li><li><a href="global.html#numPlayers">numPlayers</a></li><li><a href="global.html#player">player</a></li><li><a href="global.html#PLAYERS">PLAYERS</a></li><li><a href="global.html#PORT">PORT</a></li><li><a href="global.html#role">role</a></li><li><a href="global.html#server">server</a></li><li><a href="global.html#Server">Server</a></li><li><a href="global.html#SOUNDS">SOUNDS</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Sep 01 2018 10:35:33 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Sep 01 2018 10:49:59 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

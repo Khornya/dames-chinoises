@@ -2,11 +2,16 @@ var socket = io(); // crée une instance de io à partir de socket.io
 
 /** nombre de joueurs */
 var numPlayers;
-var numColors; // nombre de couleurs
-var level;     // level de l'IA
-var COLORS; // liste des couleurs de chaque joueur
-var gameId = parseInt(document.getElementById("gameId").value,10); // numéro de la partie généré par le serveur
-var role = document.getElementById("role").value; // rôle du joueur - host ou guest
+/** nombre de couleurs */
+var numColors;
+/** niveau de difficulté de l'IA */
+var level;
+/** liste des couleurs de chaque joueur */
+var COLORS;
+/** numéro de la partie, généré par le serveur */
+var gameId = parseInt(document.getElementById("gameId").value,10);
+/** rôle du joueur - host ou guest */
+var role = document.getElementById("role").value;
 
 // ********************************** configuration nombre de joueurs nombre de couleurs ***************************
 
@@ -76,20 +81,24 @@ else if (role === "guest"){ // si le joueur est invité
 
 
   // ******************************************* création du plateau de jeu ****************************************
-
-  var player;  // joueur symbolique
-  var gameBoard; // matrice pour le plateau // A ENLEVER
-  var images; // matrice pour les images
-  var PLAYERS = []; // array pour les instances de la classe Player
-  var isPlayedByIa; // array qui permet de savoir quel joueur est joué par l'IA
-
-  var SOUNDS = { // sons qui seront liés aux events
+  /** numéro du joueur dont c'est le tour */
+  var player;
+  /** matrice pour le plateau de jeu */
+  var gameBoard;
+  /** matrice pour les images */
+  var images;
+  /** Array pour les instances de la classe Player */
+  var PLAYERS = [];
+  /** Array qui permet de savoir quel joueur est joué par l'IA */
+  var isPlayedByIa;
+  /** sons qui seront liés aux events */
+  var SOUNDS = {
     jump : new Client.Sound("sounds/click.mp3"),
     fail : new Client.Sound("sounds/fail.mp3"),
     win : new Client.Sound("sounds/win.mp3")
   }
-
-  var Muted = false; // état du son
+  /** état du son */
+  var Muted = false;
 
   document.getElementById("muteButton").addEventListener('click', function(event) { // si on clique sur le bouton on active ou désactive le son
     Muted = !Muted;
