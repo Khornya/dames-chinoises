@@ -621,6 +621,13 @@ function validateMove(io, clients, games, gameId, socket, cell) {
     games[gameId]["history"][player] = path; // mémorise le chemin
     games[gameId]["Time"] = 500*(path.length-1); // temps pour effectuer le déplacement à l'écran
     move(games, gameId, path, games[gameId]["playedColor"]); // déplace le pion
+    /**
+    * @event move
+    * @description demande au client de déplacer un pion
+    * @type {Object}
+    * @property {Int[][]} path - La liste des coordonnées des cases
+    * @property {Int} playedColor - Le numéro de la couleur jouée
+    */
     io.sockets.in(gameId).emit('move', { path : path, playedColor: games[gameId]["playedColor"] }); // avertit les joueurs du mouvement à effectuer
     games[gameId]["PLAYERS"][player].score += 1; // compte le nombre de coups du joueur
     if (hasWon(games, gameId, playedColor)) { // si le joueur a gagné
@@ -782,6 +789,7 @@ function negmax(io, games, gameId) {
   games[gameId]["Time"] += 500*(path.length-1);
   move(games, gameId, path, games[gameId]["playedColor"]);
   setTimeout(function() {
+    /** @see event:move */
     io.sockets.in(gameId).emit('move', { path : path, playedColor: games[gameId]["playedColor"] });
     games[gameId]["isIaPlaying"] = false;
   }, games[gameId]["Time"]); // avertit les joueurs du mouvement à effectuer
@@ -789,6 +797,7 @@ function negmax(io, games, gameId) {
   if (hasWon(games, gameId, games[gameId]["playedColor"])) { // si l'IA a gagné
     games[gameId]["gameOver"] = true; // termine la partie
     setTimeout(function() {
+      /** @see event:end game */
       io.sockets.in(gameId).emit('end game', { winner: games[gameId]["player"], score: games[gameId]["PLAYERS"][games[gameId]["player"]].score }); // avertit les joueurs du vainqueur
     }, games[gameId]["Time"]);
     sendScore(games, gameId, games[gameId]["PLAYERS"][games[gameId]["player"]], (error,data) => { // factoriser
@@ -798,7 +807,9 @@ function negmax(io, games, gameId) {
     return true; // pourquoi pas juste return ?
   }
   games[gameId]["player"] = (games[gameId]["player"]+1) % games[gameId]["numPlayers"]; // passe au joueur suivant
-  setTimeout(function() { io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] }); }, games[gameId]["Time"]); // avertit les joueurs du nouveau tour
+  setTimeout(function() {
+    /** @see event:new turn */
+    io.sockets.in(gameId).emit('new turn', { player: games[gameId]["player"] }); }, games[gameId]["Time"]); // avertit les joueurs du nouveau tour
   games[gameId]["startCell"] = 0; // réinitialise la case de départ
 }
 

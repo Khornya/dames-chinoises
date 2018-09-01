@@ -1,19 +1,52 @@
+/** Les fonctions serveur */
 var Server = require('./server.functions.js');
 
-var express = require('express'); // requiert le framework express
-var app = express(); // invoque une instance d'express
-var http = require('http'); // requiert le module http
-var server = http.Server(app); // crée le serveur
-var io = require('socket.io')(server); // invoque une instance de socket.io liée au serveur
+/** Le framework Express */
+var express = require('express');
+/** L'instance d'Express */
+var app = express();
+/** Le module http */
+var http = require('http');
+/** Le serveur HTTP */
+var server = http.Server(app);
+/** L'instance de socket.io liée au serveur */
+var io = require('socket.io')(server);
 
-var bodyParser = require("body-parser"); // configure express pour utiliser body-parser comme intermédiaire
+/** Le port utilisé par le serveur */
+var PORT = (process.env.PORT || 8000);
+server.listen(PORT); // on écoute sur le port
+
+/** Le module mysql */
+var mysql = require('mysql');
+/** La configuration de la base de données */
+var dbConfig = (process.env.NODE_ENV === 'production') ? { // distante
+  host     : 'us-cdbr-iron-east-05.cleardb.net',
+  user     : 'bb4e923f5faaa9',
+  password : '382b4542',
+  database : 'heroku_703605cd7a769b9',
+  dateStrings: 'date'
+} : { // locale
+  host: 'localhost',
+  user: 'hophophop',
+  password: 'hophophop',
+  database : 'dames_chinoises',
+  dateStrings: 'date'
+};
+/** La connexion à la base de données */
+var connection;
+handleDisconnect(); // on invoque la fonction de reconnexion
+
+/** Le module body-parser */
+var bodyParser = require("body-parser");
+// configure express pour utiliser body-parser comme intermédiaire
 app.use(bodyParser.urlencoded({ extended: false })); // on configure body-parser (voir site pug)
 app.use(bodyParser.json());
 app.set('views', './views'); // dossier pour les templates html
-app.set('view engine', 'pug'); // configuration du moteur d'affichage des templates
+app.set('view engine', 'pug'); // moteur d'affichage des templates
 
-var mysql = require('mysql'); // on requiert le module mysql
+app.use(express.static(__dirname)); // pour pouvoir utiliser les fichiers statiques
 
+// On configure les routes du serveur HTTP
 app.post('/game', function(request, response) { // en cas de requête POST sur la page de jeu
   if (typeof(request.body.inputNewGameForm) !== 'undefined' && typeof(request.body.inputJoinGameForm) !== 'undefined') { // on redirige si aucune variable n'est transmise par formulaire
     response.redirect('/');
@@ -135,30 +168,6 @@ app.get('/score',function(request,response){ // en cas de requête GET sur la pa
   }
 });
 
-/** configuration de la base de données */
-var dbConfig = (process.env.NODE_ENV === 'production') ? { // distante
-  host     : 'us-cdbr-iron-east-05.cleardb.net',
-  user     : 'bb4e923f5faaa9',
-  password : '382b4542',
-  database : 'heroku_703605cd7a769b9',
-  dateStrings: 'date'
-} : { // locale
-  host: 'localhost',
-  user: 'hophophop',
-  password: 'hophophop',
-  database : 'dames_chinoises',
-  dateStrings: 'date'
-};
-
-/** connexion à la base de données */
-var connection;
-
-handleDisconnect(); // on invoque la fonction de reconnexion
-
-var PORT = (process.env.PORT || 8000);
-
-server.listen(PORT);
-
 app.get('/', function(request, response) { // en cas de requête GET surla page d'accueil
   connection.query('SELECT nom, score, dategame FROM parties ORDER BY score ASC LIMIT 0, 10', function(error, rows, fields) { // on récupère les meilleurs scores dans la BDD
     if (error) throw error;
@@ -181,12 +190,43 @@ app.get('/game', function (request, response) { // en cas de requête GET surla 
   response.redirect('/'); // on redirige vers la page d'accueil
 });
 
-app.use(express.static(__dirname)); // pour pouvoir utiliser les fichiers statiques
-
-/** Les données des différentes parties en cours */
+/**
+ * Les données des différentes parties en cours
+ * @type {Object.<Object>}
+ * @property {Object} undefined - Une partie identifiée par son numéro
+ * @property {Int} undefined.numPlayers - Le nombre de joueurs
+ * @property {Int} undefined.numColors - Le nombre de couleurs par joueur
+ * @property {Int[][]} undefined.COLORS - La liste contenant la liste des couleurs pour chaque joueur
+ * @property {String[]|Object[]} undefined.PLAYERS - La liste des joueurs
+ * @property {String} undefined.PLAYERS[].name - Le nom du joueur
+ * @property {Int} undefined.PLAYERS[].score - Le score du joueur
+ * @property {Int[]} undefined.PLAYERS[].colors - Les couleurs du joueur
+ * @property {Int} undefined.PLAYERS[].number - Le numéro du joueur (de 1 à 6)
+ * @property {Boolean[]} undefined.isPlayedByIa - La liste des joueurs joués par l'IA. L'index correspond au numéro du joueur -1, la valeur vaut true si c'est l'IA qui joue, false sinon
+ * @property {Int} undefined.numHumanPlayers - Le nombre de joueurs qui ne sont pas contrôlés par l'IA
+ * @property {Int} undefined.remaining - Le nombre de joueurs qui n'ont pas encore rejoint la partie
+ * @property {Boolean} undefined.isIaPlaying - true si l'IA est en train de jouer, false sinon
+ * @property {Int} undefined.restartCount - Le nombre de joueurs qui veulent recommencer une partie
+ * @property {Int} undefined.Time - Le temps à attendre entre deux IA qui jouent
+ * @property {Array[]} undefined.gameBoard - La matrice représentant le plateau de jeu
+ * @property {Int|Boolean} undefined.gameBoard[x][y]] - La couleur du pion sur la case de coordonnées (x,y) : 1/vert, 2/orange, 3/bleu foncé, 4/bleu clair, 5/jaune, 6/rouge, -1/case inoccupée, false/case inutilisable
+ * @property {Int} undefined.player - Le numéro du joueur dont c'est le tour -1
+ * @property {Int[]|Int} undefined.startCell - Les coordonnées de la case de départ, ou 0 si aucune case n'est sélectionnée
+ * @property {Boolean} undefined.gameOver - true si la partie est finie, false sinon
+ * @property {Array[]} undefined.gameState - La liste des états d'avancement de chaque joueur
+ * @property {Boolean[]} undefined.gameState[] - true si cette couleur est dans son triangle d'arrivée, false sinon (dans le même ordre que PLAYERS[].colors)
+ * @property {Int[][][]} undefined.history - Les coordonnées des derniers déplacements. L'index correspond au numéro du joueur -1.
+ */
 var games = {};
 
-/** Les données des différents utilisateurs actuellement connectés */
+/**
+ * Les données des différents utilisateurs actuellement connectés
+ * @type {Object.<Object>}
+ * @property {Object} undefined - L'id de la WebSocket utilisée par le client
+ * @property {Int} undefined.gameId - Le numéro de la partie à laquelle participe le client
+ * @property {Int} undefined.number - Le numéro du joueur joué par le client
+ * @property {String} undefined.name - Le nom du client
+ */
 var clients = {};
 
 io.on('connection', function (socket) { // déclaration des fonctions de callback
@@ -226,7 +266,12 @@ io.on('connection', function (socket) { // déclaration des fonctions de callbac
       }
       delete games[data["gameId"]]["PLAYERS"]; // supprime l'array PLAYERS
       Server.init(games, data["gameId"]); // initialise la partie
-      io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]); // avertit les joueurs que la partie peut commencer
+      /**
+      * @event game full
+      * @description Avertit le client que la partie peut commencer. Transmet le numéro de la partie.
+      * @type {Int}
+      */
+      io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]);
       if (numHumanPlayers === 0) { // si uniquement des IA
         Server.play(io, clients, games, data["gameId"]) // fait jouer la 1ère IA
       }
@@ -235,7 +280,13 @@ io.on('connection', function (socket) { // déclaration des fonctions de callbac
   socket.on('join game', function (data) { // en cas de message 'join game' reçu
     console.log('join game : ', data);
     if (data["player"] !== '' && Server.contains(games[data["gameId"]]["PLAYERS"], data["player"]) || data["player"] === (games[data["gameId"]]["player1"])) { // si le nom est déjà pris
-      socket.emit('name error', { name: data["player"] }); // demande un nouveau nom au joueur
+      /**
+       * Demande un nouveau nom au client
+       * @event name error
+       * @type {Object}
+       * @property name - Le nom demandé par le joueur
+       */
+      socket.emit('name error', { name: data["player"] });
       return;
     }
     socket.join(data["gameId"].toString()); // rejoint la partie
@@ -260,6 +311,7 @@ io.on('connection', function (socket) { // déclaration des fonctions de callbac
       }
       delete games[data["gameId"]]["PLAYERS"]; // supprime l'array PLAYERS
       Server.init(games, data["gameId"]); // initialise la partie
+      /** @see event:game full */
       io.sockets.in(data["gameId"]).emit('game full', games[data["gameId"]]); // avertit les joueurs que la partie peut commencer
     }
   });
@@ -269,10 +321,16 @@ io.on('connection', function (socket) { // déclaration des fonctions de callbac
   }); // joue le coup demandé
   socket.on('disconnecting', function (reason) { // en cas de message 'disconnecting' reçu
     if (Server.contains(Object.keys(clients), this.id)) { // si l'utilisateur est enregistré
-      io.sockets.in(clients[this.id]["gameId"]).emit('player disconnecting', clients[this.id]); // avertit les autres joueurs que le joueur a été déconnecté
+    /**
+     * Avertit un client qu'un joueur a été déconnecté. Transmet l'objet représentant le joueur dans [clients]{@link clients}
+     * @event player disconnecting
+     * @type {Object}
+     */
+      io.sockets.in(clients[this.id]["gameId"]).emit('player disconnecting', clients[this.id]);
       if (!games[clients[this.id]["gameId"]]["gameOver"]) { // si la partie n'est pas finie
         games[clients[this.id]["gameId"]]["gameOver"] = true; // la termine
-        io.sockets.in(clients[this.id]["gameId"]).emit('end game', {}); // avertit les joueurs de la fin de la partie
+        /** @see event:end game */
+        io.sockets.in(clients[this.id]["gameId"]).emit('end game', {});
       }
     }
   });
@@ -287,13 +345,18 @@ io.on('connection', function (socket) { // déclaration des fonctions de callbac
     if (games[clients[this.id]["gameId"]]["restartCount"] === games[clients[this.id]["gameId"]]["numHumanPlayers"]) { // si tous les joueurs veulent recommencer
       Server.restart(games, clients[this.id]["gameId"], 1); // redémarre la partie (à revoir, plus d'option 1 pour restart ?)
       console.log('restarting : ', clients[this.id]["gameId"]);
-      io.sockets.in(clients[this.id]["gameId"]).emit('restart game', {}); // avertit les joueurs de la nouvelle partie
+      /**
+       * Avertit un client du début de la nouvelle partie
+       * @event restart game
+       */
+      io.sockets.in(clients[this.id]["gameId"]).emit('restart game', {});
     }
   });
 });
 
 /**
- * fonction pour se reconnecter à la BDD en cas de déconnexion - https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
+ * fonction pour se reconnecter à la BDD en cas de déconnexion
+ * @see https://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
  */
 function handleDisconnect() {
   connection = mysql.createConnection(dbConfig); // Recreate the connection, since the old one cannot be reused.

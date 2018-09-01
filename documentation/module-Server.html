@@ -190,7 +190,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line806">line 806</a>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line817">line 817</a>
     </li></ul></dd>
     
 
@@ -521,7 +521,7 @@ Server.contains([[2,3],[3,5],[4,2]], [1,2]) -> false</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line695">line 695</a>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line702">line 702</a>
     </li></ul></dd>
     
 
@@ -636,7 +636,7 @@ une situation avantageuse si les distances de l'agent sont les plus petites  et 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line841">line 841</a>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line852">line 852</a>
     </li></ul></dd>
     
 
@@ -2392,7 +2392,7 @@ Server.isOnGameBoard([4,16]) // -> true</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line674">line 674</a>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line681">line 681</a>
     </li></ul></dd>
     
 
@@ -2505,7 +2505,7 @@ Server.isOnGameBoard([4,16]) // -> true</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line738">line 738</a>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line745">line 745</a>
     </li></ul></dd>
     
 
@@ -2762,7 +2762,7 @@ Server.isOnGameBoard([4,16]) // -> true</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line724">line 724</a>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line731">line 731</a>
     </li></ul></dd>
     
 
@@ -3726,7 +3726,7 @@ Server.isOnGameBoard([4,16]) // -> true</code></pre>
 
     <li><a href="module-Server.html#~event:deselect">event:deselect</a></li>
 
-    <li>event:move</li>
+    <li><a href="module-Server.html#~event:move">event:move</a></li>
 
     <li><a href="module-Server.html#~event:endgame">event:end game</a></li>
 
@@ -4104,7 +4104,7 @@ Server.validateMove(io,clients,games,"12314",socket,[8,12]) // -> le joueur sur 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line628">line 628</a>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line635">line 635</a>
     </li></ul></dd>
     
 
@@ -4309,6 +4309,177 @@ Server.validateMove(io,clients,games,"12314",socket,[8,12]) // -> le joueur sur 
     
 
     
+    <h4 class="name" id="~event:move">move</h4>
+    
+
+    
+
+
+
+<div class="description">
+    demande au client de déplacer un pion
+</div>
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Array.&lt;Int>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">La liste des coordonnées des cases</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>playedColor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Le numéro de la couleur jouée</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line624">line 624</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="~event:newturn">new turn</h4>
     
 
@@ -4423,7 +4594,7 @@ Server.validateMove(io,clients,games,"12314",socket,[8,12]) // -> le joueur sur 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line643">line 643</a>
+        <a href="server.functions.js.html">server.functions.js</a>, <a href="server.functions.js.html#line650">line 650</a>
     </li></ul></dd>
     
 
@@ -4611,13 +4782,13 @@ Server.validateMove(io,clients,games,"12314",socket,[8,12]) // -> le joueur sur 
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li><li><a href="module-Server.html">Server</a></li><li><a href="module-Shared.html">Shared</a></li></ul><h3>Classes</h3><ul><li><a href="Player.html">Player</a></li><li><a href="Sound.html">Sound</a></li></ul><h3>Events</h3><ul><li><a href="module-Server.html#~event:deselect">deselect</a></li><li><a href="module-Server.html#~event:endgame">end game</a></li><li><a href="module-Server.html#~event:gameerror">game error</a></li><li><a href="global.html#event:moverequest">move request</a></li><li><a href="module-Server.html#~event:newturn">new turn</a></li><li><a href="global.html#event:restartrequest">restart request</a></li><li><a href="module-Server.html#~event:select">select</a></li></ul><h3>Global</h3><ul><li><a href="global.html#clients">clients</a></li><li><a href="global.html#connection">connection</a></li><li><a href="global.html#dbConfig">dbConfig</a></li><li><a href="global.html#games">games</a></li><li><a href="global.html#handleDisconnect">handleDisconnect</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Client.html">Client</a></li><li><a href="module-Server.html">Server</a></li><li><a href="module-Shared.html">Shared</a></li></ul><h3>Classes</h3><ul><li><a href="Player.html">Player</a></li><li><a href="Sound.html">Sound</a></li></ul><h3>Events</h3><ul><li><a href="module-Server.html#~event:deselect">deselect</a></li><li><a href="module-Server.html#~event:endgame">end game</a></li><li><a href="module-Server.html#~event:gameerror">game error</a></li><li><a href="global.html#event:gamefull">game full</a></li><li><a href="module-Server.html#~event:move">move</a></li><li><a href="global.html#event:moverequest">move request</a></li><li><a href="global.html#event:nameerror">name error</a></li><li><a href="module-Server.html#~event:newturn">new turn</a></li><li><a href="global.html#event:playerdisconnecting">player disconnecting</a></li><li><a href="global.html#event:restartrequest">restart request</a></li><li><a href="module-Server.html#~event:select">select</a></li></ul><h3>Global</h3><ul><li><a href="global.html#app">app</a></li><li><a href="global.html#bodyParser">bodyParser</a></li><li><a href="global.html#clients">clients</a></li><li><a href="global.html#connection">connection</a></li><li><a href="global.html#dbConfig">dbConfig</a></li><li><a href="global.html#express">express</a></li><li><a href="global.html#games">games</a></li><li><a href="global.html#handleDisconnect">handleDisconnect</a></li><li><a href="global.html#http">http</a></li><li><a href="global.html#io">io</a></li><li><a href="global.html#mysql">mysql</a></li><li><a href="global.html#numPlayers">numPlayers</a></li><li><a href="global.html#PORT">PORT</a></li><li><a href="global.html#server">server</a></li><li><a href="global.html#Server">Server</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Aug 31 2018 15:18:56 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Sep 01 2018 10:07:00 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
