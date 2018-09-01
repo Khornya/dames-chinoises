@@ -1,3 +1,5 @@
+(function () {
+
 // Mise en place des événements
 
   var newGameForm = document.getElementById('newGameForm'), // on récupère le formulaire de création de partie
@@ -57,3 +59,5 @@ for (var i=2;i<=6;i++) { // pour tous les joueurs sauf le premier
 }
 
 Client.updateChoices(); // on affiche les options correspondantes au nombre de joueurs choisi
+
+})();
